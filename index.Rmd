@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAME HERE"
+title: "Machine Learning and Causal Inference"
+author: "Alexander Quispe"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
