@@ -1,3 +1,12 @@
 down-the-rabbit-hole
 the-pool-of-tears
 a-caucus-race-and-a-long-tale
+chapter-1-predictive-inference-1
+data
+predictive-inference-1
+data-analysis
+r-code
+tab:table-one
+tab:type-variables
+tab:type-table
+prediction-question
