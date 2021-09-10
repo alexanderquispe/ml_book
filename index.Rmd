@@ -26,10 +26,142 @@ The variable of interest $Y$ is the hourly wage rate constructed as the ratio of
 
 ## Data Analysis
 
+### R code
+
 1. Import relevant packages
 
-```{r}
-print("hello world")
+There are not additional packages to import.
+
+```{r packages,echo= TRUE,message=FALSE,warning=FALSE}
+library(dplyr)
+library(kableExtra)
 ```
 
-2. 
+2. We start loading the data set.
+
+```{r import-data,echo= TRUE}
+load("./data/wage2015_subsample_inference.Rdata")
+```
+
+The dimensions are `r dim(data)[1]` rows and `r dim(data)[2]` columns.
+
+Let's have a look at the structure of the data.
+
+```{r type-table, echo=TRUE}
+
+# Calculate the means and convert it into a dataframe
+table0 <- data.frame(apply(data,2,class))%>%
+  rename(Type =`apply.data..2..class.`)
+
+table0$Variables <- rownames(table0)
+rownames(table0) <- c(1:nrow(table0))
+
+# Table presentation
+table0 %>% select(2,1)%>%
+  kable("markdown",caption = "Type of the Variables")
+```
+
+3. Give structure to the variables
+
+We are constructing the output variable $Y$ and the matrix $Z$ which includes the characteristics of workers that are given in the data.
+
+```{r variables-structure, echo=TRUE}
+
+# Calculate the log wage.
+Y <- log(data$wage)
+# Number of observaciones
+n <- length(Y)
+# Regressors
+Z <- data[,c("wage","lwage")]
+# Number of regressors
+p <- dim(Z)[2]
+```
+
+Number of observation: `r n`
+Number of raw regressors:`r p`
+
+For the outcome variable wage and a subset of the raw regressors, we calculate the empirical mean to get familiar with the data.
+
+```{r table-one, echo = TRUE}
+# Select the variables.
+Z_subset <- data[,c("lwage","sex","shs","hsg","scl","clg","ad","mw","so","we","ne","exp1")]
+
+# Create table
+table1 <- data.frame(as.numeric(lapply(Z_subset,mean))) %>%
+  mutate(Variables = c("Log Wage","Sex","Some High School","High School Graduate","Some College","College Graduate", "Advanced Degree","Midwest","South","West","Northeast","Experience")) %>%
+  rename(`Sample Mean` = `as.numeric.lapply.Z_subset..mean..`) %>%
+  select(2,1)
+
+# HTML table
+table1 %>%
+  kable("markdown",caption = "Descriptive Statistics")
+```
+
+E.g., the share of female workers in our sample is $~44% (sex=1$ if female).
+
+Alternatively, we can also print the table as latex.
+
+```{r table-one-latex, echo=TRUE}
+print(table1, type="latex")
+```
+
+## Prediction Question
+
+Now, we will construct a prediction rule for hourly wage $Y$ , which depends linearly on job-relevant characteristics  $X$:
+
+$$Y = \beta ′X + \epsilon $$
+ 
+Our goals are
+
+* Predict wages using various characteristics of workers.
+
+* Assess the predictive performance using the (adjusted) sample MSE, the (adjusted) sample $R^2$ and the out-of-sample $MSE$ and $R^2$.
+
+We employ two different specifications for prediction:
+
+- **Basic Model**: $X$ consists of a set of raw regressors (e.g. gender, experience, education indicators, occupation and industry indicators, regional indicators).
+
+- **Flexible Model**: $X$ consists of all raw regressors from the basic model plus occupation and industry indicators, transformations (e.g.,$exp2$ and $exp3$) and additional two-way interactions of polynomial in experience with other regressors. An example of a regressor created through a two-way interaction is experience times the indicator of having a college degree.
+
+Using the **Flexible Model**, enables us to approximate the real relationship by a more complex regression model and therefore to reduce the bias. The **Flexible Model** increases the range of potential shapes of the estimated regression function. In general, flexible models often deliver good prediction accuracy but give models which are harder to interpret.
+
+Now, let us fit both models to our data by running ordinary least squares (ols):
+
+```{r basic-model}
+basic <- lwage~ (sex + exp1 + shs + hsg+ scl + clg + mw + so + we+occ2+ind2)
+regbasic <- lm(basic, data=data)
+regbasic # estimated coefficients
+```
+
+Number of regressors in the basic model **`r length(regbasic$coef)`**.
+
+```{r flexible-model}
+flex <- lwage ~ sex + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)
+regflex <- lm(flex, data=data)
+regflex # estimated coefficients
+```
+
+Number of regressors in the flexible model:**`r length(regflex$coef)`**.
+
+- **Lasso Model**
+
+First, we import a essential library.
+
+```{r hdm-packages, message=FALSE, warning=FALSE}
+library(hdm)
+```
+
+
+```{r}
+flex <- lwage ~ sex + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)
+lassoreg<- rlasso(flex, data=data)
+
+sumlasso<- summary(lassoreg)
+```
+
+Now, we can evaluate the performance of both models based on the (adjusted) $R^2_{sample}$  and the (adjusted) $MSE_{sample}$:
+
+
+
+
+

@@ -24,7 +24,7 @@
 <meta name="author" content="Alexander Quispe" />
 
 
-<meta name="date" content="2021-09-09" />
+<meta name="date" content="2021-09-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -139,7 +139,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Predictive Inference 1</a>
 <ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#data"><i class="fa fa-check"></i><b>1.1</b> Data</a></li>
-<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-analysis"><i class="fa fa-check"></i><b>1.2</b> Data Analysis</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-analysis"><i class="fa fa-check"></i><b>1.2</b> Data Analysis</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#r-code"><i class="fa fa-check"></i><b>1.2.1</b> R code</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#prediction-question"><i class="fa fa-check"></i><b>1.3</b> Prediction Question</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="the-pool-of-tears.html"><a href="the-pool-of-tears.html"><i class="fa fa-check"></i><b>2</b> The pool of tears</a></li>
 <li class="chapter" data-level="3" data-path="a-caucus-race-and-a-long-tale.html"><a href="a-caucus-race-and-a-long-tale.html"><i class="fa fa-check"></i><b>3</b> A caucus-race and a long tale</a></li>
@@ -165,7 +169,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Machine Learning and Causal Inference</h1>
 <p class="author"><em>Alexander Quispe</em></p>
-<p class="date" style="margin-top: 1.5em;"><em>2021-09-09</em></p>
+<p class="date" style="margin-top: 1.5em;"><em>2021-09-10</em></p>
 </div>
 <div id="predictive-inference-1" class="section level1" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Predictive Inference 1</h1>
@@ -184,14 +188,635 @@ Two main questions here are:</p>
 </div>
 <div id="data-analysis" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Data Analysis</h2>
+<div id="r-code" class="section level3" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> R code</h3>
 <ol style="list-style-type: decimal">
 <li>Import relevant packages</li>
 </ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true"></a><span class="kw">print</span>(<span class="st">&quot;hello world&quot;</span>)</span></code></pre></div>
-<pre><code>## [1] &quot;hello world&quot;</code></pre>
+<p>There are not additional packages to import.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(kableExtra)</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li></li>
+<li>We start loading the data set.</li>
 </ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" aria-hidden="true"></a><span class="kw">load</span>(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span></code></pre></div>
+<p>The dimensions are 5150 rows and 20 columns.</p>
+<p>Let’s have a look at the structure of the data.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true"></a><span class="co"># Calculate the means and convert it into a dataframe</span></span>
+<span id="cb3-2"><a href="index.html#cb3-2" aria-hidden="true"></a>table0 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">apply</span>(data,<span class="dv">2</span>,class))<span class="op">%&gt;%</span></span>
+<span id="cb3-3"><a href="index.html#cb3-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">Type =</span><span class="st">`</span><span class="dt">apply.data..2..class.</span><span class="st">`</span>)</span>
+<span id="cb3-4"><a href="index.html#cb3-4" aria-hidden="true"></a></span>
+<span id="cb3-5"><a href="index.html#cb3-5" aria-hidden="true"></a>table0<span class="op">$</span>Variables &lt;-<span class="st"> </span><span class="kw">rownames</span>(table0)</span>
+<span id="cb3-6"><a href="index.html#cb3-6" aria-hidden="true"></a><span class="kw">rownames</span>(table0) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(table0))</span>
+<span id="cb3-7"><a href="index.html#cb3-7" aria-hidden="true"></a></span>
+<span id="cb3-8"><a href="index.html#cb3-8" aria-hidden="true"></a><span class="co"># Table presentation</span></span>
+<span id="cb3-9"><a href="index.html#cb3-9" aria-hidden="true"></a>table0 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)<span class="op">%&gt;%</span></span>
+<span id="cb3-10"><a href="index.html#cb3-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Type of the Variables&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:type-table">Table 1.1: </span>Type of the Variables</caption>
+<thead>
+<tr class="header">
+<th align="left">Variables</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">wage</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">lwage</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">sex</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">shs</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">hsg</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">scl</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">clg</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">ad</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">mw</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">so</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">we</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">ne</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">exp1</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">exp2</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">exp3</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">exp4</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">occ</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">occ2</td>
+<td align="left">character</td>
+</tr>
+<tr class="odd">
+<td align="left">ind</td>
+<td align="left">character</td>
+</tr>
+<tr class="even">
+<td align="left">ind2</td>
+<td align="left">character</td>
+</tr>
+</tbody>
+</table>
+<ol start="3" style="list-style-type: decimal">
+<li>Give structure to the variables</li>
+</ol>
+<p>We are constructing the output variable <span class="math inline">\(Y\)</span> and the matrix <span class="math inline">\(Z\)</span> which includes the characteristics of workers that are given in the data.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true"></a><span class="co"># Calculate the log wage.</span></span>
+<span id="cb4-2"><a href="index.html#cb4-2" aria-hidden="true"></a>Y &lt;-<span class="st"> </span><span class="kw">log</span>(data<span class="op">$</span>wage)</span>
+<span id="cb4-3"><a href="index.html#cb4-3" aria-hidden="true"></a><span class="co"># Number of observaciones</span></span>
+<span id="cb4-4"><a href="index.html#cb4-4" aria-hidden="true"></a>n &lt;-<span class="st"> </span><span class="kw">length</span>(Y)</span>
+<span id="cb4-5"><a href="index.html#cb4-5" aria-hidden="true"></a><span class="co"># Regressors</span></span>
+<span id="cb4-6"><a href="index.html#cb4-6" aria-hidden="true"></a>Z &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;wage&quot;</span>,<span class="st">&quot;lwage&quot;</span>)]</span>
+<span id="cb4-7"><a href="index.html#cb4-7" aria-hidden="true"></a><span class="co"># Number of regressors</span></span>
+<span id="cb4-8"><a href="index.html#cb4-8" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">dim</span>(Z)[<span class="dv">2</span>]</span></code></pre></div>
+<p>Number of observation: 5150
+Number of raw regressors:2</p>
+<p>For the outcome variable wage and a subset of the raw regressors, we calculate the empirical mean to get familiar with the data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true"></a><span class="co"># Select the variables.</span></span>
+<span id="cb5-2"><a href="index.html#cb5-2" aria-hidden="true"></a>Z_subset &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;lwage&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;shs&quot;</span>,<span class="st">&quot;hsg&quot;</span>,<span class="st">&quot;scl&quot;</span>,<span class="st">&quot;clg&quot;</span>,<span class="st">&quot;ad&quot;</span>,<span class="st">&quot;mw&quot;</span>,<span class="st">&quot;so&quot;</span>,<span class="st">&quot;we&quot;</span>,<span class="st">&quot;ne&quot;</span>,<span class="st">&quot;exp1&quot;</span>)]</span>
+<span id="cb5-3"><a href="index.html#cb5-3" aria-hidden="true"></a></span>
+<span id="cb5-4"><a href="index.html#cb5-4" aria-hidden="true"></a><span class="co"># Create table</span></span>
+<span id="cb5-5"><a href="index.html#cb5-5" aria-hidden="true"></a>table1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">as.numeric</span>(<span class="kw">lapply</span>(Z_subset,mean))) <span class="op">%&gt;%</span></span>
+<span id="cb5-6"><a href="index.html#cb5-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Variables =</span> <span class="kw">c</span>(<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Some High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;College Graduate&quot;</span>, <span class="st">&quot;Advanced Degree&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Experience&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb5-7"><a href="index.html#cb5-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">Sample Mean</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">as.numeric.lapply.Z_subset..mean..</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
+<span id="cb5-8"><a href="index.html#cb5-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)</span>
+<span id="cb5-9"><a href="index.html#cb5-9" aria-hidden="true"></a></span>
+<span id="cb5-10"><a href="index.html#cb5-10" aria-hidden="true"></a><span class="co"># HTML table</span></span>
+<span id="cb5-11"><a href="index.html#cb5-11" aria-hidden="true"></a>table1 <span class="op">%&gt;%</span></span>
+<span id="cb5-12"><a href="index.html#cb5-12" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:table-one">Table 1.2: </span>Descriptive Statistics</caption>
+<thead>
+<tr class="header">
+<th align="left">Variables</th>
+<th align="right">Sample Mean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Log Wage</td>
+<td align="right">2.9707867</td>
+</tr>
+<tr class="even">
+<td align="left">Sex</td>
+<td align="right">0.4444660</td>
+</tr>
+<tr class="odd">
+<td align="left">Some High School</td>
+<td align="right">0.0233010</td>
+</tr>
+<tr class="even">
+<td align="left">High School Graduate</td>
+<td align="right">0.2438835</td>
+</tr>
+<tr class="odd">
+<td align="left">Some College</td>
+<td align="right">0.2780583</td>
+</tr>
+<tr class="even">
+<td align="left">College Graduate</td>
+<td align="right">0.3176699</td>
+</tr>
+<tr class="odd">
+<td align="left">Advanced Degree</td>
+<td align="right">0.1370874</td>
+</tr>
+<tr class="even">
+<td align="left">Midwest</td>
+<td align="right">0.2596117</td>
+</tr>
+<tr class="odd">
+<td align="left">South</td>
+<td align="right">0.2965049</td>
+</tr>
+<tr class="even">
+<td align="left">West</td>
+<td align="right">0.2161165</td>
+</tr>
+<tr class="odd">
+<td align="left">Northeast</td>
+<td align="right">0.2277670</td>
+</tr>
+<tr class="even">
+<td align="left">Experience</td>
+<td align="right">13.7605825</td>
+</tr>
+</tbody>
+</table>
+<p>E.g., the share of female workers in our sample is <span class="math inline">\(~44% (sex=1\)</span> if female).</p>
+<p>Alternatively, we can also print the table as latex.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="index.html#cb6-1" aria-hidden="true"></a><span class="kw">print</span>(table1, <span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
+<pre><code>##               Variables Sample Mean
+## 1              Log Wage  2.97078670
+## 2                   Sex  0.44446602
+## 3      Some High School  0.02330097
+## 4  High School Graduate  0.24388350
+## 5          Some College  0.27805825
+## 6      College Graduate  0.31766990
+## 7       Advanced Degree  0.13708738
+## 8               Midwest  0.25961165
+## 9                 South  0.29650485
+## 10                 West  0.21611650
+## 11            Northeast  0.22776699
+## 12           Experience 13.76058252</code></pre>
+</div>
+</div>
+<div id="prediction-question" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Prediction Question</h2>
+<p>Now, we will construct a prediction rule for hourly wage <span class="math inline">\(Y\)</span> , which depends linearly on job-relevant characteristics <span class="math inline">\(X\)</span>:</p>
+<p><span class="math display">\[Y = \beta ′X + \epsilon \]</span></p>
+<p>Our goals are</p>
+<ul>
+<li><p>Predict wages using various characteristics of workers.</p></li>
+<li><p>Assess the predictive performance using the (adjusted) sample MSE, the (adjusted) sample <span class="math inline">\(R^2\)</span> and the out-of-sample <span class="math inline">\(MSE\)</span> and <span class="math inline">\(R^2\)</span>.</p></li>
+</ul>
+<p>We employ two different specifications for prediction:</p>
+<ul>
+<li><p><strong>Basic Model</strong>: <span class="math inline">\(X\)</span> consists of a set of raw regressors (e.g. gender, experience, education indicators, occupation and industry indicators, regional indicators).</p></li>
+<li><p><strong>Flexible Model</strong>: <span class="math inline">\(X\)</span> consists of all raw regressors from the basic model plus occupation and industry indicators, transformations (e.g.,<span class="math inline">\(exp2\)</span> and <span class="math inline">\(exp3\)</span>) and additional two-way interactions of polynomial in experience with other regressors. An example of a regressor created through a two-way interaction is experience times the indicator of having a college degree.</p></li>
+</ul>
+<p>Using the <strong>Flexible Model</strong>, enables us to approximate the real relationship by a more complex regression model and therefore to reduce the bias. The <strong>Flexible Model</strong> increases the range of potential shapes of the estimated regression function. In general, flexible models often deliver good prediction accuracy but give models which are harder to interpret.</p>
+<p>Now, let us fit both models to our data by running ordinary least squares (ols):</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="index.html#cb8-1" aria-hidden="true"></a>basic &lt;-<span class="st"> </span>lwage<span class="op">~</span><span class="st"> </span>(sex <span class="op">+</span><span class="st"> </span>exp1 <span class="op">+</span><span class="st"> </span>shs <span class="op">+</span><span class="st"> </span>hsg<span class="op">+</span><span class="st"> </span>scl <span class="op">+</span><span class="st"> </span>clg <span class="op">+</span><span class="st"> </span>mw <span class="op">+</span><span class="st"> </span>so <span class="op">+</span><span class="st"> </span>we<span class="op">+</span>occ2<span class="op">+</span>ind2)</span>
+<span id="cb8-2"><a href="index.html#cb8-2" aria-hidden="true"></a>regbasic &lt;-<span class="st"> </span><span class="kw">lm</span>(basic, <span class="dt">data=</span>data)</span>
+<span id="cb8-3"><a href="index.html#cb8-3" aria-hidden="true"></a>regbasic <span class="co"># estimated coefficients</span></span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = basic, data = data)
+## 
+## Coefficients:
+## (Intercept)          sex         exp1          shs          hsg          scl  
+##    3.722235    -0.072857     0.008568    -0.592798    -0.504337    -0.411994  
+##         clg           mw           so           we        occ22        occ23  
+##   -0.182216    -0.027541    -0.034454     0.017249    -0.076472    -0.034678  
+##       occ24        occ25        occ26        occ27        occ28        occ29  
+##   -0.096202    -0.187915    -0.414933    -0.045987    -0.377847    -0.215752  
+##      occ210       occ211       occ212       occ213       occ214       occ215  
+##   -0.010623    -0.455834    -0.307589    -0.361440    -0.499495    -0.464482  
+##      occ216       occ217       occ218       occ219       occ220       occ221  
+##   -0.233715    -0.412588    -0.340418    -0.241480    -0.212628    -0.288413  
+##      occ222        ind23        ind24        ind25        ind26        ind27  
+##   -0.422394    -0.116836    -0.244493    -0.273533    -0.249368    -0.139588  
+##       ind28        ind29       ind210       ind211       ind212       ind213  
+##   -0.242948    -0.387485    -0.193851    -0.169063    -0.077436    -0.172604  
+##      ind214       ind215       ind216       ind217       ind218       ind219  
+##   -0.187005    -0.325364    -0.315399    -0.304405    -0.335386    -0.374121  
+##      ind220       ind221       ind222  
+##   -0.551932    -0.316679    -0.118971</code></pre>
+<p>Number of regressors in the basic model <strong>51</strong>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="index.html#cb10-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
+<span id="cb10-2"><a href="index.html#cb10-2" aria-hidden="true"></a>regflex &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>data)</span>
+<span id="cb10-3"><a href="index.html#cb10-3" aria-hidden="true"></a>regflex <span class="co"># estimated coefficients</span></span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = flex, data = data)
+## 
+## Coefficients:
+## (Intercept)          sex          shs          hsg          scl          clg  
+##   3.8602606   -0.0695532   -0.1233089   -0.5289024   -0.2920581   -0.0411641  
+##       occ22        occ23        occ24        occ25        occ26        occ27  
+##   0.1613397    0.2101514    0.0708570   -0.3960076   -0.2310611    0.3147249  
+##       occ28        occ29       occ210       occ211       occ212       occ213  
+##  -0.1875417   -0.3390270    0.0209545   -0.6424177   -0.0674774   -0.2329781  
+##      occ214       occ215       occ216       occ217       occ218       occ219  
+##   0.2562009   -0.1938585   -0.0551256   -0.4156093   -0.4822168   -0.2579412  
+##      occ220       occ221       occ222        ind23        ind24        ind25  
+##  -0.3010203   -0.4271811   -0.8694527   -1.2473654   -0.0948281   -0.5293860  
+##       ind26        ind27        ind28        ind29       ind210       ind211  
+##  -0.6221688   -0.5047497   -0.7295442   -0.8025334   -0.5805840   -0.9852350  
+##      ind212       ind213       ind214       ind215       ind216       ind217  
+##  -0.7375777   -1.0183283   -0.5860174   -0.3801359   -0.5703905   -0.8201843  
+##      ind218       ind219       ind220       ind221       ind222           mw  
+##  -0.7613604   -0.8812815   -0.9099021   -0.7586534   -0.4040775    0.1106834  
+##          so           we         exp1         exp2         exp3         exp4  
+##   0.0224244   -0.0215659   -0.0677247    1.6362944   -0.9154735    0.1429357  
+##    shs:exp1     hsg:exp1     scl:exp1     clg:exp1   occ22:exp1   occ23:exp1  
+##  -0.1919981   -0.0173433   -0.0664505   -0.0550346   -0.0736239   -0.0714859  
+##  occ24:exp1   occ25:exp1   occ26:exp1   occ27:exp1   occ28:exp1   occ29:exp1  
+##  -0.0723997    0.0946732   -0.0348928   -0.2279338   -0.0727459    0.0274143  
+## occ210:exp1  occ211:exp1  occ212:exp1  occ213:exp1  occ214:exp1  occ215:exp1  
+##   0.0075628    0.1014221   -0.0862744    0.0067149   -0.1369153   -0.0400425  
+## occ216:exp1  occ217:exp1  occ218:exp1  occ219:exp1  occ220:exp1  occ221:exp1  
+##  -0.0539314    0.0147277    0.1074099    0.0047165    0.0243156    0.0791776  
+## occ222:exp1   ind23:exp1   ind24:exp1   ind25:exp1   ind26:exp1   ind27:exp1  
+##   0.1093246    0.4758891    0.0147304    0.1256987    0.1540275    0.1029245  
+##  ind28:exp1   ind29:exp1  ind210:exp1  ind211:exp1  ind212:exp1  ind213:exp1  
+##   0.2357669    0.1359079    0.1512578    0.3174885    0.2591089    0.3396094  
+## ind214:exp1  ind215:exp1  ind216:exp1  ind217:exp1  ind218:exp1  ind219:exp1  
+##   0.1441411   -0.0568181    0.0847295    0.1728867    0.1565399    0.1516103  
+## ind220:exp1  ind221:exp1  ind222:exp1      mw:exp1      so:exp1      we:exp1  
+##   0.1326629    0.2190905    0.1145814   -0.0279931   -0.0099678    0.0063077  
+##    shs:exp2     hsg:exp2     scl:exp2     clg:exp2   occ22:exp2   occ23:exp2  
+##   1.9005060    0.1171642    0.6217923    0.4096746    0.6632173    0.6415456  
+##  occ24:exp2   occ25:exp2   occ26:exp2   occ27:exp2   occ28:exp2   occ29:exp2  
+##   0.9748422   -0.9778823    0.1050860    3.1407119    0.6710877    0.0231977  
+## occ210:exp2  occ211:exp2  occ212:exp2  occ213:exp2  occ214:exp2  occ215:exp2  
+##  -0.2692292   -1.0816539    0.8323737   -0.2209813    0.7511163   -0.0326858  
+## occ216:exp2  occ217:exp2  occ218:exp2  occ219:exp2  occ220:exp2  occ221:exp2  
+##   0.3635814   -0.2659285   -2.5608762   -0.1291756   -0.3323297   -0.9099997  
+## occ222:exp2   ind23:exp2   ind24:exp2   ind25:exp2   ind26:exp2   ind27:exp2  
+##  -0.8550536   -5.9368948   -1.1053411   -2.0149181   -2.2277748   -1.4648099  
+##  ind28:exp2   ind29:exp2  ind210:exp2  ind211:exp2  ind212:exp2  ind213:exp2  
+##  -2.9479949   -1.7796219   -2.1973300   -3.8776807   -3.1690425   -3.9651983  
+## ind214:exp2  ind215:exp2  ind216:exp2  ind217:exp2  ind218:exp2  ind219:exp2  
+##  -2.0783289    0.1911692   -1.3265850   -2.2002873   -2.2006232   -1.9308536  
+## ind220:exp2  ind221:exp2  ind222:exp2      mw:exp2      so:exp2      we:exp2  
+##  -1.9467267   -3.1127363   -1.8578340    0.2005611    0.0544354    0.0012717  
+##    shs:exp3     hsg:exp3     scl:exp3     clg:exp3   occ22:exp3   occ23:exp3  
+##  -0.6721239   -0.0179937   -0.1997877   -0.1025230   -0.2039403   -0.2369620  
+##  occ24:exp3   occ25:exp3   occ26:exp3   occ27:exp3   occ28:exp3   occ29:exp3  
+##  -0.4366958    0.3885298    0.0484737   -1.3949288   -0.2053899   -0.0909660  
+## occ210:exp3  occ211:exp3  occ212:exp3  occ213:exp3  occ214:exp3  occ215:exp3  
+##   0.1854753    0.3931553   -0.2202559    0.0950356   -0.1443933    0.1477077  
+## occ216:exp3  occ217:exp3  occ218:exp3  occ219:exp3  occ220:exp3  occ221:exp3  
+##  -0.0378548    0.1510497    1.4084443    0.0923425    0.1806994    0.3779083  
+## occ222:exp3   ind23:exp3   ind24:exp3   ind25:exp3   ind26:exp3   ind27:exp3  
+##   0.2855058    2.6665808    0.7298431    0.9942250    1.0641428    0.7089089  
+##  ind28:exp3   ind29:exp3  ind210:exp3  ind211:exp3  ind212:exp3  ind213:exp3  
+##   1.2340948    0.8287315    1.0448162    1.6877578    1.3734455    1.6376669  
+## ind214:exp3  ind215:exp3  ind216:exp3  ind217:exp3  ind218:exp3  ind219:exp3  
+##   1.0162910    0.1879483    0.6889680    1.0085540    1.0605598    0.8959865  
+## ind220:exp3  ind221:exp3  ind222:exp3      mw:exp3      so:exp3      we:exp3  
+##   0.9768944    1.4415215    0.9687884   -0.0625771   -0.0115842   -0.0124875  
+##    shs:exp4     hsg:exp4     scl:exp4     clg:exp4   occ22:exp4   occ23:exp4  
+##   0.0777418    0.0004913    0.0210760    0.0078695    0.0176389    0.0303057  
+##  occ24:exp4   occ25:exp4   occ26:exp4   occ27:exp4   occ28:exp4   occ29:exp4  
+##   0.0584146   -0.0515181   -0.0170182    0.1905353    0.0196522    0.0190014  
+## occ210:exp4  occ211:exp4  occ212:exp4  occ213:exp4  occ214:exp4  occ215:exp4  
+##  -0.0333347   -0.0465914    0.0110212   -0.0136895    0.0055582   -0.0327444  
+## occ216:exp4  occ217:exp4  occ218:exp4  occ219:exp4  occ220:exp4  occ221:exp4  
+##  -0.0089706   -0.0256735   -0.2121372   -0.0169398   -0.0296125   -0.0524577  
+## occ222:exp4   ind23:exp4   ind24:exp4   ind25:exp4   ind26:exp4   ind27:exp4  
+##  -0.0350646   -0.3851791   -0.1209478   -0.1441045   -0.1526110   -0.1001993  
+##  ind28:exp4   ind29:exp4  ind210:exp4  ind211:exp4  ind212:exp4  ind213:exp4  
+##  -0.1609664   -0.1178080   -0.1482842   -0.2322961   -0.1872911   -0.2155617  
+## ind214:exp4  ind215:exp4  ind216:exp4  ind217:exp4  ind218:exp4  ind219:exp4  
+##  -0.1483524   -0.0532195   -0.1044336   -0.1427349   -0.1546248   -0.1269592  
+## ind220:exp4  ind221:exp4  ind222:exp4      mw:exp4      so:exp4      we:exp4  
+##  -0.1468554   -0.2032619   -0.1480951    0.0062439    0.0003145    0.0017685</code></pre>
+<p>Number of regressors in the flexible model:<strong>246</strong>.</p>
+<ul>
+<li><strong>Lasso Model</strong></li>
+</ul>
+<p>First, we import a essential library.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="index.html#cb12-1" aria-hidden="true"></a><span class="kw">library</span>(hdm)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="index.html#cb13-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
+<span id="cb13-2"><a href="index.html#cb13-2" aria-hidden="true"></a>lassoreg&lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex, <span class="dt">data=</span>data)</span>
+<span id="cb13-3"><a href="index.html#cb13-3" aria-hidden="true"></a></span>
+<span id="cb13-4"><a href="index.html#cb13-4" aria-hidden="true"></a>sumlasso&lt;-<span class="st"> </span><span class="kw">summary</span>(lassoreg)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## rlasso.formula(formula = flex, data = data)
+## 
+## Post-Lasso Estimation:  TRUE 
+## 
+## Total number of variables: 245
+## Number of selected variables: 24 
+## 
+## Residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.03159 -0.29132 -0.01137  0.28472  3.63651 
+## 
+##             Estimate
+## (Intercept)    3.137
+## sex            0.000
+## shs           -0.480
+## hsg           -0.404
+## scl           -0.306
+## clg            0.000
+## occ22          0.041
+## occ23          0.109
+## occ24          0.000
+## occ25          0.000
+## occ26         -0.327
+## occ27          0.000
+## occ28         -0.257
+## occ29          0.000
+## occ210         0.038
+## occ211        -0.398
+## occ212         0.000
+## occ213        -0.131
+## occ214        -0.189
+## occ215        -0.387
+## occ216         0.000
+## occ217        -0.280
+## occ218         0.000
+## occ219         0.000
+## occ220         0.000
+## occ221         0.000
+## occ222        -0.209
+## ind23          0.000
+## ind24          0.000
+## ind25          0.000
+## ind26          0.000
+## ind27          0.000
+## ind28          0.000
+## ind29         -0.169
+## ind210         0.000
+## ind211         0.000
+## ind212         0.193
+## ind213         0.000
+## ind214         0.076
+## ind215         0.000
+## ind216         0.000
+## ind217         0.000
+## ind218         0.000
+## ind219         0.000
+## ind220        -0.225
+## ind221         0.000
+## ind222         0.140
+## mw             0.000
+## so             0.000
+## we             0.000
+## exp1           0.009
+## exp2           0.000
+## exp3           0.000
+## exp4           0.000
+## shs:exp1       0.000
+## hsg:exp1       0.000
+## scl:exp1       0.000
+## clg:exp1       0.000
+## occ22:exp1     0.000
+## occ23:exp1     0.000
+## occ24:exp1     0.000
+## occ25:exp1     0.000
+## occ26:exp1     0.000
+## occ27:exp1     0.000
+## occ28:exp1     0.000
+## occ29:exp1     0.000
+## occ210:exp1    0.003
+## occ211:exp1    0.000
+## occ212:exp1    0.000
+## occ213:exp1   -0.011
+## occ214:exp1   -0.009
+## occ215:exp1    0.000
+## occ216:exp1    0.000
+## occ217:exp1    0.000
+## occ218:exp1    0.000
+## occ219:exp1    0.000
+## occ220:exp1    0.000
+## occ221:exp1    0.000
+## occ222:exp1    0.000
+## ind23:exp1     0.000
+## ind24:exp1     0.000
+## ind25:exp1     0.000
+## ind26:exp1     0.000
+## ind27:exp1     0.000
+## ind28:exp1     0.000
+## ind29:exp1     0.000
+## ind210:exp1    0.000
+## ind211:exp1    0.000
+## ind212:exp1    0.000
+## ind213:exp1    0.000
+## ind214:exp1    0.004
+## ind215:exp1    0.000
+## ind216:exp1    0.000
+## ind217:exp1    0.000
+## ind218:exp1    0.000
+## ind219:exp1    0.000
+## ind220:exp1    0.000
+## ind221:exp1    0.000
+## ind222:exp1    0.000
+## mw:exp1        0.000
+## so:exp1        0.000
+## we:exp1        0.000
+## shs:exp2       0.000
+## hsg:exp2       0.000
+## scl:exp2       0.000
+## clg:exp2       0.000
+## occ22:exp2     0.000
+## occ23:exp2     0.000
+## occ24:exp2     0.000
+## occ25:exp2     0.000
+## occ26:exp2     0.000
+## occ27:exp2     0.000
+## occ28:exp2     0.000
+## occ29:exp2     0.000
+## occ210:exp2    0.000
+## occ211:exp2    0.000
+## occ212:exp2    0.000
+## occ213:exp2    0.000
+## occ214:exp2    0.000
+## occ215:exp2    0.000
+## occ216:exp2    0.000
+## occ217:exp2    0.000
+## occ218:exp2    0.000
+## occ219:exp2    0.000
+## occ220:exp2    0.000
+## occ221:exp2    0.000
+## occ222:exp2    0.000
+## ind23:exp2     0.000
+## ind24:exp2     0.000
+## ind25:exp2     0.000
+## ind26:exp2     0.000
+## ind27:exp2     0.000
+## ind28:exp2     0.000
+## ind29:exp2     0.000
+## ind210:exp2    0.000
+## ind211:exp2    0.000
+## ind212:exp2    0.000
+## ind213:exp2    0.000
+## ind214:exp2    0.000
+## ind215:exp2    0.000
+## ind216:exp2    0.000
+## ind217:exp2    0.000
+## ind218:exp2    0.000
+## ind219:exp2    0.000
+## ind220:exp2    0.000
+## ind221:exp2    0.000
+## ind222:exp2    0.000
+## mw:exp2        0.000
+## so:exp2        0.000
+## we:exp2        0.000
+## shs:exp3       0.000
+## hsg:exp3       0.000
+## scl:exp3       0.000
+## clg:exp3       0.000
+## occ22:exp3     0.000
+## occ23:exp3     0.000
+## occ24:exp3     0.000
+## occ25:exp3     0.000
+## occ26:exp3     0.000
+## occ27:exp3     0.000
+## occ28:exp3     0.000
+## occ29:exp3     0.000
+## occ210:exp3    0.000
+## occ211:exp3    0.000
+## occ212:exp3    0.000
+## occ213:exp3    0.000
+## occ214:exp3    0.000
+## occ215:exp3    0.000
+## occ216:exp3    0.000
+## occ217:exp3    0.000
+## occ218:exp3    0.000
+## occ219:exp3    0.000
+## occ220:exp3    0.000
+## occ221:exp3    0.000
+## occ222:exp3    0.000
+## ind23:exp3     0.000
+## ind24:exp3     0.000
+## ind25:exp3     0.000
+## ind26:exp3     0.000
+## ind27:exp3     0.000
+## ind28:exp3     0.000
+## ind29:exp3     0.000
+## ind210:exp3    0.000
+## ind211:exp3    0.000
+## ind212:exp3    0.000
+## ind213:exp3    0.000
+## ind214:exp3    0.000
+## ind215:exp3    0.000
+## ind216:exp3    0.000
+## ind217:exp3    0.000
+## ind218:exp3    0.000
+## ind219:exp3    0.000
+## ind220:exp3    0.000
+## ind221:exp3    0.000
+## ind222:exp3    0.000
+## mw:exp3        0.000
+## so:exp3        0.000
+## we:exp3        0.000
+## shs:exp4       0.000
+## hsg:exp4       0.000
+## scl:exp4       0.000
+## clg:exp4       0.000
+## occ22:exp4     0.000
+## occ23:exp4     0.000
+## occ24:exp4     0.000
+## occ25:exp4     0.000
+## occ26:exp4     0.000
+## occ27:exp4     0.000
+## occ28:exp4     0.000
+## occ29:exp4     0.000
+## occ210:exp4    0.000
+## occ211:exp4    0.000
+## occ212:exp4    0.000
+## occ213:exp4    0.000
+## occ214:exp4    0.000
+## occ215:exp4    0.000
+## occ216:exp4    0.000
+## occ217:exp4    0.000
+## occ218:exp4    0.000
+## occ219:exp4    0.000
+## occ220:exp4    0.000
+## occ221:exp4    0.000
+## occ222:exp4    0.000
+## ind23:exp4     0.000
+## ind24:exp4     0.000
+## ind25:exp4     0.000
+## ind26:exp4     0.000
+## ind27:exp4     0.000
+## ind28:exp4     0.000
+## ind29:exp4     0.000
+## ind210:exp4    0.000
+## ind211:exp4    0.000
+## ind212:exp4    0.000
+## ind213:exp4    0.000
+## ind214:exp4    0.000
+## ind215:exp4    0.000
+## ind216:exp4    0.000
+## ind217:exp4    0.000
+## ind218:exp4    0.000
+## ind219:exp4    0.000
+## ind220:exp4    0.000
+## ind221:exp4    0.000
+## ind222:exp4    0.000
+## mw:exp4        0.000
+## so:exp4        0.000
+## we:exp4        0.000
+## 
+## Residual standard error: 0.4847
+## Multiple R-squared:  0.2779
+## Adjusted R-squared:  0.2745
+## Joint significance test:
+##  the sup score statistic for joint significance test is 89.09 with a p-value of 0.006</code></pre>
+<p>Now, we can evaluate the performance of both models based on the (adjusted) <span class="math inline">\(R^2 sample\)</span> and the (adjusted) <span class="math inline">\(MSE \n sample\)</span> :</p>
 
 </div>
 </div>
