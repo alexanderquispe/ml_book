@@ -5,5 +5,31 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
-# Down the rabbit-hole
+# Predictive Inference 1
 
+In labor economics an important question is what determines the wage of workers. This is a causal question, but we could begin to investigate from a predictive perspective.
+
+In the following wage example, $Y$ is the hourly wage of a worker and $X$ is a vector of worker's characteristics, e.g., education, experience, gender.
+Two main questions here are:    
+
+* How to use job-relevant characteristics, such as education and experience, to best predict wages?
+
+* What is the difference in predicted wages between men and women with the same job-relevant characteristics?
+
+In this lab, we focus on the prediction question first.
+
+## Data
+
+The data set we consider is from the March Supplement of the U.S. Current Population Survey, year 2015. We select white non-hispanic individuals, aged 25 to 64 years, and working more than 35 hours per week during at least 50 weeks of the year. We exclude self-employed workers; individuals living in group quarters; individuals in the military, agricultural or private household sectors; individuals with inconsistent reports on earnings and employment status; individuals with allocated or missing information in any of the variables used in the analysis; and individuals with hourly wage below $3$.
+
+The variable of interest $Y$ is the hourly wage rate constructed as the ratio of the annual earnings to the total number of hours worked, which is constructed in turn as the product of number of weeks worked and the usual number of hours worked per week. In our analysis, we also focus on single (never married) workers. The final sample is of size $n = 5150$.
+
+## Data Analysis
+
+1. Import relevant packages
+
+```{r}
+print("hello world")
+```
+
+2. 
