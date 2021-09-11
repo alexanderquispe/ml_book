@@ -30,12 +30,32 @@ The variable of interest $Y$ is the hourly wage rate constructed as the ratio of
 
 1. Import relevant packages
 
-There are not additional packages to import.
+:::: {style="display: flex;"}
+
+::: {}
+**R code**
 
 ```{r packages,echo= TRUE,message=FALSE,warning=FALSE}
 library(dplyr)
 library(kableExtra)
 ```
+:::
+
+::: {.col data-latex="{0.05\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+
+::: {}
+**Python code**
+
+```{r}
+print("Hello world")
+```
+:::
+
+::::
 
 2. We start loading the data set.
 
@@ -80,7 +100,7 @@ p <- dim(Z)[2]
 Number of observation: `r n`
 Number of raw regressors:`r p`
 
-For the outcome variable wage and a subset of the raw regressors, we calculate the empirical mean to get familiar with the data.
+4. For the outcome variable wage and a subset of the raw regressors, we calculate the empirical mean to get familiar with the data.
 
 ```{r table-one, echo = TRUE}
 # Select the variables.
@@ -145,14 +165,14 @@ Number of regressors in the flexible model:**`r length(regflex$coef)`**.
 
 - **Lasso Model**
 
-First, we import a essential library.
+First, we import an essential library.
 
 ```{r hdm-packages, message=FALSE, warning=FALSE}
 library(hdm)
 ```
 
-
-```{r}
+Then, we estimate the lasso model.
+```{r lasso-estimation}
 flex <- lwage ~ sex + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)
 lassoreg<- rlasso(flex, data=data)
 
@@ -161,7 +181,183 @@ sumlasso<- summary(lassoreg)
 
 Now, we can evaluate the performance of both models based on the (adjusted) $R^2_{sample}$  and the (adjusted) $MSE_{sample}$:
 
+1. R-Squared $(R^2)$
+
+```{r r-squared}
+
+# Summary from basic and flexible model.
+sumbasic <- summary(regbasic)
+sumflex <- summary(regflex)
+
+#  R-squared from basic, flexible and lasso models
+R2.1 <- sumbasic$r.squared
+R2.adj1 <- sumbasic$adj.r.squared
+
+R2.2 <- sumflex$r.squared
+R2.adj2 <- sumflex$adj.r.squared
+
+R2.L <- sumlasso$r.squared
+R2.adjL <- sumlasso$adj.r.squared
+
+```
+
+- R-squared for the basic model: `r R2.1`.
+- Adjusted R-squared for the basic model: `r R2.adj1`.
+- R-squared for the flexible model: `r R2.2`.
+- Adjusted R-squared for the flexible model: `r R2.adj2`.
+- R-squared for the lasso with flexible model: `r R2.L`.
+- Adjusted R-squared for the flexible model: `r R2.adjL`.
+
+2. Mean Squared Error $MSE$
+
+```{r mean-squared-error}
+MSE1 <- mean(sumbasic$res^2)
+p1 <- sumbasic$df[1] # number of regressors
+MSE.adj1 <- (n/(n-p1))*MSE1
 
 
+MSE2 <-mean(sumflex$res^2)
+p2 <- sumflex$df[1]
+MSE.adj2 <- (n/(n-p2))*MSE2
 
+MSEL <-mean(sumlasso$res^2)
+pL <- length(sumlasso$coef)
+MSE.adjL <- (n/(n-pL))*MSEL
+
+```
+
+* MSE for the basic model: `r MSE1`
+* Adjusted MSE for the basic model: `r MSE.adj1`
+* MSE for the flexible model: `r MSE2`
+* Adjusted MSE for the flexible model: `r MSE.adj2` 
+* MSE for the lasso flexible model: `r MSEL`
+* Adjusted MSE for the lasso flexible model: `r MSE.adjL`
+
+```{r table-two}
+Models <- c("Basic reg","Flexible reg","Lasso reg")
+p <- c(p1,p2,pL)
+R_2 <- c(R2.1,R2.2,R2.L)
+MSE <- c(MSE1,MSE2,MSEL)
+R_2_adj <- c(R2.adj1,R2.adj2,R2.adjL)
+MSE_adj <- c(MSE.adj1,MSE.adj2,MSE.adjL)
+
+data.frame(Models,p,R_2,MSE,R_2_adj,MSE_adj) %>%
+  kable("markdown",caption = "Descriptive Statistics")
+
+```
+
+Considering all measures above, the flexible model performs slightly better than the basic model.
+
+One procedure to circumvent this issue is to use data splitting that is described and applied in the following.
+
+## Data Splitting
+
+Measure the prediction quality of the two models via data splitting:
+
+- Randomly split the data into one training sample and one testing sample. Here we just use a simple method (stratified splitting is a more sophisticated version of splitting that we can consider).
+
+- Use the training sample for estimating the parameters of the **Basic Model** and the **Flexible Model**.
+
+- Use the testing sample for evaluation. Predict the $wage$ of every observation in the testing sample based on the estimated parameters in the training sample.
+
+- Calculate the **Mean Squared Prediction Error** $MSE_{test}$ based on the testing sample for both prediction models.
+
+```{r data-spliting}
+# to make the results replicable (generating random numbers)
+set.seed(1)
+# draw (4/5)*n random numbers from 1 to n without replacing them
+random_2 <- sample(1:n, floor(n*4/5))
+# training sample
+train <- data[random_2,]
+# testing sample
+test <- data[-random_2,] 
+```
+
+The train data dimensions are `r dim(train)[1]` rows and `r dim(train)[2]` columns.
+
+We estimate the parameters using the training data set.
+```{r basic-training-estimate}
+# basic model
+# estimating the parameters in the training sample
+regbasic <- lm(basic, data=train)
+regbasic
+```
+
+Then predict using the parameters in the testing sample.
+```{r basic-testing-predict}
+# calculating the out-of-sample MSE
+trainregbasic <- predict(regbasic, newdata=test)
+trainregbasic
+```
+
+Finally, we test the predictions.
+```{r basic-mse}
+y.test <- log(test$wage)
+MSE.test1 <- sum((y.test-trainregbasic)^2)/length(y.test)
+R2.test1<- 1- MSE.test1/var(y.test)
+```
+
+* Test MSE for the basic model: `r MSE.test1`.
+* Test R2 for the basic model: `r R2.test1`.
+
+In the basic model, the $MSE test$ is quite closed to the $MSE sample$.
+
+```{r fexible-estimate-prediction}
+
+# estimating the parameters
+regflex <- lm(flex, data=train)
+
+# calculating the out-of-sample MSE
+trainregflex<- predict(regflex, newdata=test)
+
+y.test <- log(test$wage)
+MSE.test2 <- sum((y.test-trainregflex)^2)/length(y.test)
+R2.test2<- 1- MSE.test2/var(y.test)
+```
+
+* Test MSE for the flexible model: `r MSE.test2`.
+
+* Test R2 for the flexible model: `r R2.test2`.
+
+In the flexible model, the discrepancy between the $MSE_{test}$ and the $MSE_{sample}$ is not large.
+
+It is worth to notice that the $MSE_{test}$ vary across different data splits. Hence, it is a good idea average the out-of-sample MSE over different data splits to get valid results.
+
+Nevertheless, we observe that, based on the out-of-sample $MSE$, the basic model using OLS regression performs is about as well (or slightly better) than the flexible model.
+
+Next, let us use lasso regression in the flexible model instead of OLS regression. Lasso (least absolute shrinkage and selection operator) is a penalized regression method that can be used to reduce the complexity of a regression model when the number of regressors $p$ is relatively large in relation to $n$.
+
+Note that the out-of-sample $MSE$ on the test sample can be computed for any other black-box prediction method as well. Thus, let us finally compare the performance of lasso regression in the flexible model to OLS regression.
+
+
+```{r flexible-lass-random}
+# flexible model using lasso
+
+# estimating the parameters
+reglasso <- rlasso(flex, data=train, post=FALSE)
+
+# calculating the out-of-sample MSE
+trainreglasso<- predict(reglasso, newdata=test)
+MSE.lasso <- sum((y.test-trainreglasso)^2)/length(y.test)
+R2.lasso<- 1- MSE.lasso/var(y.test)
+```
+* Test $MSE$ for the lasso on flexible model: `r MSE.lasso`
+
+* Test $R^2$ for the lasso flexible model: `r R2.lasso`
+
+Finally, let us summarize the results:
+
+```{r summarize-results}
+Models <- c("Basic regression","Flexible regression","Lasso regression")
+R_2_SAMPLE <- c(R2.test1,R2.test2,R2.lasso)
+MSE_SAMPLE<- c(MSE.test1,MSE.test2,MSE.lasso)
+
+data.frame(Models,R_2_SAMPLE,MSE_SAMPLE) %>%
+  kable("markdown",caption = "Descriptive Statistics - Random Process")
+```
+
+
+```{r table-four}
+print(data.frame(Models,R_2,MSE),type="latex")
+```
 

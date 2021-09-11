@@ -144,6 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#r-code"><i class="fa fa-check"></i><b>1.2.1</b> R code</a></li>
 </ul></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#prediction-question"><i class="fa fa-check"></i><b>1.3</b> Prediction Question</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#data-splitting"><i class="fa fa-check"></i><b>1.4</b> Data Splitting</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="the-pool-of-tears.html"><a href="the-pool-of-tears.html"><i class="fa fa-check"></i><b>2</b> The pool of tears</a></li>
 <li class="chapter" data-level="3" data-path="a-caucus-race-and-a-long-tale.html"><a href="a-caucus-race-and-a-long-tale.html"><i class="fa fa-check"></i><b>3</b> A caucus-race and a long tale</a></li>
@@ -193,25 +194,39 @@ Two main questions here are:</p>
 <ol style="list-style-type: decimal">
 <li>Import relevant packages</li>
 </ol>
-<p>There are not additional packages to import.</p>
+<div style="display: flex;">
+<div>
+<p><strong>R code</strong></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
 <span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(kableExtra)</span></code></pre></div>
+</div>
+<div class="col">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div>
+<div>
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" aria-hidden="true"></a><span class="kw">print</span>(<span class="st">&quot;Hello world&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Hello world&quot;</code></pre>
+</div>
+</div>
 <ol start="2" style="list-style-type: decimal">
 <li>We start loading the data set.</li>
 </ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" aria-hidden="true"></a><span class="kw">load</span>(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true"></a><span class="kw">load</span>(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span></code></pre></div>
 <p>The dimensions are 5150 rows and 20 columns.</p>
 <p>Let’s have a look at the structure of the data.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true"></a><span class="co"># Calculate the means and convert it into a dataframe</span></span>
-<span id="cb3-2"><a href="index.html#cb3-2" aria-hidden="true"></a>table0 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">apply</span>(data,<span class="dv">2</span>,class))<span class="op">%&gt;%</span></span>
-<span id="cb3-3"><a href="index.html#cb3-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">Type =</span><span class="st">`</span><span class="dt">apply.data..2..class.</span><span class="st">`</span>)</span>
-<span id="cb3-4"><a href="index.html#cb3-4" aria-hidden="true"></a></span>
-<span id="cb3-5"><a href="index.html#cb3-5" aria-hidden="true"></a>table0<span class="op">$</span>Variables &lt;-<span class="st"> </span><span class="kw">rownames</span>(table0)</span>
-<span id="cb3-6"><a href="index.html#cb3-6" aria-hidden="true"></a><span class="kw">rownames</span>(table0) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(table0))</span>
-<span id="cb3-7"><a href="index.html#cb3-7" aria-hidden="true"></a></span>
-<span id="cb3-8"><a href="index.html#cb3-8" aria-hidden="true"></a><span class="co"># Table presentation</span></span>
-<span id="cb3-9"><a href="index.html#cb3-9" aria-hidden="true"></a>table0 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)<span class="op">%&gt;%</span></span>
-<span id="cb3-10"><a href="index.html#cb3-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Type of the Variables&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true"></a><span class="co"># Calculate the means and convert it into a dataframe</span></span>
+<span id="cb5-2"><a href="index.html#cb5-2" aria-hidden="true"></a>table0 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">apply</span>(data,<span class="dv">2</span>,class))<span class="op">%&gt;%</span></span>
+<span id="cb5-3"><a href="index.html#cb5-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">Type =</span><span class="st">`</span><span class="dt">apply.data..2..class.</span><span class="st">`</span>)</span>
+<span id="cb5-4"><a href="index.html#cb5-4" aria-hidden="true"></a></span>
+<span id="cb5-5"><a href="index.html#cb5-5" aria-hidden="true"></a>table0<span class="op">$</span>Variables &lt;-<span class="st"> </span><span class="kw">rownames</span>(table0)</span>
+<span id="cb5-6"><a href="index.html#cb5-6" aria-hidden="true"></a><span class="kw">rownames</span>(table0) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(table0))</span>
+<span id="cb5-7"><a href="index.html#cb5-7" aria-hidden="true"></a></span>
+<span id="cb5-8"><a href="index.html#cb5-8" aria-hidden="true"></a><span class="co"># Table presentation</span></span>
+<span id="cb5-9"><a href="index.html#cb5-9" aria-hidden="true"></a>table0 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)<span class="op">%&gt;%</span></span>
+<span id="cb5-10"><a href="index.html#cb5-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Type of the Variables&quot;</span>)</span></code></pre></div>
 <table>
 <caption><span id="tab:type-table">Table 1.1: </span>Type of the Variables</caption>
 <thead>
@@ -307,29 +322,31 @@ Two main questions here are:</p>
 <li>Give structure to the variables</li>
 </ol>
 <p>We are constructing the output variable <span class="math inline">\(Y\)</span> and the matrix <span class="math inline">\(Z\)</span> which includes the characteristics of workers that are given in the data.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true"></a><span class="co"># Calculate the log wage.</span></span>
-<span id="cb4-2"><a href="index.html#cb4-2" aria-hidden="true"></a>Y &lt;-<span class="st"> </span><span class="kw">log</span>(data<span class="op">$</span>wage)</span>
-<span id="cb4-3"><a href="index.html#cb4-3" aria-hidden="true"></a><span class="co"># Number of observaciones</span></span>
-<span id="cb4-4"><a href="index.html#cb4-4" aria-hidden="true"></a>n &lt;-<span class="st"> </span><span class="kw">length</span>(Y)</span>
-<span id="cb4-5"><a href="index.html#cb4-5" aria-hidden="true"></a><span class="co"># Regressors</span></span>
-<span id="cb4-6"><a href="index.html#cb4-6" aria-hidden="true"></a>Z &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;wage&quot;</span>,<span class="st">&quot;lwage&quot;</span>)]</span>
-<span id="cb4-7"><a href="index.html#cb4-7" aria-hidden="true"></a><span class="co"># Number of regressors</span></span>
-<span id="cb4-8"><a href="index.html#cb4-8" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">dim</span>(Z)[<span class="dv">2</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="index.html#cb6-1" aria-hidden="true"></a><span class="co"># Calculate the log wage.</span></span>
+<span id="cb6-2"><a href="index.html#cb6-2" aria-hidden="true"></a>Y &lt;-<span class="st"> </span><span class="kw">log</span>(data<span class="op">$</span>wage)</span>
+<span id="cb6-3"><a href="index.html#cb6-3" aria-hidden="true"></a><span class="co"># Number of observaciones</span></span>
+<span id="cb6-4"><a href="index.html#cb6-4" aria-hidden="true"></a>n &lt;-<span class="st"> </span><span class="kw">length</span>(Y)</span>
+<span id="cb6-5"><a href="index.html#cb6-5" aria-hidden="true"></a><span class="co"># Regressors</span></span>
+<span id="cb6-6"><a href="index.html#cb6-6" aria-hidden="true"></a>Z &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;wage&quot;</span>,<span class="st">&quot;lwage&quot;</span>)]</span>
+<span id="cb6-7"><a href="index.html#cb6-7" aria-hidden="true"></a><span class="co"># Number of regressors</span></span>
+<span id="cb6-8"><a href="index.html#cb6-8" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">dim</span>(Z)[<span class="dv">2</span>]</span></code></pre></div>
 <p>Number of observation: 5150
 Number of raw regressors:2</p>
-<p>For the outcome variable wage and a subset of the raw regressors, we calculate the empirical mean to get familiar with the data.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true"></a><span class="co"># Select the variables.</span></span>
-<span id="cb5-2"><a href="index.html#cb5-2" aria-hidden="true"></a>Z_subset &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;lwage&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;shs&quot;</span>,<span class="st">&quot;hsg&quot;</span>,<span class="st">&quot;scl&quot;</span>,<span class="st">&quot;clg&quot;</span>,<span class="st">&quot;ad&quot;</span>,<span class="st">&quot;mw&quot;</span>,<span class="st">&quot;so&quot;</span>,<span class="st">&quot;we&quot;</span>,<span class="st">&quot;ne&quot;</span>,<span class="st">&quot;exp1&quot;</span>)]</span>
-<span id="cb5-3"><a href="index.html#cb5-3" aria-hidden="true"></a></span>
-<span id="cb5-4"><a href="index.html#cb5-4" aria-hidden="true"></a><span class="co"># Create table</span></span>
-<span id="cb5-5"><a href="index.html#cb5-5" aria-hidden="true"></a>table1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">as.numeric</span>(<span class="kw">lapply</span>(Z_subset,mean))) <span class="op">%&gt;%</span></span>
-<span id="cb5-6"><a href="index.html#cb5-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Variables =</span> <span class="kw">c</span>(<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Some High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;College Graduate&quot;</span>, <span class="st">&quot;Advanced Degree&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Experience&quot;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb5-7"><a href="index.html#cb5-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">Sample Mean</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">as.numeric.lapply.Z_subset..mean..</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
-<span id="cb5-8"><a href="index.html#cb5-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)</span>
-<span id="cb5-9"><a href="index.html#cb5-9" aria-hidden="true"></a></span>
-<span id="cb5-10"><a href="index.html#cb5-10" aria-hidden="true"></a><span class="co"># HTML table</span></span>
-<span id="cb5-11"><a href="index.html#cb5-11" aria-hidden="true"></a>table1 <span class="op">%&gt;%</span></span>
-<span id="cb5-12"><a href="index.html#cb5-12" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics&quot;</span>)</span></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li>For the outcome variable wage and a subset of the raw regressors, we calculate the empirical mean to get familiar with the data.</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="index.html#cb7-1" aria-hidden="true"></a><span class="co"># Select the variables.</span></span>
+<span id="cb7-2"><a href="index.html#cb7-2" aria-hidden="true"></a>Z_subset &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;lwage&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;shs&quot;</span>,<span class="st">&quot;hsg&quot;</span>,<span class="st">&quot;scl&quot;</span>,<span class="st">&quot;clg&quot;</span>,<span class="st">&quot;ad&quot;</span>,<span class="st">&quot;mw&quot;</span>,<span class="st">&quot;so&quot;</span>,<span class="st">&quot;we&quot;</span>,<span class="st">&quot;ne&quot;</span>,<span class="st">&quot;exp1&quot;</span>)]</span>
+<span id="cb7-3"><a href="index.html#cb7-3" aria-hidden="true"></a></span>
+<span id="cb7-4"><a href="index.html#cb7-4" aria-hidden="true"></a><span class="co"># Create table</span></span>
+<span id="cb7-5"><a href="index.html#cb7-5" aria-hidden="true"></a>table1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">as.numeric</span>(<span class="kw">lapply</span>(Z_subset,mean))) <span class="op">%&gt;%</span></span>
+<span id="cb7-6"><a href="index.html#cb7-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Variables =</span> <span class="kw">c</span>(<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Some High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;College Graduate&quot;</span>, <span class="st">&quot;Advanced Degree&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Experience&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb7-7"><a href="index.html#cb7-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">Sample Mean</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">as.numeric.lapply.Z_subset..mean..</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
+<span id="cb7-8"><a href="index.html#cb7-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)</span>
+<span id="cb7-9"><a href="index.html#cb7-9" aria-hidden="true"></a></span>
+<span id="cb7-10"><a href="index.html#cb7-10" aria-hidden="true"></a><span class="co"># HTML table</span></span>
+<span id="cb7-11"><a href="index.html#cb7-11" aria-hidden="true"></a>table1 <span class="op">%&gt;%</span></span>
+<span id="cb7-12"><a href="index.html#cb7-12" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics&quot;</span>)</span></code></pre></div>
 <table>
 <caption><span id="tab:table-one">Table 1.2: </span>Descriptive Statistics</caption>
 <thead>
@@ -391,7 +408,7 @@ Number of raw regressors:2</p>
 </table>
 <p>E.g., the share of female workers in our sample is <span class="math inline">\(~44% (sex=1\)</span> if female).</p>
 <p>Alternatively, we can also print the table as latex.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="index.html#cb6-1" aria-hidden="true"></a><span class="kw">print</span>(table1, <span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="index.html#cb8-1" aria-hidden="true"></a><span class="kw">print</span>(table1, <span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
 <pre><code>##               Variables Sample Mean
 ## 1              Log Wage  2.97078670
 ## 2                   Sex  0.44446602
@@ -423,9 +440,9 @@ Number of raw regressors:2</p>
 </ul>
 <p>Using the <strong>Flexible Model</strong>, enables us to approximate the real relationship by a more complex regression model and therefore to reduce the bias. The <strong>Flexible Model</strong> increases the range of potential shapes of the estimated regression function. In general, flexible models often deliver good prediction accuracy but give models which are harder to interpret.</p>
 <p>Now, let us fit both models to our data by running ordinary least squares (ols):</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="index.html#cb8-1" aria-hidden="true"></a>basic &lt;-<span class="st"> </span>lwage<span class="op">~</span><span class="st"> </span>(sex <span class="op">+</span><span class="st"> </span>exp1 <span class="op">+</span><span class="st"> </span>shs <span class="op">+</span><span class="st"> </span>hsg<span class="op">+</span><span class="st"> </span>scl <span class="op">+</span><span class="st"> </span>clg <span class="op">+</span><span class="st"> </span>mw <span class="op">+</span><span class="st"> </span>so <span class="op">+</span><span class="st"> </span>we<span class="op">+</span>occ2<span class="op">+</span>ind2)</span>
-<span id="cb8-2"><a href="index.html#cb8-2" aria-hidden="true"></a>regbasic &lt;-<span class="st"> </span><span class="kw">lm</span>(basic, <span class="dt">data=</span>data)</span>
-<span id="cb8-3"><a href="index.html#cb8-3" aria-hidden="true"></a>regbasic <span class="co"># estimated coefficients</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="index.html#cb10-1" aria-hidden="true"></a>basic &lt;-<span class="st"> </span>lwage<span class="op">~</span><span class="st"> </span>(sex <span class="op">+</span><span class="st"> </span>exp1 <span class="op">+</span><span class="st"> </span>shs <span class="op">+</span><span class="st"> </span>hsg<span class="op">+</span><span class="st"> </span>scl <span class="op">+</span><span class="st"> </span>clg <span class="op">+</span><span class="st"> </span>mw <span class="op">+</span><span class="st"> </span>so <span class="op">+</span><span class="st"> </span>we<span class="op">+</span>occ2<span class="op">+</span>ind2)</span>
+<span id="cb10-2"><a href="index.html#cb10-2" aria-hidden="true"></a>regbasic &lt;-<span class="st"> </span><span class="kw">lm</span>(basic, <span class="dt">data=</span>data)</span>
+<span id="cb10-3"><a href="index.html#cb10-3" aria-hidden="true"></a>regbasic <span class="co"># estimated coefficients</span></span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = basic, data = data)
@@ -450,9 +467,9 @@ Number of raw regressors:2</p>
 ##      ind220       ind221       ind222  
 ##   -0.551932    -0.316679    -0.118971</code></pre>
 <p>Number of regressors in the basic model <strong>51</strong>.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="index.html#cb10-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
-<span id="cb10-2"><a href="index.html#cb10-2" aria-hidden="true"></a>regflex &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>data)</span>
-<span id="cb10-3"><a href="index.html#cb10-3" aria-hidden="true"></a>regflex <span class="co"># estimated coefficients</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="index.html#cb12-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
+<span id="cb12-2"><a href="index.html#cb12-2" aria-hidden="true"></a>regflex &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>data)</span>
+<span id="cb12-3"><a href="index.html#cb12-3" aria-hidden="true"></a>regflex <span class="co"># estimated coefficients</span></span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = flex, data = data)
@@ -544,12 +561,13 @@ Number of raw regressors:2</p>
 <ul>
 <li><strong>Lasso Model</strong></li>
 </ul>
-<p>First, we import a essential library.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="index.html#cb12-1" aria-hidden="true"></a><span class="kw">library</span>(hdm)</span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="index.html#cb13-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
-<span id="cb13-2"><a href="index.html#cb13-2" aria-hidden="true"></a>lassoreg&lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex, <span class="dt">data=</span>data)</span>
-<span id="cb13-3"><a href="index.html#cb13-3" aria-hidden="true"></a></span>
-<span id="cb13-4"><a href="index.html#cb13-4" aria-hidden="true"></a>sumlasso&lt;-<span class="st"> </span><span class="kw">summary</span>(lassoreg)</span></code></pre></div>
+<p>First, we import an essential library.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="index.html#cb14-1" aria-hidden="true"></a><span class="kw">library</span>(hdm)</span></code></pre></div>
+<p>Then, we estimate the lasso model.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="index.html#cb15-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
+<span id="cb15-2"><a href="index.html#cb15-2" aria-hidden="true"></a>lassoreg&lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex, <span class="dt">data=</span>data)</span>
+<span id="cb15-3"><a href="index.html#cb15-3" aria-hidden="true"></a></span>
+<span id="cb15-4"><a href="index.html#cb15-4" aria-hidden="true"></a>sumlasso&lt;-<span class="st"> </span><span class="kw">summary</span>(lassoreg)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## rlasso.formula(formula = flex, data = data)
@@ -815,8 +833,493 @@ Number of raw regressors:2</p>
 ## Multiple R-squared:  0.2779
 ## Adjusted R-squared:  0.2745
 ## Joint significance test:
-##  the sup score statistic for joint significance test is 89.09 with a p-value of 0.006</code></pre>
-<p>Now, we can evaluate the performance of both models based on the (adjusted) <span class="math inline">\(R^2 sample\)</span> and the (adjusted) <span class="math inline">\(MSE \n sample\)</span> :</p>
+##  the sup score statistic for joint significance test is 89.09 with a p-value of 0.004</code></pre>
+<p>Now, we can evaluate the performance of both models based on the (adjusted) <span class="math inline">\(R^2_{sample}\)</span> and the (adjusted) <span class="math inline">\(MSE_{sample}\)</span>:</p>
+<ol style="list-style-type: decimal">
+<li>R-Squared <span class="math inline">\((R^2)\)</span></li>
+</ol>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="index.html#cb17-1" aria-hidden="true"></a><span class="co"># Summary from basic and flexible model.</span></span>
+<span id="cb17-2"><a href="index.html#cb17-2" aria-hidden="true"></a>sumbasic &lt;-<span class="st"> </span><span class="kw">summary</span>(regbasic)</span>
+<span id="cb17-3"><a href="index.html#cb17-3" aria-hidden="true"></a>sumflex &lt;-<span class="st"> </span><span class="kw">summary</span>(regflex)</span>
+<span id="cb17-4"><a href="index.html#cb17-4" aria-hidden="true"></a></span>
+<span id="cb17-5"><a href="index.html#cb17-5" aria-hidden="true"></a><span class="co">#  R-squared from basic, flexible and lasso models</span></span>
+<span id="cb17-6"><a href="index.html#cb17-6" aria-hidden="true"></a>R2<span class="fl">.1</span> &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>r.squared</span>
+<span id="cb17-7"><a href="index.html#cb17-7" aria-hidden="true"></a>R2.adj1 &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>adj.r.squared</span>
+<span id="cb17-8"><a href="index.html#cb17-8" aria-hidden="true"></a></span>
+<span id="cb17-9"><a href="index.html#cb17-9" aria-hidden="true"></a>R2<span class="fl">.2</span> &lt;-<span class="st"> </span>sumflex<span class="op">$</span>r.squared</span>
+<span id="cb17-10"><a href="index.html#cb17-10" aria-hidden="true"></a>R2.adj2 &lt;-<span class="st"> </span>sumflex<span class="op">$</span>adj.r.squared</span>
+<span id="cb17-11"><a href="index.html#cb17-11" aria-hidden="true"></a></span>
+<span id="cb17-12"><a href="index.html#cb17-12" aria-hidden="true"></a>R2.L &lt;-<span class="st"> </span>sumlasso<span class="op">$</span>r.squared</span>
+<span id="cb17-13"><a href="index.html#cb17-13" aria-hidden="true"></a>R2.adjL &lt;-<span class="st"> </span>sumlasso<span class="op">$</span>adj.r.squared</span></code></pre></div>
+<ul>
+<li>R-squared for the basic model: 0.3100465.</li>
+<li>Adjusted R-squared for the basic model: 0.3032809.</li>
+<li>R-squared for the flexible model: 0.3511099.</li>
+<li>Adjusted R-squared for the flexible model: 0.3186919.</li>
+<li>R-squared for the lasso with flexible model: 0.2778653.</li>
+<li>Adjusted R-squared for the flexible model: 0.2744836.</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Mean Squared Error <span class="math inline">\(MSE\)</span></li>
+</ol>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="index.html#cb18-1" aria-hidden="true"></a>MSE1 &lt;-<span class="st"> </span><span class="kw">mean</span>(sumbasic<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb18-2"><a href="index.html#cb18-2" aria-hidden="true"></a>p1 &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>df[<span class="dv">1</span>] <span class="co"># number of regressors</span></span>
+<span id="cb18-3"><a href="index.html#cb18-3" aria-hidden="true"></a>MSE.adj1 &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>p1))<span class="op">*</span>MSE1</span>
+<span id="cb18-4"><a href="index.html#cb18-4" aria-hidden="true"></a></span>
+<span id="cb18-5"><a href="index.html#cb18-5" aria-hidden="true"></a></span>
+<span id="cb18-6"><a href="index.html#cb18-6" aria-hidden="true"></a>MSE2 &lt;-<span class="kw">mean</span>(sumflex<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb18-7"><a href="index.html#cb18-7" aria-hidden="true"></a>p2 &lt;-<span class="st"> </span>sumflex<span class="op">$</span>df[<span class="dv">1</span>]</span>
+<span id="cb18-8"><a href="index.html#cb18-8" aria-hidden="true"></a>MSE.adj2 &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>p2))<span class="op">*</span>MSE2</span>
+<span id="cb18-9"><a href="index.html#cb18-9" aria-hidden="true"></a></span>
+<span id="cb18-10"><a href="index.html#cb18-10" aria-hidden="true"></a>MSEL &lt;-<span class="kw">mean</span>(sumlasso<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb18-11"><a href="index.html#cb18-11" aria-hidden="true"></a>pL &lt;-<span class="st"> </span><span class="kw">length</span>(sumlasso<span class="op">$</span>coef)</span>
+<span id="cb18-12"><a href="index.html#cb18-12" aria-hidden="true"></a>MSE.adjL &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>pL))<span class="op">*</span>MSEL</span></code></pre></div>
+<ul>
+<li>MSE for the basic model: 0.2244251</li>
+<li>Adjusted MSE for the basic model: 0.2266697</li>
+<li>MSE for the flexible model: 0.2110681</li>
+<li>Adjusted MSE for the flexible model: 0.221656</li>
+<li>MSE for the lasso flexible model: 0.2348928</li>
+<li>Adjusted MSE for the lasso flexible model: 0.2466758</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="index.html#cb19-1" aria-hidden="true"></a>Models &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Basic reg&quot;</span>,<span class="st">&quot;Flexible reg&quot;</span>,<span class="st">&quot;Lasso reg&quot;</span>)</span>
+<span id="cb19-2"><a href="index.html#cb19-2" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">c</span>(p1,p2,pL)</span>
+<span id="cb19-3"><a href="index.html#cb19-3" aria-hidden="true"></a>R_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">c</span>(R2<span class="fl">.1</span>,R2<span class="fl">.2</span>,R2.L)</span>
+<span id="cb19-4"><a href="index.html#cb19-4" aria-hidden="true"></a>MSE &lt;-<span class="st"> </span><span class="kw">c</span>(MSE1,MSE2,MSEL)</span>
+<span id="cb19-5"><a href="index.html#cb19-5" aria-hidden="true"></a>R_<span class="dv">2</span>_adj &lt;-<span class="st"> </span><span class="kw">c</span>(R2.adj1,R2.adj2,R2.adjL)</span>
+<span id="cb19-6"><a href="index.html#cb19-6" aria-hidden="true"></a>MSE_adj &lt;-<span class="st"> </span><span class="kw">c</span>(MSE.adj1,MSE.adj2,MSE.adjL)</span>
+<span id="cb19-7"><a href="index.html#cb19-7" aria-hidden="true"></a></span>
+<span id="cb19-8"><a href="index.html#cb19-8" aria-hidden="true"></a><span class="kw">data.frame</span>(Models,p,R_<span class="dv">2</span>,MSE,R_<span class="dv">2</span>_adj,MSE_adj) <span class="op">%&gt;%</span></span>
+<span id="cb19-9"><a href="index.html#cb19-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:table-two">Table 1.3: </span>Descriptive Statistics</caption>
+<thead>
+<tr class="header">
+<th align="left">Models</th>
+<th align="right">p</th>
+<th align="right">R_2</th>
+<th align="right">MSE</th>
+<th align="right">R_2_adj</th>
+<th align="right">MSE_adj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Basic reg</td>
+<td align="right">51</td>
+<td align="right">0.3100465</td>
+<td align="right">0.2244251</td>
+<td align="right">0.3032809</td>
+<td align="right">0.2266697</td>
+</tr>
+<tr class="even">
+<td align="left">Flexible reg</td>
+<td align="right">246</td>
+<td align="right">0.3511099</td>
+<td align="right">0.2110681</td>
+<td align="right">0.3186919</td>
+<td align="right">0.2216560</td>
+</tr>
+<tr class="odd">
+<td align="left">Lasso reg</td>
+<td align="right">246</td>
+<td align="right">0.2778653</td>
+<td align="right">0.2348928</td>
+<td align="right">0.2744836</td>
+<td align="right">0.2466758</td>
+</tr>
+</tbody>
+</table>
+<p>Considering all measures above, the flexible model performs slightly better than the basic model.</p>
+<p>One procedure to circumvent this issue is to use data splitting that is described and applied in the following.</p>
+</div>
+<div id="data-splitting" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Data Splitting</h2>
+<p>Measure the prediction quality of the two models via data splitting:</p>
+<ul>
+<li><p>Randomly split the data into one training sample and one testing sample. Here we just use a simple method (stratified splitting is a more sophisticated version of splitting that we can consider).</p></li>
+<li><p>Use the training sample for estimating the parameters of the <strong>Basic Model</strong> and the <strong>Flexible Model</strong>.</p></li>
+<li><p>Use the testing sample for evaluation. Predict the <span class="math inline">\(wage\)</span> of every observation in the testing sample based on the estimated parameters in the training sample.</p></li>
+<li><p>Calculate the <strong>Mean Squared Prediction Error</strong> <span class="math inline">\(MSE_{test}\)</span> based on the testing sample for both prediction models.</p></li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="index.html#cb20-1" aria-hidden="true"></a><span class="co"># to make the results replicable (generating random numbers)</span></span>
+<span id="cb20-2"><a href="index.html#cb20-2" aria-hidden="true"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb20-3"><a href="index.html#cb20-3" aria-hidden="true"></a><span class="co"># draw (4/5)*n random numbers from 1 to n without replacing them</span></span>
+<span id="cb20-4"><a href="index.html#cb20-4" aria-hidden="true"></a>random_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>n, <span class="kw">floor</span>(n<span class="op">*</span><span class="dv">4</span><span class="op">/</span><span class="dv">5</span>))</span>
+<span id="cb20-5"><a href="index.html#cb20-5" aria-hidden="true"></a><span class="co"># training sample</span></span>
+<span id="cb20-6"><a href="index.html#cb20-6" aria-hidden="true"></a>train &lt;-<span class="st"> </span>data[random_<span class="dv">2</span>,]</span>
+<span id="cb20-7"><a href="index.html#cb20-7" aria-hidden="true"></a><span class="co"># testing sample</span></span>
+<span id="cb20-8"><a href="index.html#cb20-8" aria-hidden="true"></a>test &lt;-<span class="st"> </span>data[<span class="op">-</span>random_<span class="dv">2</span>,] </span></code></pre></div>
+<p>The train data dimensions are 4120 rows and 20 columns.</p>
+<p>We estimate the parameters using the training data set.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="index.html#cb21-1" aria-hidden="true"></a><span class="co"># basic model</span></span>
+<span id="cb21-2"><a href="index.html#cb21-2" aria-hidden="true"></a><span class="co"># estimating the parameters in the training sample</span></span>
+<span id="cb21-3"><a href="index.html#cb21-3" aria-hidden="true"></a>regbasic &lt;-<span class="st"> </span><span class="kw">lm</span>(basic, <span class="dt">data=</span>train)</span>
+<span id="cb21-4"><a href="index.html#cb21-4" aria-hidden="true"></a>regbasic</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = basic, data = train)
+## 
+## Coefficients:
+## (Intercept)          sex         exp1          shs          hsg          scl  
+##    3.641716    -0.059065     0.008635    -0.570657    -0.508393    -0.405932  
+##         clg           mw           so           we        occ22        occ23  
+##   -0.178154    -0.044486    -0.051111     0.004004    -0.083481    -0.036320  
+##       occ24        occ25        occ26        occ27        occ28        occ29  
+##   -0.091457    -0.126383    -0.416548    -0.046615    -0.385957    -0.220534  
+##      occ210       occ211       occ212       occ213       occ214       occ215  
+##   -0.030423    -0.460487    -0.317680    -0.375180    -0.465495    -0.494731  
+##      occ216       occ217       occ218       occ219       occ220       occ221  
+##   -0.212026    -0.413355    -0.329054    -0.263839    -0.241109    -0.293004  
+##      occ222        ind23        ind24        ind25        ind26        ind27  
+##   -0.410747    -0.075902    -0.121251    -0.206172    -0.151398    -0.081742  
+##       ind28        ind29       ind210       ind211       ind212       ind213  
+##   -0.186304    -0.304987    -0.126226    -0.090402     0.028445    -0.116162  
+##      ind214       ind215       ind216       ind217       ind218       ind219  
+##   -0.105521    -0.227273    -0.223604    -0.208887    -0.256808    -0.266724  
+##      ind220       ind221       ind222  
+##   -0.459034    -0.226775    -0.047166</code></pre>
+<p>Then predict using the parameters in the testing sample.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="index.html#cb23-1" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
+<span id="cb23-2"><a href="index.html#cb23-2" aria-hidden="true"></a>trainregbasic &lt;-<span class="st"> </span><span class="kw">predict</span>(regbasic, <span class="dt">newdata=</span>test)</span>
+<span id="cb23-3"><a href="index.html#cb23-3" aria-hidden="true"></a>trainregbasic</span></code></pre></div>
+<pre><code>##       12       44       71       84      129      149      191      221 
+## 3.395851 2.734493 3.151807 2.506919 2.368192 3.173461 3.065637 3.043757 
+##      248      264      281      368      464      467      496      540 
+## 2.699975 2.398635 3.080034 2.542424 2.700733 2.973891 2.940246 2.796404 
+##      546      576      629      687      705      765      769      809 
+## 2.793806 2.907308 3.213768 3.222378 2.758879 2.772328 2.753855 3.005369 
+##      938      945      952      960     1003     1057     1059     1065 
+## 2.502601 2.941366 3.166449 2.846778 3.070972 2.629048 3.036431 2.881320 
+##     1075     1076     1079     1101     1105     1143     1161     1195 
+## 3.414267 3.504898 2.283221 2.564178 2.737425 2.761703 3.606691 2.556301 
+##     1224     1271     1299     1342     1387     1407     1508     1568 
+## 2.861144 2.749369 2.809817 3.680845 3.445996 2.621132 2.826924 2.877508 
+##     1593     1646     1669     1693     1711     1715     1748     1749 
+## 3.011676 2.775702 2.923326 2.811011 2.844195 3.037463 3.038273 2.898368 
+##     1751     1763     1782     1862     1889     1896     1915     1916 
+## 2.913956 3.447804 2.987807 3.308917 3.448159 3.032423 2.639366 2.710743 
+##     1917     1930     1933     1939     1945     1946     1964     1978 
+## 3.388704 3.639454 3.560323 3.261379 2.991757 3.476764 2.574404 3.409102 
+##     1999     2020     2055     2122     2132     2135     2194     2215 
+## 2.815364 2.804909 2.796349 3.052717 2.760399 2.834512 3.066740 3.066740 
+##     2224     2278     2315     2330     2333     2362     2381     2465 
+## 2.996740 3.497591 3.208588 3.172049 3.137275 2.977112 2.911219 2.936761 
+##     2488     2490     2500     2502     2555     2566     2592     2593 
+## 3.107351 2.515200 2.884473 2.834005 3.120641 3.248789 3.190732 2.996836 
+##     2604     2635     2660     2746     2851     2879     2919     2972 
+## 3.362746 3.364898 3.195416 2.850228 3.155803 2.618133 2.600422 3.536249 
+##     2990     3005     3020     3021     3103     3117     3195     3269 
+## 2.486495 2.965091 2.784081 2.659487 3.183660 3.126963 3.537607 3.375366 
+##     3313     3357     3383     3428     3501     3531     3575     3605 
+## 2.800045 3.108703 2.707201 3.030192 3.530804 3.056041 3.475381 2.868124 
+##     3630     3634     3641     3738     3803     3810     3819     3824 
+## 2.802191 2.785823 2.978776 2.885989 3.312690 3.053702 3.262039 2.792172 
+##     3853     3855     3858     3867     3975     3996     4008     4012 
+## 2.929577 2.837561 3.453031 2.637223 3.295419 3.283195 3.190034 3.255441 
+##     4015     4021     4027     4034     4042     4046     4056     4057 
+## 3.513137 2.909294 3.791820 3.371755 3.487255 3.382399 3.146749 3.341796 
+##     4068     4078     4088     4095     4108     4109     4110     4111 
+## 3.130255 3.083729 3.136610 3.373162 3.350788 3.342153 3.049343 3.701652 
+##     4119     4161     4180     4189     4190     4311     4318     4416 
+## 2.852830 3.050451 2.661820 2.655253 3.127026 3.167800 2.660548 3.436540 
+##     4476     4492     4495     4585     4627     4658     4668     4735 
+## 2.915678 3.440465 2.554050 3.351613 3.121649 2.702883 2.576908 2.956567 
+##     4752     4801     4805     4806     4837     4862     4865     4869 
+## 2.586882 3.185483 3.288241 3.562156 3.517912 3.426356 3.174408 2.709436 
+##     4873     4981     5013     5021     5026     5034     5043     5069 
+## 2.973516 2.988795 2.473201 2.692698 3.187168 3.096083 3.258672 2.824127 
+##     5087     5115     5117     5145     5177     5187     5207     5210 
+## 3.081478 2.752523 2.596189 3.173009 2.658040 2.897046 2.965355 2.732098 
+##     5232     5288     5343     5345     5347     5348     5444     5455 
+## 3.498372 3.170164 2.911181 3.308917 3.203620 2.998361 2.655253 2.806754 
+##     5487     5548     5617     5654     5667     5699     5766     5779 
+## 3.177714 2.600207 2.648163 2.536779 3.101771 3.257564 2.673927 3.191729 
+##     5793     5798     5830     5889     5892     5902     5919     5946 
+## 3.111683 2.895035 2.890652 2.694029 3.010846 3.283855 2.762490 3.055507 
+##     6002     6005     6034     6096     6132     6152     6210     6236 
+## 3.169177 3.295419 2.537143 2.886118 2.765682 3.264142 2.632311 2.698241 
+##     6256     6281     6293     6310     6425     6431     6434     6457 
+## 2.791589 2.867499 2.682244 2.712499 2.813238 3.020245 2.523731 3.154739 
+##     6465     6478     6538     6539     6544     6575     6606     6668 
+## 2.389111 3.040710 2.684084 2.731215 2.828932 2.867409 2.676274 3.154494 
+##     6682     6695     6739     6800     6829     6841     6844     6886 
+## 2.778237 2.808591 2.555936 3.097376 3.314938 2.790101 2.238735 3.018277 
+##     6890     6929     6938     6971     6978     7019     7020     7062 
+## 3.155272 2.556840 3.428714 2.846166 3.235418 2.742063 2.772506 2.615001 
+##     7089     7158     7212     7221     7300     7313     7340     7347 
+## 3.221539 2.731686 2.423232 2.611822 2.891218 2.688873 2.853702 2.904171 
+##     7381     7389     7458     7508     7516     7560     7576     7609 
+## 2.891335 2.551294 2.834250 2.462321 2.593496 2.901132 2.919222 3.151498 
+##     7633     7646     7686     7710     7746     7773     7783     7793 
+## 2.860321 2.264641 3.184857 3.467215 2.457641 3.128485 3.373293 3.196914 
+##     7808     7859     7900     7917     7929     7977     8010     8055 
+## 2.564555 2.457774 2.776710 3.185064 2.783985 2.626024 2.649542 2.811661 
+##     8143     8145     8157     8195     8196     8208     8213     8214 
+## 3.040923 3.409586 3.270035 3.141863 3.133301 3.039365 2.923953 2.895535 
+##     8226     8231     8254     8263     8266     8317     8319     8326 
+## 3.576747 2.896649 2.782438 3.055945 3.270551 3.179643 3.313609 3.620846 
+##     8333     8336     8338     8346     8407     8511     8523     8560 
+## 3.480284 2.632379 2.926105 3.273351 3.462364 3.248004 3.006084 2.999161 
+##     8574     8578     8648     8676     8727     8792     8800     8850 
+## 2.785021 2.748091 2.861330 2.950619 2.878199 2.792013 2.642290 2.860954 
+##     8912     8968     8997     9010     9082     9123     9152     9161 
+## 2.632838 2.886228 2.997329 2.681401 2.439120 2.790073 2.970414 3.518632 
+##     9209     9210     9219     9226     9285     9317     9319     9348 
+## 3.029675 3.164715 2.532392 3.090050 3.263125 3.090179 3.335531 3.517874 
+##     9350     9360     9384     9396     9398     9496     9514     9529 
+## 2.747039 2.747103 3.196415 3.048000 3.025001 3.219398 2.934031 3.517669 
+##     9601     9616     9636     9638     9688     9733     9735     9815 
+## 2.478605 3.308452 2.493620 3.135583 2.871998 2.622413 2.555936 3.197328 
+##     9823     9844     9934     9980    10001    10034    10096    10108 
+## 2.923922 2.886228 2.710209 2.642857 3.286879 3.176896 3.320412 3.150498 
+##    10197    10210    10217    10220    10233    10276    10287    10350 
+## 3.414480 2.442025 3.415007 3.020489 3.090124 2.626143 2.862338 3.305753 
+##    10351    10386    10412    10552    10630    10709    10715    10727 
+## 2.585180 2.657856 3.019542 3.026912 2.790073 2.782602 3.008182 3.083998 
+##    10782    10800    10886    10903    10909    10917    10921    10980 
+## 2.469040 3.257361 3.180766 2.523731 2.860268 2.449059 3.425870 3.257464 
+##    11026    11078    11091    11204    11279    11402    11406    11435 
+## 3.406395 3.019779 2.981300 2.713518 3.184448 2.729435 2.811661 2.570225 
+##    11454    11474    11487    11503    11507    11598    11605    11610 
+## 2.743368 2.514423 2.273232 2.660127 2.806852 2.678122 2.719207 2.782849 
+##    11683    11729    11795    11806    11839    11846    11896    11924 
+## 3.112563 2.746924 2.844411 2.994090 3.140131 2.800299 2.602132 2.988201 
+##    11930    11958    12083    12086    12089    12101    12143    12146 
+## 2.351741 3.017568 2.263834 3.083077 3.274528 2.704883 2.599324 2.809138 
+##    12150    12208    12271    12287    12288    12365    12419    12429 
+## 3.287253 3.353175 2.790101 2.466267 2.946758 3.106844 2.790383 3.425624 
+##    12433    12475    12539    12578    12607    12711    12733    12752 
+## 2.420893 2.832867 2.476729 2.878963 2.695290 2.901157 2.330046 2.573646 
+##    12774    12786    12833    12871    12876    12886    12957    12976 
+## 2.662935 2.599986 2.904128 3.055031 2.641126 2.807372 3.040229 2.755559 
+##    13016    13017    13022    13029    13046    13052    13057    13077 
+## 3.417180 3.476312 3.568416 2.837878 2.755559 3.102465 3.113267 3.114496 
+##    13092    13105    13112    13122    13220    13221    13243    13310 
+## 3.050248 2.845574 3.155015 3.332366 2.430184 2.276895 2.925396 2.747174 
+##    13356    13358    13359    13366    13474    13510    13548    13568 
+## 3.093096 2.618345 2.623750 2.479811 3.021040 2.539788 2.430929 2.764956 
+##    13573    13584    13590    13600    13601    13616    13659    13708 
+## 2.534431 2.645527 3.011021 2.962510 2.492657 2.730789 2.650109 2.868645 
+##    13718    13782    13837    13896    13913    13917    13932    13933 
+## 3.061893 2.792621 2.772830 3.346548 2.598853 3.381887 2.471366 2.724714 
+##    13978    14018    14050    14072    14098    14162    14176    14198 
+## 2.600259 2.880745 3.664472 3.033902 3.191092 2.865511 2.952953 2.860268 
+##    14258    14259    14294    14295    14326    14367    14376    14399 
+## 2.875225 2.469983 3.249871 2.713518 2.594471 2.810564 2.783779 3.182974 
+##    14412    14465    14499    14512    14592    14644    14654    14683 
+## 3.190560 2.980949 3.505541 3.690583 2.542768 2.817335 2.304618 2.807372 
+##    14725    14741    14828    14829    14886    14940    14946    14954 
+## 2.969227 2.985458 2.697326 2.466737 3.145866 2.356618 3.282041 3.008760 
+##    15015    15101    15104    15114    15287    15289    15324    15355 
+## 2.568758 2.769849 2.555234 3.244725 2.799118 3.220308 3.556590 3.276802 
+##    15366    15469    15481    15590    15594    15628    15681    15735 
+## 2.723132 2.638708 2.705936 3.100770 2.381933 2.935394 3.216137 3.239776 
+##    15749    15750    15754    15758    15760    15765    15777    15785 
+## 3.384704 3.516188 3.514095 3.520652 3.212966 3.608636 3.437759 3.152509 
+##    15786    15791    15805    15815    15821    15827    15830    15880 
+## 3.481646 3.255376 2.700494 3.265136 3.348101 3.517139 3.187060 3.110830 
+##    15891    15902    15934    15941    15952    15961    15965    15971 
+## 3.193349 3.714094 3.169789 3.232084 3.315654 3.356737 3.562094 3.122832 
+##    15989    16035    16042    16053    16054    16056    16071    16091 
+## 3.299678 3.221284 3.014416 3.464375 3.473961 2.927407 3.159375 3.555265 
+##    16097    16111    16173    16258    16267    16293    16328    16405 
+## 3.351173 3.480937 2.595507 2.787767 2.793084 2.646590 2.607116 2.906384 
+##    16454    16502    16515    16516    16526    16590    16592    16632 
+## 3.358797 2.575218 2.770689 2.647454 2.977852 2.779557 2.878467 3.526109 
+##    16649    16650    16665    16672    16673    16676    16699    16757 
+## 2.773134 2.863806 3.199719 3.331058 3.464375 3.401603 2.882098 3.551680 
+##    16822    16844    16853    16886    16914    16952    16963    16971 
+## 3.474671 2.735219 3.099418 3.248663 3.107956 2.815627 2.601526 3.448631 
+##    17039    17069    17081    17091    17132    17135    17152    17157 
+## 2.416265 2.552472 2.732800 2.799740 3.195670 2.955886 2.783477 2.800747 
+##    17190    17208    17222    17230    17257    17293    17294    17402 
+## 2.647563 3.069653 2.777815 2.848641 2.793262 2.861168 2.686719 2.417203 
+##    17455    17494    17505    17529    17544    17678    17847    17875 
+## 2.834641 2.486331 2.749697 2.858687 2.984336 3.244309 3.037455 3.041415 
+##    17878    17879    17959    17997    18001    18039    18066    18125 
+## 2.646071 2.947250 2.751080 3.070538 3.205364 2.514498 2.847078 2.989497 
+##    18158    18164    18323    18401    18433    18460    18469    18470 
+## 2.697404 3.046861 2.724165 3.527250 2.932882 2.664725 3.131272 3.113342 
+##    18564    18565    18618    18694    18748    18753    18767    18858 
+## 3.091645 3.000447 3.342855 2.587929 2.839579 2.747013 3.050876 2.740299 
+##    18960    18984    19009    19076    19089    19090    19091    19094 
+## 2.873387 3.467569 2.767178 3.504871 3.191277 3.139801 2.822440 3.502355 
+##    19121    19122    19173    19192    19195    19208    19223    19434 
+## 3.303374 3.374685 3.339694 2.567525 2.330253 2.800747 2.740299 2.885277 
+##    19478    19492    19556    19594    19616    19726    19730    19733 
+## 3.445357 2.951892 2.795562 3.032479 3.056944 3.074790 2.941744 3.173019 
+##    19757    19801    19827    19847    19858    19869    19875    19906 
+## 2.972071 3.380165 2.860108 2.424384 2.441589 2.232110 2.599261 2.692920 
+##    19994    19995    20008    20015    20031    20049    20056    20083 
+## 2.831725 2.407047 2.657506 3.148543 2.896903 2.791363 2.905944 2.664401 
+##    20107    20111    20127    20163    20200    20241    20258    20267 
+## 2.795667 2.490694 3.146094 2.563411 2.396161 2.596753 3.466035 3.678169 
+##    20385    20427    20443    20520    20605    20679    20767    20806 
+## 2.386165 2.836262 2.631594 2.804303 3.008397 2.924797 3.008649 2.891907 
+##    20837    20875    20898    20903    20905    20912    20925    20937 
+## 3.077707 2.797785 3.133210 2.929868 2.744293 2.625647 3.369021 2.727499 
+##    21080    21085    21165    21176    21265    21266    21269    21284 
+## 3.022307 2.580516 2.879550 2.826243 3.207662 3.283998 3.108848 2.691858 
+##    21304    21333    21337    21365    21398    21418    21542    21559 
+## 3.163137 2.232110 2.567706 3.346551 2.729273 2.655225 2.785654 3.094746 
+##    21626    21690    21779    21830    21900    21922    21987    22009 
+## 3.058768 2.980862 2.905345 2.805037 3.083569 2.423860 2.597930 3.401739 
+##    22150    22269    22336    22345    22377    22399    22414    22423 
+## 2.308446 3.085418 3.036176 3.196270 2.620568 3.057593 2.677924 3.119933 
+##    22471    22714    22972    22973    22979    23002    23007    23053 
+## 2.969788 3.721346 3.126603 2.939269 2.775603 2.741388 3.094053 2.841212 
+##    23144    23176    23192    23302    23320    23338    23391    23441 
+## 2.867323 3.091255 3.399768 2.678750 2.563752 2.767178 2.642704 2.824370 
+##    23468    23493    23517    23528    23531    23548    23553    23591 
+## 3.232750 2.670633 2.681284 2.775603 2.549311 3.300897 2.907745 3.688897 
+##    23681    23701    23780    23840    23848    23857    24022    24023 
+## 2.925199 2.675506 2.624561 2.624397 2.807388 3.014823 3.073608 2.755584 
+##    24030    24058    24059    24124    24135    24352    24418    24421 
+## 2.389318 2.967909 3.114712 2.469926 3.150024 2.977259 2.671498 3.131272 
+##    24453    24463    24470    24471    24478    24498    24527    24576 
+## 2.857084 3.142006 3.009469 2.621414 3.155093 2.657787 3.065349 3.150426 
+##    24593    24601    24687    24714    24741    24804    24816    24911 
+## 3.050876 2.601124 2.942821 2.752929 2.629750 2.903934 2.921344 2.745706 
+##    24922    24924    24947    25024    25066    25070    25085    25103 
+## 2.980886 3.186868 2.833660 2.902548 2.755649 2.949469 3.376068 2.726612 
+##    25127    25141    25148    25275    25356    25392    25408    25432 
+## 2.413455 2.930122 2.540796 2.796418 2.794290 3.413211 2.820307 2.669043 
+##    25519    25570    25571    25597    25611    25621    25652    25711 
+## 2.710115 2.796976 2.723939 2.670310 2.295860 3.000743 2.380831 3.001285 
+##    25728    25735    25737    25766    25804    25849    25888    25890 
+## 2.820115 3.014233 3.069530 3.387951 2.851479 3.644922 2.684099 2.367786 
+##    25947    25990    26078    26081    26084    26086    26120    26168 
+## 2.988004 2.760290 2.731489 2.380831 2.993922 2.462162 3.502219 3.457387 
+##    26314    26331    26476    26528    26602    26612    26613    26644 
+## 2.712185 3.126173 2.810868 2.525219 2.586276 3.301202 3.363585 3.064085 
+##    26696    26755    26801    26811    26861    26902    26916    26919 
+## 2.684321 2.819399 3.331036 2.766494 3.126131 2.923047 2.706563 3.139545 
+##    26956    27110    27148    27246    27395    27403    27415    27420 
+## 3.223426 2.778321 3.304095 2.648727 2.767012 3.227156 2.821524 3.214151 
+##    27531    27541    27555    27578    27579    27598    27600    27606 
+## 3.040861 3.048308 3.385778 3.248080 3.429799 3.167417 2.690347 2.985094 
+##    27611    27698    27699    27757    27764    27787    27791    27870 
+## 2.992102 2.613061 2.689963 2.775728 3.542449 2.716503 2.934718 2.929703 
+##    27925    27928    27945    28038    28119    28156    28157    28191 
+## 2.673675 2.633052 3.180282 2.968123 3.262777 2.799444 2.465556 2.815750 
+##    28237    28242    28251    28254    28360    28363    28379    28394 
+## 3.008311 2.731244 2.971210 3.261576 2.949695 3.294052 2.941437 2.609867 
+##    28422    28496    28572    28621    28765    28770    28776    28807 
+## 2.806628 3.082127 2.723916 2.866546 2.637370 3.235074 3.037555 2.719983 
+##    28886    28961    28969    28980    28997    29004    29014    29093 
+## 3.413106 2.699416 2.921469 2.733039 2.716503 3.226393 2.954921 2.795414 
+##    29101    29118    29159    29164    29169    29225    29275    29288 
+## 2.950096 3.020908 3.478804 2.859092 2.503292 2.667893 3.026353 3.193546 
+##    29294    29387    29431    29480    29508    29521    29540    29554 
+## 2.900029 2.866459 2.623956 3.194736 2.802281 3.648312 3.189868 2.852089 
+##    29557    29562    29569    29584    29593    29633    29634    29639 
+## 3.072721 3.401966 3.397119 3.397747 3.693485 3.406763 2.722689 3.582981 
+##    29652    29687    29715    29748    29830    29868    29871    29916 
+## 2.782137 3.266794 3.002642 2.577031 2.901424 2.335838 2.653470 2.385368 
+##    29920    29958    30006    30128    30194    30197    30263    30290 
+## 2.525828 2.908758 3.364388 3.228235 2.866970 3.093340 3.138425 2.928069 
+##    30369    30427    30477    30478    30491    30539    30583    30591 
+## 3.217922 2.737111 3.119816 3.057985 3.440781 2.463042 3.415199 3.121343 
+##    30606    30613    30624    30632    30649    30694    30727    30737 
+## 3.078165 3.305130 3.272426 3.110170 2.893884 3.218469 3.158782 2.787540 
+##    30747    30753    30756    30777    30783    30817    30870    30892 
+## 3.328520 3.119508 3.386635 3.022257 2.444432 2.668947 3.140760 2.815947 
+##    30898    30984    31002    31003    31038    31069    31132    31147 
+## 3.477839 2.737057 2.906667 3.413590 3.377261 2.962718 3.528125 2.866060 
+##    31183    31184    31191    31222    31254    31324    31363    31391 
+## 2.739399 2.779588 3.217096 2.640962 3.085992 3.392725 3.207045 2.789176 
+##    31396    31426    31431    31433    31504    31525    31615    31667 
+## 2.961050 3.263336 3.207624 2.875036 3.236769 3.617178 3.542060 3.295834 
+##    31668    31689    31758    31768    31863    31867    31868    31897 
+## 3.389677 3.177946 3.550217 2.836428 3.403739 3.198997 3.305430 3.106381 
+##    31899    31902    31956    31969    31975    31982    31997    32042 
+## 3.063874 2.847226 3.342601 3.210594 3.279223 2.680762 3.406409 2.788163 
+##    32045    32074    32087    32095    32143    32152    32212    32229 
+## 2.505339 3.085367 3.027446 3.046780 2.684815 2.950308 3.404048 2.979846 
+##    32256    32314    32357    32369    32458    32502    32504    32517 
+## 3.075402 3.566477 3.167155 2.795414 2.851532 2.943600 2.752415 3.184073 
+##    32561    32564    32571    32591    32599    32626 
+## 3.481612 2.347673 2.475821 2.982382 2.551125 3.497855</code></pre>
+<p>Finally, we test the predictions.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="index.html#cb25-1" aria-hidden="true"></a>y.test &lt;-<span class="st"> </span><span class="kw">log</span>(test<span class="op">$</span>wage)</span>
+<span id="cb25-2"><a href="index.html#cb25-2" aria-hidden="true"></a>MSE.test1 &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainregbasic)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
+<span id="cb25-3"><a href="index.html#cb25-3" aria-hidden="true"></a>R2.test1&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.test1<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
+<ul>
+<li>Test MSE for the basic model: 0.1971044.</li>
+<li>Test R2 for the basic model: 0.3279559.</li>
+</ul>
+<p>In the basic model, the <span class="math inline">\(MSE test\)</span> is quite closed to the <span class="math inline">\(MSE sample\)</span>.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="index.html#cb26-1" aria-hidden="true"></a><span class="co"># estimating the parameters</span></span>
+<span id="cb26-2"><a href="index.html#cb26-2" aria-hidden="true"></a>regflex &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>train)</span>
+<span id="cb26-3"><a href="index.html#cb26-3" aria-hidden="true"></a></span>
+<span id="cb26-4"><a href="index.html#cb26-4" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
+<span id="cb26-5"><a href="index.html#cb26-5" aria-hidden="true"></a>trainregflex&lt;-<span class="st"> </span><span class="kw">predict</span>(regflex, <span class="dt">newdata=</span>test)</span>
+<span id="cb26-6"><a href="index.html#cb26-6" aria-hidden="true"></a></span>
+<span id="cb26-7"><a href="index.html#cb26-7" aria-hidden="true"></a>y.test &lt;-<span class="st"> </span><span class="kw">log</span>(test<span class="op">$</span>wage)</span>
+<span id="cb26-8"><a href="index.html#cb26-8" aria-hidden="true"></a>MSE.test2 &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainregflex)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
+<span id="cb26-9"><a href="index.html#cb26-9" aria-hidden="true"></a>R2.test2&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.test2<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
+<ul>
+<li><p>Test MSE for the flexible model: 0.2064107.</p></li>
+<li><p>Test R2 for the flexible model: 0.2962252.</p></li>
+</ul>
+<p>In the flexible model, the discrepancy between the <span class="math inline">\(MSE_{test}\)</span> and the <span class="math inline">\(MSE_{sample}\)</span> is not large.</p>
+<p>It is worth to notice that the <span class="math inline">\(MSE_{test}\)</span> vary across different data splits. Hence, it is a good idea average the out-of-sample MSE over different data splits to get valid results.</p>
+<p>Nevertheless, we observe that, based on the out-of-sample <span class="math inline">\(MSE\)</span>, the basic model using OLS regression performs is about as well (or slightly better) than the flexible model.</p>
+<p>Next, let us use lasso regression in the flexible model instead of OLS regression. Lasso (least absolute shrinkage and selection operator) is a penalized regression method that can be used to reduce the complexity of a regression model when the number of regressors <span class="math inline">\(p\)</span> is relatively large in relation to <span class="math inline">\(n\)</span>.</p>
+<p>Note that the out-of-sample <span class="math inline">\(MSE\)</span> on the test sample can be computed for any other black-box prediction method as well. Thus, let us finally compare the performance of lasso regression in the flexible model to OLS regression.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="index.html#cb27-1" aria-hidden="true"></a><span class="co"># flexible model using lasso</span></span>
+<span id="cb27-2"><a href="index.html#cb27-2" aria-hidden="true"></a></span>
+<span id="cb27-3"><a href="index.html#cb27-3" aria-hidden="true"></a><span class="co"># estimating the parameters</span></span>
+<span id="cb27-4"><a href="index.html#cb27-4" aria-hidden="true"></a>reglasso &lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex, <span class="dt">data=</span>train, <span class="dt">post=</span><span class="ot">FALSE</span>)</span>
+<span id="cb27-5"><a href="index.html#cb27-5" aria-hidden="true"></a></span>
+<span id="cb27-6"><a href="index.html#cb27-6" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
+<span id="cb27-7"><a href="index.html#cb27-7" aria-hidden="true"></a>trainreglasso&lt;-<span class="st"> </span><span class="kw">predict</span>(reglasso, <span class="dt">newdata=</span>test)</span>
+<span id="cb27-8"><a href="index.html#cb27-8" aria-hidden="true"></a>MSE.lasso &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainreglasso)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
+<span id="cb27-9"><a href="index.html#cb27-9" aria-hidden="true"></a>R2.lasso&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.lasso<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
+<ul>
+<li><p>Test <span class="math inline">\(MSE\)</span> for the lasso on flexible model: 0.212698</p></li>
+<li><p>Test <span class="math inline">\(R^2\)</span> for the lasso flexible model: 0.2747882</p></li>
+</ul>
+<p>Finally, let us summarize the results:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="index.html#cb28-1" aria-hidden="true"></a>Models &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Basic regression&quot;</span>,<span class="st">&quot;Flexible regression&quot;</span>,<span class="st">&quot;Lasso regression&quot;</span>)</span>
+<span id="cb28-2"><a href="index.html#cb28-2" aria-hidden="true"></a>R_<span class="dv">2</span>_SAMPLE &lt;-<span class="st"> </span><span class="kw">c</span>(R2.test1,R2.test2,R2.lasso)</span>
+<span id="cb28-3"><a href="index.html#cb28-3" aria-hidden="true"></a>MSE_SAMPLE&lt;-<span class="st"> </span><span class="kw">c</span>(MSE.test1,MSE.test2,MSE.lasso)</span>
+<span id="cb28-4"><a href="index.html#cb28-4" aria-hidden="true"></a></span>
+<span id="cb28-5"><a href="index.html#cb28-5" aria-hidden="true"></a><span class="kw">data.frame</span>(Models,R_<span class="dv">2</span>_SAMPLE,MSE_SAMPLE) <span class="op">%&gt;%</span></span>
+<span id="cb28-6"><a href="index.html#cb28-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics - Random Process&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:summarize-results">Table 1.4: </span>Descriptive Statistics - Random Process</caption>
+<thead>
+<tr class="header">
+<th align="left">Models</th>
+<th align="right">R_2_SAMPLE</th>
+<th align="right">MSE_SAMPLE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Basic regression</td>
+<td align="right">0.3279559</td>
+<td align="right">0.1971044</td>
+</tr>
+<tr class="even">
+<td align="left">Flexible regression</td>
+<td align="right">0.2962252</td>
+<td align="right">0.2064107</td>
+</tr>
+<tr class="odd">
+<td align="left">Lasso regression</td>
+<td align="right">0.2747882</td>
+<td align="right">0.2126980</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="index.html#cb29-1" aria-hidden="true"></a><span class="kw">print</span>(<span class="kw">data.frame</span>(Models,R_<span class="dv">2</span>,MSE),<span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
+<pre><code>##                Models       R_2       MSE
+## 1    Basic regression 0.3100465 0.2244251
+## 2 Flexible regression 0.3511099 0.2110681
+## 3    Lasso regression 0.2778653 0.2348928</code></pre>
 
 </div>
 </div>
