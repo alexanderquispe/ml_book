@@ -10,3 +10,6 @@ tab:table-one
 tab:type-variables
 tab:type-table
 prediction-question
+tab:table-two
+data-splitting
+tab:summarize-results
