@@ -24,7 +24,7 @@
 <meta name="author" content="Alexander Quispe" />
 
 
-<meta name="date" content="2021-09-10" />
+<meta name="date" content="2021-09-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -141,9 +141,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#data"><i class="fa fa-check"></i><b>1.1</b> Data</a></li>
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-analysis"><i class="fa fa-check"></i><b>1.2</b> Data Analysis</a>
 <ul>
-<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#r-code"><i class="fa fa-check"></i><b>1.2.1</b> R code</a></li>
+<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#r-and-python-code"><i class="fa fa-check"></i><b>1.2.1</b> R and Python code</a></li>
 </ul></li>
-<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#prediction-question"><i class="fa fa-check"></i><b>1.3</b> Prediction Question</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#prediction-question"><i class="fa fa-check"></i><b>1.3</b> Prediction Question</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="index.html"><a href="index.html#basic-model"><i class="fa fa-check"></i><b>1.3.1</b> Basic Model:</a></li>
+<li class="chapter" data-level="1.3.2" data-path="index.html"><a href="index.html#flexible-model"><i class="fa fa-check"></i><b>1.3.2</b> Flexible Model:</a></li>
+<li class="chapter" data-level="1.3.3" data-path="index.html"><a href="index.html#lasso-model"><i class="fa fa-check"></i><b>1.3.3</b> Lasso Model:</a></li>
+</ul></li>
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#data-splitting"><i class="fa fa-check"></i><b>1.4</b> Data Splitting</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="the-pool-of-tears.html"><a href="the-pool-of-tears.html"><i class="fa fa-check"></i><b>2</b> The pool of tears</a></li>
@@ -170,7 +175,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Machine Learning and Causal Inference</h1>
 <p class="author"><em>Alexander Quispe</em></p>
-<p class="date" style="margin-top: 1.5em;"><em>2021-09-10</em></p>
+<p class="date" style="margin-top: 1.5em;"><em>2021-09-14</em></p>
 </div>
 <div id="predictive-inference-1" class="section level1" number="1">
 <h1><span class="header-section-number">Chapter 1</span> Predictive Inference 1</h1>
@@ -189,164 +194,200 @@ Two main questions here are:</p>
 </div>
 <div id="data-analysis" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Data Analysis</h2>
-<div id="r-code" class="section level3" number="1.2.1">
-<h3><span class="header-section-number">1.2.1</span> R code</h3>
+<div id="r-and-python-code" class="section level3" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> R and Python code</h3>
 <ol style="list-style-type: decimal">
 <li>Import relevant packages</li>
 </ol>
-<div style="display: flex;">
-<div>
+<div class="columns">
+<div class="column" style="width:48%;">
 <p><strong>R code</strong></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
 <span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(kableExtra)</span></code></pre></div>
-</div>
-<div class="col">
+</div><div class="column" style="width:4%;">
 <p> 
 <!-- an empty Div (with a white space), serving as
 a column separator --></p>
-</div>
-<div>
+</div><div class="column" style="width:48%;">
 <p><strong>Python code</strong></p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="index.html#cb2-1" aria-hidden="true"></a><span class="kw">print</span>(<span class="st">&quot;Hello world&quot;</span>)</span></code></pre></div>
-<pre><code>## [1] &quot;Hello world&quot;</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="index.html#cb2-1" aria-hidden="true"></a><span class="co"># import pandas as pd</span></span>
+<span id="cb2-2"><a href="index.html#cb2-2" aria-hidden="true"></a><span class="co"># import numpy as np</span></span>
+<span id="cb2-3"><a href="index.html#cb2-3" aria-hidden="true"></a><span class="co"># import pyreadr</span></span></code></pre></div>
 </div>
 </div>
 <ol start="2" style="list-style-type: decimal">
 <li>We start loading the data set.</li>
 </ol>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true"></a><span class="kw">load</span>(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="index.html#cb3-1" aria-hidden="true"></a><span class="kw">load</span>(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span></code></pre></div>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="index.html#cb4-1" aria-hidden="true"></a><span class="co">#rdata_read = pyreadr.read_r(&quot;../data/wage2015_subsample_inference.Rdata&quot;)</span></span>
+<span id="cb4-2"><a href="index.html#cb4-2" aria-hidden="true"></a><span class="co">#data = rdata_read[ &#39;data&#39; ]</span></span>
+<span id="cb4-3"><a href="index.html#cb4-3" aria-hidden="true"></a><span class="co">#type(data)</span></span>
+<span id="cb4-4"><a href="index.html#cb4-4" aria-hidden="true"></a><span class="co">#data.shape</span></span></code></pre></div>
+</div>
+</div>
 <p>The dimensions are 5150 rows and 20 columns.</p>
 <p>Let’s have a look at the structure of the data.</p>
+<p><strong>R code</strong></p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="index.html#cb5-1" aria-hidden="true"></a><span class="co"># Calculate the means and convert it into a dataframe</span></span>
-<span id="cb5-2"><a href="index.html#cb5-2" aria-hidden="true"></a>table0 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">apply</span>(data,<span class="dv">2</span>,class))<span class="op">%&gt;%</span></span>
-<span id="cb5-3"><a href="index.html#cb5-3" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">Type =</span><span class="st">`</span><span class="dt">apply.data..2..class.</span><span class="st">`</span>)</span>
+<span id="cb5-2"><a href="index.html#cb5-2" aria-hidden="true"></a>table0 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">lapply</span>(data,class))<span class="op">%&gt;%</span></span>
+<span id="cb5-3"><a href="index.html#cb5-3" aria-hidden="true"></a><span class="st">  </span>tidyr<span class="op">::</span><span class="kw">gather</span>(<span class="st">&quot;Variable&quot;</span>,<span class="st">&quot;Type&quot;</span>)</span>
 <span id="cb5-4"><a href="index.html#cb5-4" aria-hidden="true"></a></span>
-<span id="cb5-5"><a href="index.html#cb5-5" aria-hidden="true"></a>table0<span class="op">$</span>Variables &lt;-<span class="st"> </span><span class="kw">rownames</span>(table0)</span>
-<span id="cb5-6"><a href="index.html#cb5-6" aria-hidden="true"></a><span class="kw">rownames</span>(table0) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(table0))</span>
-<span id="cb5-7"><a href="index.html#cb5-7" aria-hidden="true"></a></span>
-<span id="cb5-8"><a href="index.html#cb5-8" aria-hidden="true"></a><span class="co"># Table presentation</span></span>
-<span id="cb5-9"><a href="index.html#cb5-9" aria-hidden="true"></a>table0 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)<span class="op">%&gt;%</span></span>
-<span id="cb5-10"><a href="index.html#cb5-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Type of the Variables&quot;</span>)</span></code></pre></div>
+<span id="cb5-5"><a href="index.html#cb5-5" aria-hidden="true"></a><span class="co"># Table presentation</span></span>
+<span id="cb5-6"><a href="index.html#cb5-6" aria-hidden="true"></a>table0 <span class="op">%&gt;%</span></span>
+<span id="cb5-7"><a href="index.html#cb5-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Type of the Variables&quot;</span>)</span></code></pre></div>
 <table>
 <caption><span id="tab:type-table">Table 1.1: </span>Type of the Variables</caption>
 <thead>
 <tr class="header">
-<th align="left">Variables</th>
+<th align="left">Variable</th>
 <th align="left">Type</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">wage</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="even">
 <td align="left">lwage</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="odd">
 <td align="left">sex</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="even">
 <td align="left">shs</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="odd">
 <td align="left">hsg</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="even">
 <td align="left">scl</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="odd">
 <td align="left">clg</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="even">
 <td align="left">ad</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="odd">
 <td align="left">mw</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="even">
 <td align="left">so</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="odd">
 <td align="left">we</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="even">
 <td align="left">ne</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="odd">
 <td align="left">exp1</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="even">
 <td align="left">exp2</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="odd">
 <td align="left">exp3</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="even">
 <td align="left">exp4</td>
-<td align="left">character</td>
+<td align="left">numeric</td>
 </tr>
 <tr class="odd">
 <td align="left">occ</td>
-<td align="left">character</td>
+<td align="left">factor</td>
 </tr>
 <tr class="even">
 <td align="left">occ2</td>
-<td align="left">character</td>
+<td align="left">factor</td>
 </tr>
 <tr class="odd">
 <td align="left">ind</td>
-<td align="left">character</td>
+<td align="left">factor</td>
 </tr>
 <tr class="even">
 <td align="left">ind2</td>
-<td align="left">character</td>
+<td align="left">factor</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="index.html#cb6-1" aria-hidden="true"></a><span class="co"># data.info()</span></span>
+<span id="cb6-2"><a href="index.html#cb6-2" aria-hidden="true"></a></span>
+<span id="cb6-3"><a href="index.html#cb6-3" aria-hidden="true"></a><span class="co"># data.describe()</span></span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Give structure to the variables</li>
 </ol>
 <p>We are constructing the output variable <span class="math inline">\(Y\)</span> and the matrix <span class="math inline">\(Z\)</span> which includes the characteristics of workers that are given in the data.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="index.html#cb6-1" aria-hidden="true"></a><span class="co"># Calculate the log wage.</span></span>
-<span id="cb6-2"><a href="index.html#cb6-2" aria-hidden="true"></a>Y &lt;-<span class="st"> </span><span class="kw">log</span>(data<span class="op">$</span>wage)</span>
-<span id="cb6-3"><a href="index.html#cb6-3" aria-hidden="true"></a><span class="co"># Number of observaciones</span></span>
-<span id="cb6-4"><a href="index.html#cb6-4" aria-hidden="true"></a>n &lt;-<span class="st"> </span><span class="kw">length</span>(Y)</span>
-<span id="cb6-5"><a href="index.html#cb6-5" aria-hidden="true"></a><span class="co"># Regressors</span></span>
-<span id="cb6-6"><a href="index.html#cb6-6" aria-hidden="true"></a>Z &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;wage&quot;</span>,<span class="st">&quot;lwage&quot;</span>)]</span>
-<span id="cb6-7"><a href="index.html#cb6-7" aria-hidden="true"></a><span class="co"># Number of regressors</span></span>
-<span id="cb6-8"><a href="index.html#cb6-8" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">dim</span>(Z)[<span class="dv">2</span>]</span></code></pre></div>
-<p>Number of observation: 5150
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="index.html#cb7-1" aria-hidden="true"></a><span class="co"># Calculate the log wage.</span></span>
+<span id="cb7-2"><a href="index.html#cb7-2" aria-hidden="true"></a>Y &lt;-<span class="st"> </span><span class="kw">log</span>(data<span class="op">$</span>wage)</span>
+<span id="cb7-3"><a href="index.html#cb7-3" aria-hidden="true"></a><span class="co"># Number of observaciones</span></span>
+<span id="cb7-4"><a href="index.html#cb7-4" aria-hidden="true"></a>n &lt;-<span class="st"> </span><span class="kw">length</span>(Y)</span>
+<span id="cb7-5"><a href="index.html#cb7-5" aria-hidden="true"></a><span class="co"># Regressors</span></span>
+<span id="cb7-6"><a href="index.html#cb7-6" aria-hidden="true"></a>Z &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;wage&quot;</span>,<span class="st">&quot;lwage&quot;</span>)]</span>
+<span id="cb7-7"><a href="index.html#cb7-7" aria-hidden="true"></a><span class="co"># Number of regressors</span></span>
+<span id="cb7-8"><a href="index.html#cb7-8" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">dim</span>(Z)[<span class="dv">2</span>]</span></code></pre></div>
+<p>Number of observation: 5150<br />
 Number of raw regressors:2</p>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="index.html#cb8-1" aria-hidden="true"></a><span class="co">## Calculate the log wage.</span></span>
+<span id="cb8-2"><a href="index.html#cb8-2" aria-hidden="true"></a><span class="co"># Y = np.log2(data[&#39;wage&#39;]) </span></span>
+<span id="cb8-3"><a href="index.html#cb8-3" aria-hidden="true"></a><span class="co">## Number of observaciones</span></span>
+<span id="cb8-4"><a href="index.html#cb8-4" aria-hidden="true"></a><span class="co"># n = len(Y)</span></span>
+<span id="cb8-5"><a href="index.html#cb8-5" aria-hidden="true"></a><span class="co">## Regressors</span></span>
+<span id="cb8-6"><a href="index.html#cb8-6" aria-hidden="true"></a><span class="co"># z = data.loc[:, ~data.columns.isin([&#39;wage&#39;, &#39;lwage&#39;,&#39;Unnamed: 0&#39;])]</span></span>
+<span id="cb8-7"><a href="index.html#cb8-7" aria-hidden="true"></a><span class="co">## Number of regressors</span></span>
+<span id="cb8-8"><a href="index.html#cb8-8" aria-hidden="true"></a><span class="co"># p = z.shape[1]</span></span>
+<span id="cb8-9"><a href="index.html#cb8-9" aria-hidden="true"></a><span class="co"># print(&quot;Number of observation:&quot;, n, &#39;\n&#39;)</span></span>
+<span id="cb8-10"><a href="index.html#cb8-10" aria-hidden="true"></a><span class="co"># print( &quot;Number of raw regressors:&quot;, p)</span></span></code></pre></div>
+</div>
+</div>
 <ol start="4" style="list-style-type: decimal">
 <li>For the outcome variable wage and a subset of the raw regressors, we calculate the empirical mean to get familiar with the data.</li>
 </ol>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="index.html#cb7-1" aria-hidden="true"></a><span class="co"># Select the variables.</span></span>
-<span id="cb7-2"><a href="index.html#cb7-2" aria-hidden="true"></a>Z_subset &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;lwage&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;shs&quot;</span>,<span class="st">&quot;hsg&quot;</span>,<span class="st">&quot;scl&quot;</span>,<span class="st">&quot;clg&quot;</span>,<span class="st">&quot;ad&quot;</span>,<span class="st">&quot;mw&quot;</span>,<span class="st">&quot;so&quot;</span>,<span class="st">&quot;we&quot;</span>,<span class="st">&quot;ne&quot;</span>,<span class="st">&quot;exp1&quot;</span>)]</span>
-<span id="cb7-3"><a href="index.html#cb7-3" aria-hidden="true"></a></span>
-<span id="cb7-4"><a href="index.html#cb7-4" aria-hidden="true"></a><span class="co"># Create table</span></span>
-<span id="cb7-5"><a href="index.html#cb7-5" aria-hidden="true"></a>table1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">as.numeric</span>(<span class="kw">lapply</span>(Z_subset,mean))) <span class="op">%&gt;%</span></span>
-<span id="cb7-6"><a href="index.html#cb7-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Variables =</span> <span class="kw">c</span>(<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Some High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;College Graduate&quot;</span>, <span class="st">&quot;Advanced Degree&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Experience&quot;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb7-7"><a href="index.html#cb7-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">Sample Mean</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">as.numeric.lapply.Z_subset..mean..</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
-<span id="cb7-8"><a href="index.html#cb7-8" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)</span>
-<span id="cb7-9"><a href="index.html#cb7-9" aria-hidden="true"></a></span>
-<span id="cb7-10"><a href="index.html#cb7-10" aria-hidden="true"></a><span class="co"># HTML table</span></span>
-<span id="cb7-11"><a href="index.html#cb7-11" aria-hidden="true"></a>table1 <span class="op">%&gt;%</span></span>
-<span id="cb7-12"><a href="index.html#cb7-12" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics&quot;</span>)</span></code></pre></div>
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="index.html#cb9-1" aria-hidden="true"></a><span class="co"># Select the variables.</span></span>
+<span id="cb9-2"><a href="index.html#cb9-2" aria-hidden="true"></a>Z_subset &lt;-<span class="st"> </span>data[,<span class="kw">c</span>(<span class="st">&quot;lwage&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;shs&quot;</span>,<span class="st">&quot;hsg&quot;</span>,<span class="st">&quot;scl&quot;</span>,<span class="st">&quot;clg&quot;</span>,<span class="st">&quot;ad&quot;</span>,<span class="st">&quot;mw&quot;</span>,<span class="st">&quot;so&quot;</span>,<span class="st">&quot;we&quot;</span>,<span class="st">&quot;ne&quot;</span>,<span class="st">&quot;exp1&quot;</span>)]</span>
+<span id="cb9-3"><a href="index.html#cb9-3" aria-hidden="true"></a><span class="co"># Create table</span></span>
+<span id="cb9-4"><a href="index.html#cb9-4" aria-hidden="true"></a>table1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">as.numeric</span>(<span class="kw">lapply</span>(Z_subset,mean))) <span class="op">%&gt;%</span></span>
+<span id="cb9-5"><a href="index.html#cb9-5" aria-hidden="true"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Variables =</span> <span class="kw">c</span>(<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Some High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;College Graduate&quot;</span>, <span class="st">&quot;Advanced Degree&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Experience&quot;</span>)) <span class="op">%&gt;%</span></span>
+<span id="cb9-6"><a href="index.html#cb9-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">rename</span>(<span class="st">`</span><span class="dt">Sample Mean</span><span class="st">`</span> =<span class="st"> `</span><span class="dt">as.numeric.lapply.Z_subset..mean..</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
+<span id="cb9-7"><a href="index.html#cb9-7" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(<span class="dv">2</span>,<span class="dv">1</span>)</span>
+<span id="cb9-8"><a href="index.html#cb9-8" aria-hidden="true"></a><span class="co"># HTML table</span></span>
+<span id="cb9-9"><a href="index.html#cb9-9" aria-hidden="true"></a>table1 <span class="op">%&gt;%</span></span>
+<span id="cb9-10"><a href="index.html#cb9-10" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics&quot;</span>)</span></code></pre></div>
 <table>
 <caption><span id="tab:table-one">Table 1.2: </span>Descriptive Statistics</caption>
 <thead>
@@ -406,9 +447,25 @@ Number of raw regressors:2</p>
 </tr>
 </tbody>
 </table>
-<p>E.g., the share of female workers in our sample is <span class="math inline">\(~44% (sex=1\)</span> if female).</p>
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="index.html#cb10-1" aria-hidden="true"></a><span class="co"># Z_subset = data.loc[:, data.columns.isin([&quot;lwage&quot;,&quot;sex&quot;,&quot;shs&quot;,&quot;hsg&quot;,&quot;scl&quot;,&quot;clg&quot;,&quot;ad&quot;,&quot;mw&quot;,&quot;so&quot;,&quot;we&quot;,&quot;ne&quot;,&quot;exp1&quot;])]</span></span>
+<span id="cb10-2"><a href="index.html#cb10-2" aria-hidden="true"></a><span class="co"># table = Z_subset.mean(axis=0)</span></span>
+<span id="cb10-3"><a href="index.html#cb10-3" aria-hidden="true"></a><span class="co"># table</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="index.html#cb11-1" aria-hidden="true"></a><span class="co"># table = pd.DataFrame(data=table, columns={&quot;Sample mean&quot;:&quot;0&quot;} )</span></span>
+<span id="cb11-2"><a href="index.html#cb11-2" aria-hidden="true"></a><span class="co"># table.index</span></span>
+<span id="cb11-3"><a href="index.html#cb11-3" aria-hidden="true"></a><span class="co"># index1 = list(table.index)</span></span>
+<span id="cb11-4"><a href="index.html#cb11-4" aria-hidden="true"></a><span class="co"># index2 = [&quot;Log Wage&quot;,&quot;Sex&quot;,&quot;Some High School&quot;,&quot;High School Graduate&quot;,\</span></span>
+<span id="cb11-5"><a href="index.html#cb11-5" aria-hidden="true"></a><span class="co">#           &quot;Some College&quot;,&quot;College Graduate&quot;, &quot;Advanced Degree&quot;,&quot;Midwest&quot;,\</span></span>
+<span id="cb11-6"><a href="index.html#cb11-6" aria-hidden="true"></a><span class="co">#           &quot;South&quot;,&quot;West&quot;,&quot;Northeast&quot;,&quot;Experience&quot;]</span></span>
+<span id="cb11-7"><a href="index.html#cb11-7" aria-hidden="true"></a></span>
+<span id="cb11-8"><a href="index.html#cb11-8" aria-hidden="true"></a><span class="co"># table = table.rename(index=dict(zip(index1,index2)))</span></span>
+<span id="cb11-9"><a href="index.html#cb11-9" aria-hidden="true"></a><span class="co"># table</span></span></code></pre></div>
+<p>E.g., the share of female workers in our sample is ~44% (<span class="math inline">\(sex=1\)</span> if female).</p>
 <p>Alternatively, we can also print the table as latex.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="index.html#cb8-1" aria-hidden="true"></a><span class="kw">print</span>(table1, <span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="index.html#cb12-1" aria-hidden="true"></a><span class="kw">print</span>(table1, <span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
 <pre><code>##               Variables Sample Mean
 ## 1              Log Wage  2.97078670
 ## 2                   Sex  0.44446602
@@ -422,6 +479,15 @@ Number of raw regressors:2</p>
 ## 10                 West  0.21611650
 ## 11            Northeast  0.22776699
 ## 12           Experience 13.76058252</code></pre>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="index.html#cb14-1" aria-hidden="true"></a><span class="co"># print(table.to_latex())</span></span></code></pre></div>
+</div>
+</div>
 </div>
 </div>
 <div id="prediction-question" class="section level2" number="1.3">
@@ -440,9 +506,14 @@ Number of raw regressors:2</p>
 </ul>
 <p>Using the <strong>Flexible Model</strong>, enables us to approximate the real relationship by a more complex regression model and therefore to reduce the bias. The <strong>Flexible Model</strong> increases the range of potential shapes of the estimated regression function. In general, flexible models often deliver good prediction accuracy but give models which are harder to interpret.</p>
 <p>Now, let us fit both models to our data by running ordinary least squares (ols):</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="index.html#cb10-1" aria-hidden="true"></a>basic &lt;-<span class="st"> </span>lwage<span class="op">~</span><span class="st"> </span>(sex <span class="op">+</span><span class="st"> </span>exp1 <span class="op">+</span><span class="st"> </span>shs <span class="op">+</span><span class="st"> </span>hsg<span class="op">+</span><span class="st"> </span>scl <span class="op">+</span><span class="st"> </span>clg <span class="op">+</span><span class="st"> </span>mw <span class="op">+</span><span class="st"> </span>so <span class="op">+</span><span class="st"> </span>we<span class="op">+</span>occ2<span class="op">+</span>ind2)</span>
-<span id="cb10-2"><a href="index.html#cb10-2" aria-hidden="true"></a>regbasic &lt;-<span class="st"> </span><span class="kw">lm</span>(basic, <span class="dt">data=</span>data)</span>
-<span id="cb10-3"><a href="index.html#cb10-3" aria-hidden="true"></a>regbasic <span class="co"># estimated coefficients</span></span></code></pre></div>
+<div id="basic-model" class="section level3" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> Basic Model:</h3>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="index.html#cb15-1" aria-hidden="true"></a>basic &lt;-<span class="st"> </span>lwage<span class="op">~</span><span class="st"> </span>(sex <span class="op">+</span><span class="st"> </span>exp1 <span class="op">+</span><span class="st"> </span>shs <span class="op">+</span><span class="st"> </span>hsg<span class="op">+</span><span class="st"> </span>scl <span class="op">+</span><span class="st"> </span>clg <span class="op">+</span><span class="st"> </span>mw <span class="op">+</span><span class="st"> </span>so <span class="op">+</span><span class="st"> </span>we<span class="op">+</span>occ2<span class="op">+</span>ind2)</span>
+<span id="cb15-2"><a href="index.html#cb15-2" aria-hidden="true"></a>regbasic &lt;-<span class="st"> </span><span class="kw">lm</span>(basic, <span class="dt">data=</span>data)</span>
+<span id="cb15-3"><a href="index.html#cb15-3" aria-hidden="true"></a>regbasic <span class="co"># estimated coefficients</span></span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = basic, data = data)
@@ -467,9 +538,30 @@ Number of raw regressors:2</p>
 ##      ind220       ind221       ind222  
 ##   -0.551932    -0.316679    -0.118971</code></pre>
 <p>Number of regressors in the basic model <strong>51</strong>.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="index.html#cb12-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
-<span id="cb12-2"><a href="index.html#cb12-2" aria-hidden="true"></a>regflex &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>data)</span>
-<span id="cb12-3"><a href="index.html#cb12-3" aria-hidden="true"></a>regflex <span class="co"># estimated coefficients</span></span></code></pre></div>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python</strong></p>
+<p>Regression packages:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="index.html#cb17-1" aria-hidden="true"></a><span class="co"># import statsmodels.api as sm</span></span>
+<span id="cb17-2"><a href="index.html#cb17-2" aria-hidden="true"></a><span class="co"># import statsmodels.formula.api as smf</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="index.html#cb18-1" aria-hidden="true"></a><span class="co"># basic = &#39;lwage ~ sex + exp1 + shs + hsg+ scl + clg + mw + so + we + occ2+ ind2&#39;</span></span>
+<span id="cb18-2"><a href="index.html#cb18-2" aria-hidden="true"></a><span class="co"># basic_results = smf.ols(basic , data=data).fit()</span></span>
+<span id="cb18-3"><a href="index.html#cb18-3" aria-hidden="true"></a><span class="co"># print(basic_results.summary()) # estimated coefficients</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="index.html#cb19-1" aria-hidden="true"></a><span class="co"># print( &quot;Number of regressors in the basic model:&quot;,len(basic_results.params), &#39;\n&#39;)  # number of regressors in the Basic Model</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="flexible-model" class="section level3" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Flexible Model:</h3>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="index.html#cb20-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
+<span id="cb20-2"><a href="index.html#cb20-2" aria-hidden="true"></a>regflex &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>data)</span>
+<span id="cb20-3"><a href="index.html#cb20-3" aria-hidden="true"></a>regflex <span class="co"># estimated coefficients</span></span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = flex, data = data)
@@ -558,16 +650,47 @@ Number of raw regressors:2</p>
 ## ind220:exp4  ind221:exp4  ind222:exp4      mw:exp4      so:exp4      we:exp4  
 ##  -0.1468554   -0.2032619   -0.1480951    0.0062439    0.0003145    0.0017685</code></pre>
 <p>Number of regressors in the flexible model:<strong>246</strong>.</p>
-<ul>
-<li><strong>Lasso Model</strong></li>
-</ul>
-<p>First, we import an essential library.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="index.html#cb14-1" aria-hidden="true"></a><span class="kw">library</span>(hdm)</span></code></pre></div>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="index.html#cb22-1" aria-hidden="true"></a><span class="co"># flex = &#39;lwage ~ sex + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)&#39;</span></span>
+<span id="cb22-2"><a href="index.html#cb22-2" aria-hidden="true"></a><span class="co"># flex_results_0 = smf.ols(flex , data=data)</span></span>
+<span id="cb22-3"><a href="index.html#cb22-3" aria-hidden="true"></a><span class="co"># flex_results = smf.ols(flex , data=data).fit()</span></span>
+<span id="cb22-4"><a href="index.html#cb22-4" aria-hidden="true"></a><span class="co"># print(flex_results.summary()) # estimated coefficients</span></span>
+<span id="cb22-5"><a href="index.html#cb22-5" aria-hidden="true"></a><span class="co"># print( &quot;Number of regressors in the basic model:&quot;,len(flex_results.params), &#39;\n&#39;)</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="lasso-model" class="section level3" number="1.3.3">
+<h3><span class="header-section-number">1.3.3</span> Lasso Model:</h3>
+<p>First, we import the essential libraries.</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="index.html#cb23-1" aria-hidden="true"></a><span class="kw">library</span>(hdm)</span></code></pre></div>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="index.html#cb24-1" aria-hidden="true"></a><span class="co"># from sklearn.linear_model import LassoCV</span></span>
+<span id="cb24-2"><a href="index.html#cb24-2" aria-hidden="true"></a><span class="co"># from sklearn import linear_model</span></span>
+<span id="cb24-3"><a href="index.html#cb24-3" aria-hidden="true"></a><span class="co"># from sklearn.preprocessing import PolynomialFeatures</span></span>
+<span id="cb24-4"><a href="index.html#cb24-4" aria-hidden="true"></a><span class="co"># from sklearn.metrics import mean_squared_error</span></span></code></pre></div>
+</div>
+</div>
 <p>Then, we estimate the lasso model.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="index.html#cb15-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
-<span id="cb15-2"><a href="index.html#cb15-2" aria-hidden="true"></a>lassoreg&lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex, <span class="dt">data=</span>data)</span>
-<span id="cb15-3"><a href="index.html#cb15-3" aria-hidden="true"></a></span>
-<span id="cb15-4"><a href="index.html#cb15-4" aria-hidden="true"></a>sumlasso&lt;-<span class="st"> </span><span class="kw">summary</span>(lassoreg)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="index.html#cb25-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
+<span id="cb25-2"><a href="index.html#cb25-2" aria-hidden="true"></a>lassoreg&lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex, <span class="dt">data=</span>data)</span>
+<span id="cb25-3"><a href="index.html#cb25-3" aria-hidden="true"></a></span>
+<span id="cb25-4"><a href="index.html#cb25-4" aria-hidden="true"></a>sumlasso&lt;-<span class="st"> </span><span class="kw">summary</span>(lassoreg)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## rlasso.formula(formula = flex, data = data)
@@ -833,24 +956,54 @@ Number of raw regressors:2</p>
 ## Multiple R-squared:  0.2779
 ## Adjusted R-squared:  0.2745
 ## Joint significance test:
-##  the sup score statistic for joint significance test is 89.09 with a p-value of 0.004</code></pre>
+##  the sup score statistic for joint significance test is 89.09 with a p-value of 0.008</code></pre>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="index.html#cb27-1" aria-hidden="true"></a><span class="co"># Get exogenous variables from flexible model</span></span>
+<span id="cb27-2"><a href="index.html#cb27-2" aria-hidden="true"></a><span class="co"># X = flex_results_0.exog</span></span>
+<span id="cb27-3"><a href="index.html#cb27-3" aria-hidden="true"></a><span class="co"># X.shape</span></span>
+<span id="cb27-4"><a href="index.html#cb27-4" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb27-5"><a href="index.html#cb27-5" aria-hidden="true"></a><span class="co"># # Set endogenous variable</span></span>
+<span id="cb27-6"><a href="index.html#cb27-6" aria-hidden="true"></a><span class="co"># lwage = data[&quot;lwage&quot;]</span></span>
+<span id="cb27-7"><a href="index.html#cb27-7" aria-hidden="true"></a><span class="co"># lwage.shape</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="index.html#cb28-1" aria-hidden="true"></a><span class="co"># alpha=0.1</span></span>
+<span id="cb28-2"><a href="index.html#cb28-2" aria-hidden="true"></a><span class="co"># # Set penalty value = 0.1</span></span>
+<span id="cb28-3"><a href="index.html#cb28-3" aria-hidden="true"></a><span class="co"># #reg = linear_model.Lasso(alpha=0.1/np.log(len(lwage)))</span></span>
+<span id="cb28-4"><a href="index.html#cb28-4" aria-hidden="true"></a><span class="co"># reg = linear_model.Lasso(alpha = alpha)</span></span>
+<span id="cb28-5"><a href="index.html#cb28-5" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb28-6"><a href="index.html#cb28-6" aria-hidden="true"></a><span class="co"># # LASSO regression for flexible model</span></span>
+<span id="cb28-7"><a href="index.html#cb28-7" aria-hidden="true"></a><span class="co"># reg.fit(X, lwage)</span></span>
+<span id="cb28-8"><a href="index.html#cb28-8" aria-hidden="true"></a><span class="co"># lwage_lasso_fitted = reg.fit(X, lwage).predict( X )</span></span>
+<span id="cb28-9"><a href="index.html#cb28-9" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb28-10"><a href="index.html#cb28-10" aria-hidden="true"></a><span class="co"># # coefficients </span></span>
+<span id="cb28-11"><a href="index.html#cb28-11" aria-hidden="true"></a><span class="co"># reg.coef_</span></span>
+<span id="cb28-12"><a href="index.html#cb28-12" aria-hidden="true"></a><span class="co"># print(&#39;Lasso Regression: R^2 score&#39;, reg.score(X, lwage))</span></span></code></pre></div>
+</div>
+</div>
 <p>Now, we can evaluate the performance of both models based on the (adjusted) <span class="math inline">\(R^2_{sample}\)</span> and the (adjusted) <span class="math inline">\(MSE_{sample}\)</span>:</p>
 <ol style="list-style-type: decimal">
 <li>R-Squared <span class="math inline">\((R^2)\)</span></li>
 </ol>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="index.html#cb17-1" aria-hidden="true"></a><span class="co"># Summary from basic and flexible model.</span></span>
-<span id="cb17-2"><a href="index.html#cb17-2" aria-hidden="true"></a>sumbasic &lt;-<span class="st"> </span><span class="kw">summary</span>(regbasic)</span>
-<span id="cb17-3"><a href="index.html#cb17-3" aria-hidden="true"></a>sumflex &lt;-<span class="st"> </span><span class="kw">summary</span>(regflex)</span>
-<span id="cb17-4"><a href="index.html#cb17-4" aria-hidden="true"></a></span>
-<span id="cb17-5"><a href="index.html#cb17-5" aria-hidden="true"></a><span class="co">#  R-squared from basic, flexible and lasso models</span></span>
-<span id="cb17-6"><a href="index.html#cb17-6" aria-hidden="true"></a>R2<span class="fl">.1</span> &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>r.squared</span>
-<span id="cb17-7"><a href="index.html#cb17-7" aria-hidden="true"></a>R2.adj1 &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>adj.r.squared</span>
-<span id="cb17-8"><a href="index.html#cb17-8" aria-hidden="true"></a></span>
-<span id="cb17-9"><a href="index.html#cb17-9" aria-hidden="true"></a>R2<span class="fl">.2</span> &lt;-<span class="st"> </span>sumflex<span class="op">$</span>r.squared</span>
-<span id="cb17-10"><a href="index.html#cb17-10" aria-hidden="true"></a>R2.adj2 &lt;-<span class="st"> </span>sumflex<span class="op">$</span>adj.r.squared</span>
-<span id="cb17-11"><a href="index.html#cb17-11" aria-hidden="true"></a></span>
-<span id="cb17-12"><a href="index.html#cb17-12" aria-hidden="true"></a>R2.L &lt;-<span class="st"> </span>sumlasso<span class="op">$</span>r.squared</span>
-<span id="cb17-13"><a href="index.html#cb17-13" aria-hidden="true"></a>R2.adjL &lt;-<span class="st"> </span>sumlasso<span class="op">$</span>adj.r.squared</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="index.html#cb29-1" aria-hidden="true"></a><span class="co"># Summary from basic and flexible model.</span></span>
+<span id="cb29-2"><a href="index.html#cb29-2" aria-hidden="true"></a>sumbasic &lt;-<span class="st"> </span><span class="kw">summary</span>(regbasic)</span>
+<span id="cb29-3"><a href="index.html#cb29-3" aria-hidden="true"></a>sumflex &lt;-<span class="st"> </span><span class="kw">summary</span>(regflex)</span>
+<span id="cb29-4"><a href="index.html#cb29-4" aria-hidden="true"></a></span>
+<span id="cb29-5"><a href="index.html#cb29-5" aria-hidden="true"></a><span class="co">#  R-squared from basic, flexible and lasso models</span></span>
+<span id="cb29-6"><a href="index.html#cb29-6" aria-hidden="true"></a>R2<span class="fl">.1</span> &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>r.squared</span>
+<span id="cb29-7"><a href="index.html#cb29-7" aria-hidden="true"></a>R2.adj1 &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>adj.r.squared</span>
+<span id="cb29-8"><a href="index.html#cb29-8" aria-hidden="true"></a></span>
+<span id="cb29-9"><a href="index.html#cb29-9" aria-hidden="true"></a>R2<span class="fl">.2</span> &lt;-<span class="st"> </span>sumflex<span class="op">$</span>r.squared</span>
+<span id="cb29-10"><a href="index.html#cb29-10" aria-hidden="true"></a>R2.adj2 &lt;-<span class="st"> </span>sumflex<span class="op">$</span>adj.r.squared</span>
+<span id="cb29-11"><a href="index.html#cb29-11" aria-hidden="true"></a></span>
+<span id="cb29-12"><a href="index.html#cb29-12" aria-hidden="true"></a>R2.L &lt;-<span class="st"> </span>sumlasso<span class="op">$</span>r.squared</span>
+<span id="cb29-13"><a href="index.html#cb29-13" aria-hidden="true"></a>R2.adjL &lt;-<span class="st"> </span>sumlasso<span class="op">$</span>adj.r.squared</span></code></pre></div>
 <ul>
 <li>R-squared for the basic model: 0.3100465.</li>
 <li>Adjusted R-squared for the basic model: 0.3032809.</li>
@@ -859,21 +1012,46 @@ Number of raw regressors:2</p>
 <li>R-squared for the lasso with flexible model: 0.2778653.</li>
 <li>Adjusted R-squared for the flexible model: 0.2744836.</li>
 </ul>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python</strong></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="index.html#cb30-1" aria-hidden="true"></a><span class="co"># Assess the predictive performance</span></span>
+<span id="cb30-2"><a href="index.html#cb30-2" aria-hidden="true"></a><span class="co"># R2_1 = basic_results.rsquared</span></span>
+<span id="cb30-3"><a href="index.html#cb30-3" aria-hidden="true"></a><span class="co"># print(&quot;R-squared for the basic model: &quot;, R2_1, &quot;\n&quot;)</span></span>
+<span id="cb30-4"><a href="index.html#cb30-4" aria-hidden="true"></a><span class="co"># R2_adj1 = basic_results.rsquared_adj</span></span>
+<span id="cb30-5"><a href="index.html#cb30-5" aria-hidden="true"></a><span class="co"># print(&quot;adjusted R-squared for the basic model: &quot;, R2_adj1, &quot;\n&quot;)</span></span>
+<span id="cb30-6"><a href="index.html#cb30-6" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb30-7"><a href="index.html#cb30-7" aria-hidden="true"></a><span class="co"># R2_2 = flex_results.rsquared</span></span>
+<span id="cb30-8"><a href="index.html#cb30-8" aria-hidden="true"></a><span class="co"># print(&quot;R-squared for the basic model: &quot;, R2_2, &quot;\n&quot;)</span></span>
+<span id="cb30-9"><a href="index.html#cb30-9" aria-hidden="true"></a><span class="co"># R2_adj2 = flex_results.rsquared_adj</span></span>
+<span id="cb30-10"><a href="index.html#cb30-10" aria-hidden="true"></a><span class="co"># print(&quot;adjusted R-squared for the basic model: &quot;, R2_adj2, &quot;\n&quot;)</span></span>
+<span id="cb30-11"><a href="index.html#cb30-11" aria-hidden="true"></a><span class="co"># R2_L = reg.score(flex_results_0.exog, lwage)</span></span>
+<span id="cb30-12"><a href="index.html#cb30-12" aria-hidden="true"></a><span class="co"># print(&quot;R-squared for LASSO: &quot;, R2_L, &quot;\n&quot;)</span></span>
+<span id="cb30-13"><a href="index.html#cb30-13" aria-hidden="true"></a><span class="co"># R2_adjL = 1 - (1-R2_L)*(len(lwage)-1)/(len(lwage)-X.shape[1]-1)</span></span>
+<span id="cb30-14"><a href="index.html#cb30-14" aria-hidden="true"></a><span class="co"># print(&quot;adjusted R-squared for LASSO: &quot;, R2_adjL, &quot;\n&quot;)</span></span></code></pre></div>
+</div>
+</div>
 <ol start="2" style="list-style-type: decimal">
 <li>Mean Squared Error <span class="math inline">\(MSE\)</span></li>
 </ol>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="index.html#cb18-1" aria-hidden="true"></a>MSE1 &lt;-<span class="st"> </span><span class="kw">mean</span>(sumbasic<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
-<span id="cb18-2"><a href="index.html#cb18-2" aria-hidden="true"></a>p1 &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>df[<span class="dv">1</span>] <span class="co"># number of regressors</span></span>
-<span id="cb18-3"><a href="index.html#cb18-3" aria-hidden="true"></a>MSE.adj1 &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>p1))<span class="op">*</span>MSE1</span>
-<span id="cb18-4"><a href="index.html#cb18-4" aria-hidden="true"></a></span>
-<span id="cb18-5"><a href="index.html#cb18-5" aria-hidden="true"></a></span>
-<span id="cb18-6"><a href="index.html#cb18-6" aria-hidden="true"></a>MSE2 &lt;-<span class="kw">mean</span>(sumflex<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
-<span id="cb18-7"><a href="index.html#cb18-7" aria-hidden="true"></a>p2 &lt;-<span class="st"> </span>sumflex<span class="op">$</span>df[<span class="dv">1</span>]</span>
-<span id="cb18-8"><a href="index.html#cb18-8" aria-hidden="true"></a>MSE.adj2 &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>p2))<span class="op">*</span>MSE2</span>
-<span id="cb18-9"><a href="index.html#cb18-9" aria-hidden="true"></a></span>
-<span id="cb18-10"><a href="index.html#cb18-10" aria-hidden="true"></a>MSEL &lt;-<span class="kw">mean</span>(sumlasso<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
-<span id="cb18-11"><a href="index.html#cb18-11" aria-hidden="true"></a>pL &lt;-<span class="st"> </span><span class="kw">length</span>(sumlasso<span class="op">$</span>coef)</span>
-<span id="cb18-12"><a href="index.html#cb18-12" aria-hidden="true"></a>MSE.adjL &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>pL))<span class="op">*</span>MSEL</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="index.html#cb31-1" aria-hidden="true"></a>MSE1 &lt;-<span class="st"> </span><span class="kw">mean</span>(sumbasic<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb31-2"><a href="index.html#cb31-2" aria-hidden="true"></a>p1 &lt;-<span class="st"> </span>sumbasic<span class="op">$</span>df[<span class="dv">1</span>] <span class="co"># number of regressors</span></span>
+<span id="cb31-3"><a href="index.html#cb31-3" aria-hidden="true"></a>MSE.adj1 &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>p1))<span class="op">*</span>MSE1</span>
+<span id="cb31-4"><a href="index.html#cb31-4" aria-hidden="true"></a></span>
+<span id="cb31-5"><a href="index.html#cb31-5" aria-hidden="true"></a></span>
+<span id="cb31-6"><a href="index.html#cb31-6" aria-hidden="true"></a>MSE2 &lt;-<span class="kw">mean</span>(sumflex<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb31-7"><a href="index.html#cb31-7" aria-hidden="true"></a>p2 &lt;-<span class="st"> </span>sumflex<span class="op">$</span>df[<span class="dv">1</span>]</span>
+<span id="cb31-8"><a href="index.html#cb31-8" aria-hidden="true"></a>MSE.adj2 &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>p2))<span class="op">*</span>MSE2</span>
+<span id="cb31-9"><a href="index.html#cb31-9" aria-hidden="true"></a></span>
+<span id="cb31-10"><a href="index.html#cb31-10" aria-hidden="true"></a>MSEL &lt;-<span class="kw">mean</span>(sumlasso<span class="op">$</span>res<span class="op">^</span><span class="dv">2</span>)</span>
+<span id="cb31-11"><a href="index.html#cb31-11" aria-hidden="true"></a>pL &lt;-<span class="st"> </span><span class="kw">length</span>(sumlasso<span class="op">$</span>coef)</span>
+<span id="cb31-12"><a href="index.html#cb31-12" aria-hidden="true"></a>MSE.adjL &lt;-<span class="st"> </span>(n<span class="op">/</span>(n<span class="op">-</span>pL))<span class="op">*</span>MSEL</span></code></pre></div>
 <ul>
 <li>MSE for the basic model: 0.2244251</li>
 <li>Adjusted MSE for the basic model: 0.2266697</li>
@@ -882,17 +1060,50 @@ Number of raw regressors:2</p>
 <li>MSE for the lasso flexible model: 0.2348928</li>
 <li>Adjusted MSE for the lasso flexible model: 0.2466758</li>
 </ul>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="index.html#cb19-1" aria-hidden="true"></a>Models &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Basic reg&quot;</span>,<span class="st">&quot;Flexible reg&quot;</span>,<span class="st">&quot;Lasso reg&quot;</span>)</span>
-<span id="cb19-2"><a href="index.html#cb19-2" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">c</span>(p1,p2,pL)</span>
-<span id="cb19-3"><a href="index.html#cb19-3" aria-hidden="true"></a>R_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">c</span>(R2<span class="fl">.1</span>,R2<span class="fl">.2</span>,R2.L)</span>
-<span id="cb19-4"><a href="index.html#cb19-4" aria-hidden="true"></a>MSE &lt;-<span class="st"> </span><span class="kw">c</span>(MSE1,MSE2,MSEL)</span>
-<span id="cb19-5"><a href="index.html#cb19-5" aria-hidden="true"></a>R_<span class="dv">2</span>_adj &lt;-<span class="st"> </span><span class="kw">c</span>(R2.adj1,R2.adj2,R2.adjL)</span>
-<span id="cb19-6"><a href="index.html#cb19-6" aria-hidden="true"></a>MSE_adj &lt;-<span class="st"> </span><span class="kw">c</span>(MSE.adj1,MSE.adj2,MSE.adjL)</span>
-<span id="cb19-7"><a href="index.html#cb19-7" aria-hidden="true"></a></span>
-<span id="cb19-8"><a href="index.html#cb19-8" aria-hidden="true"></a><span class="kw">data.frame</span>(Models,p,R_<span class="dv">2</span>,MSE,R_<span class="dv">2</span>_adj,MSE_adj) <span class="op">%&gt;%</span></span>
-<span id="cb19-9"><a href="index.html#cb19-9" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics&quot;</span>)</span></code></pre></div>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="index.html#cb32-1" aria-hidden="true"></a><span class="co"># calculating the MSE</span></span>
+<span id="cb32-2"><a href="index.html#cb32-2" aria-hidden="true"></a><span class="co"># MSE1 =  np.mean(basic_results.resid**2)</span></span>
+<span id="cb32-3"><a href="index.html#cb32-3" aria-hidden="true"></a><span class="co"># print(&quot;MSE for the basic model: &quot;, MSE1, &quot;\n&quot;)</span></span>
+<span id="cb32-4"><a href="index.html#cb32-4" aria-hidden="true"></a><span class="co"># p1 = len(basic_results.params) # number of regressors</span></span>
+<span id="cb32-5"><a href="index.html#cb32-5" aria-hidden="true"></a><span class="co"># n = len(lwage)</span></span>
+<span id="cb32-6"><a href="index.html#cb32-6" aria-hidden="true"></a><span class="co"># MSE_adj1  = (n/(n-p1))*MSE1</span></span>
+<span id="cb32-7"><a href="index.html#cb32-7" aria-hidden="true"></a><span class="co"># print(&quot;adjusted MSE for the basic model: &quot;, MSE_adj1, &quot;\n&quot;)</span></span>
+<span id="cb32-8"><a href="index.html#cb32-8" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb32-9"><a href="index.html#cb32-9" aria-hidden="true"></a><span class="co"># MSE2 =  np.mean(flex_results.resid**2)</span></span>
+<span id="cb32-10"><a href="index.html#cb32-10" aria-hidden="true"></a><span class="co"># print(&quot;MSE for the flexible model: &quot;, MSE2, &quot;\n&quot;)</span></span>
+<span id="cb32-11"><a href="index.html#cb32-11" aria-hidden="true"></a><span class="co"># p2 = len(flex_results.params) # number of regressors</span></span>
+<span id="cb32-12"><a href="index.html#cb32-12" aria-hidden="true"></a><span class="co"># n = len(lwage)</span></span>
+<span id="cb32-13"><a href="index.html#cb32-13" aria-hidden="true"></a><span class="co"># MSE_adj2  = (n/(n-p2))*MSE2</span></span>
+<span id="cb32-14"><a href="index.html#cb32-14" aria-hidden="true"></a><span class="co"># print(&quot;adjusted MSE for the flexible model: &quot;, MSE_adj2, &quot;\n&quot;)</span></span>
+<span id="cb32-15"><a href="index.html#cb32-15" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb32-16"><a href="index.html#cb32-16" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb32-17"><a href="index.html#cb32-17" aria-hidden="true"></a><span class="co"># MSEL = mean_squared_error(lwage, lwage_lasso_fitted)</span></span>
+<span id="cb32-18"><a href="index.html#cb32-18" aria-hidden="true"></a><span class="co"># print(&quot;MSE for the LASSO model: &quot;, MSEL, &quot;\n&quot;)</span></span>
+<span id="cb32-19"><a href="index.html#cb32-19" aria-hidden="true"></a><span class="co"># pL = reg.coef_.shape[0] # number of regressors</span></span>
+<span id="cb32-20"><a href="index.html#cb32-20" aria-hidden="true"></a><span class="co"># n = len(lwage)</span></span>
+<span id="cb32-21"><a href="index.html#cb32-21" aria-hidden="true"></a><span class="co"># MSE_adjL  = (n/(n-pL))*MSEL</span></span>
+<span id="cb32-22"><a href="index.html#cb32-22" aria-hidden="true"></a><span class="co"># print(&quot;adjusted MSE for LASSO model: &quot;, MSE_adjL, &quot;\n&quot;)</span></span></code></pre></div>
+</div>
+</div>
+<p>Latex presentation</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="index.html#cb33-1" aria-hidden="true"></a>Models &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Basic reg&quot;</span>,<span class="st">&quot;Flexible reg&quot;</span>,<span class="st">&quot;Lasso reg&quot;</span>)</span>
+<span id="cb33-2"><a href="index.html#cb33-2" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">c</span>(p1,p2,pL)</span>
+<span id="cb33-3"><a href="index.html#cb33-3" aria-hidden="true"></a>R_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">c</span>(R2<span class="fl">.1</span>,R2<span class="fl">.2</span>,R2.L)</span>
+<span id="cb33-4"><a href="index.html#cb33-4" aria-hidden="true"></a>MSE &lt;-<span class="st"> </span><span class="kw">c</span>(MSE1,MSE2,MSEL)</span>
+<span id="cb33-5"><a href="index.html#cb33-5" aria-hidden="true"></a>R_<span class="dv">2</span>_adj &lt;-<span class="st"> </span><span class="kw">c</span>(R2.adj1,R2.adj2,R2.adjL)</span>
+<span id="cb33-6"><a href="index.html#cb33-6" aria-hidden="true"></a>MSE_adj &lt;-<span class="st"> </span><span class="kw">c</span>(MSE.adj1,MSE.adj2,MSE.adjL)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="index.html#cb34-1" aria-hidden="true"></a><span class="kw">data.frame</span>(Models,p,R_<span class="dv">2</span>,MSE,R_<span class="dv">2</span>_adj,MSE_adj) <span class="op">%&gt;%</span></span>
+<span id="cb34-2"><a href="index.html#cb34-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics&quot;</span>)</span></code></pre></div>
 <table>
-<caption><span id="tab:table-two">Table 1.3: </span>Descriptive Statistics</caption>
+<caption><span id="tab:table-two-html">Table 1.3: </span>Descriptive Statistics</caption>
 <thead>
 <tr class="header">
 <th align="left">Models</th>
@@ -930,8 +1141,26 @@ Number of raw regressors:2</p>
 </tr>
 </tbody>
 </table>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="index.html#cb35-1" aria-hidden="true"></a><span class="co"># import array_to_latex as a2l</span></span>
+<span id="cb35-2"><a href="index.html#cb35-2" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb35-3"><a href="index.html#cb35-3" aria-hidden="true"></a><span class="co"># table = np.zeros((3, 5))</span></span>
+<span id="cb35-4"><a href="index.html#cb35-4" aria-hidden="true"></a><span class="co"># table[0,0:5] = [p1, R2_1, MSE1, R2_adj1, MSE_adj1]</span></span>
+<span id="cb35-5"><a href="index.html#cb35-5" aria-hidden="true"></a><span class="co"># table[1,0:5] = [p2, R2_2, MSE2, R2_adj2, MSE_adj2]</span></span>
+<span id="cb35-6"><a href="index.html#cb35-6" aria-hidden="true"></a><span class="co"># table[2,0:5] = [pL, R2_L, MSEL, R2_adjL, MSE_adjL]</span></span>
+<span id="cb35-7"><a href="index.html#cb35-7" aria-hidden="true"></a><span class="co"># table</span></span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="index.html#cb36-1" aria-hidden="true"></a><span class="co"># table = pd.DataFrame(table, columns = [&quot;p&quot;,&quot;$R^2_{sample}$&quot;,&quot;$MSE_{sample}$&quot;,&quot;$R^2_{adjusted}$&quot;, &quot;$MSE_{adjusted}$&quot;], index = [&quot;basic reg&quot;,&quot;flexible reg&quot;, &quot;lasso flex&quot;])</span></span>
+<span id="cb36-2"><a href="index.html#cb36-2" aria-hidden="true"></a><span class="co"># table</span></span></code></pre></div>
+</div>
+</div>
 <p>Considering all measures above, the flexible model performs slightly better than the basic model.</p>
 <p>One procedure to circumvent this issue is to use data splitting that is described and applied in the following.</p>
+</div>
 </div>
 <div id="data-splitting" class="section level2" number="1.4">
 <h2><span class="header-section-number">1.4</span> Data Splitting</h2>
@@ -942,20 +1171,50 @@ Number of raw regressors:2</p>
 <li><p>Use the testing sample for evaluation. Predict the <span class="math inline">\(wage\)</span> of every observation in the testing sample based on the estimated parameters in the training sample.</p></li>
 <li><p>Calculate the <strong>Mean Squared Prediction Error</strong> <span class="math inline">\(MSE_{test}\)</span> based on the testing sample for both prediction models.</p></li>
 </ul>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="index.html#cb20-1" aria-hidden="true"></a><span class="co"># to make the results replicable (generating random numbers)</span></span>
-<span id="cb20-2"><a href="index.html#cb20-2" aria-hidden="true"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb20-3"><a href="index.html#cb20-3" aria-hidden="true"></a><span class="co"># draw (4/5)*n random numbers from 1 to n without replacing them</span></span>
-<span id="cb20-4"><a href="index.html#cb20-4" aria-hidden="true"></a>random_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>n, <span class="kw">floor</span>(n<span class="op">*</span><span class="dv">4</span><span class="op">/</span><span class="dv">5</span>))</span>
-<span id="cb20-5"><a href="index.html#cb20-5" aria-hidden="true"></a><span class="co"># training sample</span></span>
-<span id="cb20-6"><a href="index.html#cb20-6" aria-hidden="true"></a>train &lt;-<span class="st"> </span>data[random_<span class="dv">2</span>,]</span>
-<span id="cb20-7"><a href="index.html#cb20-7" aria-hidden="true"></a><span class="co"># testing sample</span></span>
-<span id="cb20-8"><a href="index.html#cb20-8" aria-hidden="true"></a>test &lt;-<span class="st"> </span>data[<span class="op">-</span>random_<span class="dv">2</span>,] </span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="index.html#cb37-1" aria-hidden="true"></a><span class="co"># to make the results replicable (generating random numbers)</span></span>
+<span id="cb37-2"><a href="index.html#cb37-2" aria-hidden="true"></a><span class="kw">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb37-3"><a href="index.html#cb37-3" aria-hidden="true"></a><span class="co"># draw (4/5)*n random numbers from 1 to n without replacing them</span></span>
+<span id="cb37-4"><a href="index.html#cb37-4" aria-hidden="true"></a>random_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span>n, <span class="kw">floor</span>(n<span class="op">*</span><span class="dv">4</span><span class="op">/</span><span class="dv">5</span>))</span>
+<span id="cb37-5"><a href="index.html#cb37-5" aria-hidden="true"></a><span class="co"># training sample</span></span>
+<span id="cb37-6"><a href="index.html#cb37-6" aria-hidden="true"></a>train &lt;-<span class="st"> </span>data[random_<span class="dv">2</span>,]</span>
+<span id="cb37-7"><a href="index.html#cb37-7" aria-hidden="true"></a><span class="co"># testing sample</span></span>
+<span id="cb37-8"><a href="index.html#cb37-8" aria-hidden="true"></a>test &lt;-<span class="st"> </span>data[<span class="op">-</span>random_<span class="dv">2</span>,]</span></code></pre></div>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="index.html#cb38-1" aria-hidden="true"></a><span class="co"># # Import relevant packages for splitting data</span></span>
+<span id="cb38-2"><a href="index.html#cb38-2" aria-hidden="true"></a><span class="co"># import random</span></span>
+<span id="cb38-3"><a href="index.html#cb38-3" aria-hidden="true"></a><span class="co"># import math</span></span>
+<span id="cb38-4"><a href="index.html#cb38-4" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb38-5"><a href="index.html#cb38-5" aria-hidden="true"></a><span class="co"># # Set Seed</span></span>
+<span id="cb38-6"><a href="index.html#cb38-6" aria-hidden="true"></a><span class="co"># # to make the results replicable (generating random numbers)</span></span>
+<span id="cb38-7"><a href="index.html#cb38-7" aria-hidden="true"></a><span class="co"># np.random.seed(0)</span></span>
+<span id="cb38-8"><a href="index.html#cb38-8" aria-hidden="true"></a><span class="co"># random = np.random.randint(0,n, size=math.floor(n))</span></span>
+<span id="cb38-9"><a href="index.html#cb38-9" aria-hidden="true"></a><span class="co"># data[&quot;random&quot;] = random</span></span>
+<span id="cb38-10"><a href="index.html#cb38-10" aria-hidden="true"></a><span class="co"># random # the array does not change </span></span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="index.html#cb39-1" aria-hidden="true"></a><span class="co"># data_2 = data.sort_values(by=[&#39;random&#39;])</span></span>
+<span id="cb39-2"><a href="index.html#cb39-2" aria-hidden="true"></a><span class="co"># data_2.head()</span></span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="index.html#cb40-1" aria-hidden="true"></a><span class="co"># Create training and testing sample </span></span>
+<span id="cb40-2"><a href="index.html#cb40-2" aria-hidden="true"></a><span class="co"># train = data_2[ : math.floor(n*4/5)]    # training sample</span></span>
+<span id="cb40-3"><a href="index.html#cb40-3" aria-hidden="true"></a><span class="co"># test =  data_2[ math.floor(n*4/5) : ]   # testing sample</span></span>
+<span id="cb40-4"><a href="index.html#cb40-4" aria-hidden="true"></a><span class="co"># print(train.shape)</span></span>
+<span id="cb40-5"><a href="index.html#cb40-5" aria-hidden="true"></a><span class="co"># print(test.shape)</span></span></code></pre></div>
+</div>
+</div>
 <p>The train data dimensions are 4120 rows and 20 columns.</p>
 <p>We estimate the parameters using the training data set.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="index.html#cb21-1" aria-hidden="true"></a><span class="co"># basic model</span></span>
-<span id="cb21-2"><a href="index.html#cb21-2" aria-hidden="true"></a><span class="co"># estimating the parameters in the training sample</span></span>
-<span id="cb21-3"><a href="index.html#cb21-3" aria-hidden="true"></a>regbasic &lt;-<span class="st"> </span><span class="kw">lm</span>(basic, <span class="dt">data=</span>train)</span>
-<span id="cb21-4"><a href="index.html#cb21-4" aria-hidden="true"></a>regbasic</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="index.html#cb41-1" aria-hidden="true"></a><span class="co"># basic model</span></span>
+<span id="cb41-2"><a href="index.html#cb41-2" aria-hidden="true"></a><span class="co"># estimating the parameters in the training sample</span></span>
+<span id="cb41-3"><a href="index.html#cb41-3" aria-hidden="true"></a>regbasic &lt;-<span class="st"> </span><span class="kw">lm</span>(basic, <span class="dt">data=</span>train)</span>
+<span id="cb41-4"><a href="index.html#cb41-4" aria-hidden="true"></a>regbasic</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = basic, data = train)
@@ -979,10 +1238,23 @@ Number of raw regressors:2</p>
 ##   -0.105521    -0.227273    -0.223604    -0.208887    -0.256808    -0.266724  
 ##      ind220       ind221       ind222  
 ##   -0.459034    -0.226775    -0.047166</code></pre>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="index.html#cb43-1" aria-hidden="true"></a><span class="co"># # basic model</span></span>
+<span id="cb43-2"><a href="index.html#cb43-2" aria-hidden="true"></a><span class="co"># # estimating the parameters in the training sample</span></span>
+<span id="cb43-3"><a href="index.html#cb43-3" aria-hidden="true"></a><span class="co"># basic_results = smf.ols(basic , data=train).fit()</span></span>
+<span id="cb43-4"><a href="index.html#cb43-4" aria-hidden="true"></a><span class="co"># print(basic_results.summary())</span></span></code></pre></div>
+</div>
+</div>
 <p>Then predict using the parameters in the testing sample.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="index.html#cb23-1" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
-<span id="cb23-2"><a href="index.html#cb23-2" aria-hidden="true"></a>trainregbasic &lt;-<span class="st"> </span><span class="kw">predict</span>(regbasic, <span class="dt">newdata=</span>test)</span>
-<span id="cb23-3"><a href="index.html#cb23-3" aria-hidden="true"></a>trainregbasic</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="index.html#cb44-1" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
+<span id="cb44-2"><a href="index.html#cb44-2" aria-hidden="true"></a>trainregbasic &lt;-<span class="st"> </span><span class="kw">predict</span>(regbasic, <span class="dt">newdata=</span>test)</span>
+<span id="cb44-3"><a href="index.html#cb44-3" aria-hidden="true"></a>trainregbasic</span></code></pre></div>
 <pre><code>##       12       44       71       84      129      149      191      221 
 ## 3.395851 2.734493 3.151807 2.506919 2.368192 3.173461 3.065637 3.043757 
 ##      248      264      281      368      464      467      496      540 
@@ -1241,53 +1513,135 @@ Number of raw regressors:2</p>
 ## 3.075402 3.566477 3.167155 2.795414 2.851532 2.943600 2.752415 3.184073 
 ##    32561    32564    32571    32591    32599    32626 
 ## 3.481612 2.347673 2.475821 2.982382 2.551125 3.497855</code></pre>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<div class="sourceCode" id="cb46"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb46-1"><a href="index.html#cb46-1" aria-hidden="true"></a><span class="co"># lwage_test = test[&quot;lwage&quot;].values</span></span>
+<span id="cb46-2"><a href="index.html#cb46-2" aria-hidden="true"></a><span class="co"># test = sm.add_constant(test)   #add constant </span></span>
+<span id="cb46-3"><a href="index.html#cb46-3" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb46-4"><a href="index.html#cb46-4" aria-hidden="true"></a><span class="co"># lwage_pred =  basic_results.predict(test) # predict out of sample</span></span>
+<span id="cb46-5"><a href="index.html#cb46-5" aria-hidden="true"></a><span class="co"># print(lwage_pred)</span></span></code></pre></div>
+</div>
+</div>
 <p>Finally, we test the predictions.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="index.html#cb25-1" aria-hidden="true"></a>y.test &lt;-<span class="st"> </span><span class="kw">log</span>(test<span class="op">$</span>wage)</span>
-<span id="cb25-2"><a href="index.html#cb25-2" aria-hidden="true"></a>MSE.test1 &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainregbasic)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
-<span id="cb25-3"><a href="index.html#cb25-3" aria-hidden="true"></a>R2.test1&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.test1<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="index.html#cb47-1" aria-hidden="true"></a>y.test &lt;-<span class="st"> </span><span class="kw">log</span>(test<span class="op">$</span>wage)</span>
+<span id="cb47-2"><a href="index.html#cb47-2" aria-hidden="true"></a>MSE.test1 &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainregbasic)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
+<span id="cb47-3"><a href="index.html#cb47-3" aria-hidden="true"></a>R2.test1&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.test1<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
 <ul>
 <li>Test MSE for the basic model: 0.1971044.</li>
 <li>Test R2 for the basic model: 0.3279559.</li>
 </ul>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb48-1"><a href="index.html#cb48-1" aria-hidden="true"></a><span class="co"># MSE_test1 = np.sum((lwage_test-lwage_pred)**2)/len(lwage_test)</span></span>
+<span id="cb48-2"><a href="index.html#cb48-2" aria-hidden="true"></a><span class="co"># R2_test1  = 1 - MSE_test1/np.var(lwage_test)</span></span>
+<span id="cb48-3"><a href="index.html#cb48-3" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb48-4"><a href="index.html#cb48-4" aria-hidden="true"></a><span class="co"># print(&quot;Test MSE for the basic model: &quot;, MSE_test1, &quot; &quot;)</span></span>
+<span id="cb48-5"><a href="index.html#cb48-5" aria-hidden="true"></a><span class="co"># print(&quot;Test R2 for the basic model: &quot;, R2_test1)</span></span></code></pre></div>
+</div>
+</div>
 <p>In the basic model, the <span class="math inline">\(MSE test\)</span> is quite closed to the <span class="math inline">\(MSE sample\)</span>.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="index.html#cb26-1" aria-hidden="true"></a><span class="co"># estimating the parameters</span></span>
-<span id="cb26-2"><a href="index.html#cb26-2" aria-hidden="true"></a>regflex &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>train)</span>
-<span id="cb26-3"><a href="index.html#cb26-3" aria-hidden="true"></a></span>
-<span id="cb26-4"><a href="index.html#cb26-4" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
-<span id="cb26-5"><a href="index.html#cb26-5" aria-hidden="true"></a>trainregflex&lt;-<span class="st"> </span><span class="kw">predict</span>(regflex, <span class="dt">newdata=</span>test)</span>
-<span id="cb26-6"><a href="index.html#cb26-6" aria-hidden="true"></a></span>
-<span id="cb26-7"><a href="index.html#cb26-7" aria-hidden="true"></a>y.test &lt;-<span class="st"> </span><span class="kw">log</span>(test<span class="op">$</span>wage)</span>
-<span id="cb26-8"><a href="index.html#cb26-8" aria-hidden="true"></a>MSE.test2 &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainregflex)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
-<span id="cb26-9"><a href="index.html#cb26-9" aria-hidden="true"></a>R2.test2&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.test2<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="index.html#cb49-1" aria-hidden="true"></a><span class="co"># estimating the parameters</span></span>
+<span id="cb49-2"><a href="index.html#cb49-2" aria-hidden="true"></a>regflex &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>train)</span>
+<span id="cb49-3"><a href="index.html#cb49-3" aria-hidden="true"></a></span>
+<span id="cb49-4"><a href="index.html#cb49-4" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
+<span id="cb49-5"><a href="index.html#cb49-5" aria-hidden="true"></a>trainregflex&lt;-<span class="st"> </span><span class="kw">predict</span>(regflex, <span class="dt">newdata=</span>test)</span>
+<span id="cb49-6"><a href="index.html#cb49-6" aria-hidden="true"></a></span>
+<span id="cb49-7"><a href="index.html#cb49-7" aria-hidden="true"></a>y.test &lt;-<span class="st"> </span><span class="kw">log</span>(test<span class="op">$</span>wage)</span>
+<span id="cb49-8"><a href="index.html#cb49-8" aria-hidden="true"></a>MSE.test2 &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainregflex)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
+<span id="cb49-9"><a href="index.html#cb49-9" aria-hidden="true"></a>R2.test2&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.test2<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
 <ul>
 <li><p>Test MSE for the flexible model: 0.2064107.</p></li>
 <li><p>Test R2 for the flexible model: 0.2962252.</p></li>
 </ul>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<div class="sourceCode" id="cb50"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb50-1"><a href="index.html#cb50-1" aria-hidden="true"></a><span class="co"># # Flexible model</span></span>
+<span id="cb50-2"><a href="index.html#cb50-2" aria-hidden="true"></a><span class="co"># # estimating the parameters in the training sample</span></span>
+<span id="cb50-3"><a href="index.html#cb50-3" aria-hidden="true"></a><span class="co"># flex_results = smf.ols(flex , data=train).fit()</span></span>
+<span id="cb50-4"><a href="index.html#cb50-4" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb50-5"><a href="index.html#cb50-5" aria-hidden="true"></a><span class="co"># # calculating the out-of-sample MSE</span></span>
+<span id="cb50-6"><a href="index.html#cb50-6" aria-hidden="true"></a><span class="co"># lwage_flex_pred =  flex_results.predict(test) # predict out of sample</span></span>
+<span id="cb50-7"><a href="index.html#cb50-7" aria-hidden="true"></a><span class="co"># lwage_test = test[&quot;lwage&quot;].values</span></span>
+<span id="cb50-8"><a href="index.html#cb50-8" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb50-9"><a href="index.html#cb50-9" aria-hidden="true"></a><span class="co"># MSE_test2 = np.sum((lwage_test-lwage_flex_pred)**2)/len(lwage_test)</span></span>
+<span id="cb50-10"><a href="index.html#cb50-10" aria-hidden="true"></a><span class="co"># R2_test2  = 1 - MSE_test2/np.var(lwage_test)</span></span>
+<span id="cb50-11"><a href="index.html#cb50-11" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb50-12"><a href="index.html#cb50-12" aria-hidden="true"></a><span class="co"># print(&quot;Test MSE for the flexible model: &quot;, MSE_test2, &quot; &quot;)</span></span>
+<span id="cb50-13"><a href="index.html#cb50-13" aria-hidden="true"></a><span class="co"># print(&quot;Test R2 for the flexible model: &quot;, R2_test2)</span></span></code></pre></div>
+</div>
+</div>
 <p>In the flexible model, the discrepancy between the <span class="math inline">\(MSE_{test}\)</span> and the <span class="math inline">\(MSE_{sample}\)</span> is not large.</p>
 <p>It is worth to notice that the <span class="math inline">\(MSE_{test}\)</span> vary across different data splits. Hence, it is a good idea average the out-of-sample MSE over different data splits to get valid results.</p>
 <p>Nevertheless, we observe that, based on the out-of-sample <span class="math inline">\(MSE\)</span>, the basic model using OLS regression performs is about as well (or slightly better) than the flexible model.</p>
 <p>Next, let us use lasso regression in the flexible model instead of OLS regression. Lasso (least absolute shrinkage and selection operator) is a penalized regression method that can be used to reduce the complexity of a regression model when the number of regressors <span class="math inline">\(p\)</span> is relatively large in relation to <span class="math inline">\(n\)</span>.</p>
 <p>Note that the out-of-sample <span class="math inline">\(MSE\)</span> on the test sample can be computed for any other black-box prediction method as well. Thus, let us finally compare the performance of lasso regression in the flexible model to OLS regression.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="index.html#cb27-1" aria-hidden="true"></a><span class="co"># flexible model using lasso</span></span>
-<span id="cb27-2"><a href="index.html#cb27-2" aria-hidden="true"></a></span>
-<span id="cb27-3"><a href="index.html#cb27-3" aria-hidden="true"></a><span class="co"># estimating the parameters</span></span>
-<span id="cb27-4"><a href="index.html#cb27-4" aria-hidden="true"></a>reglasso &lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex, <span class="dt">data=</span>train, <span class="dt">post=</span><span class="ot">FALSE</span>)</span>
-<span id="cb27-5"><a href="index.html#cb27-5" aria-hidden="true"></a></span>
-<span id="cb27-6"><a href="index.html#cb27-6" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
-<span id="cb27-7"><a href="index.html#cb27-7" aria-hidden="true"></a>trainreglasso&lt;-<span class="st"> </span><span class="kw">predict</span>(reglasso, <span class="dt">newdata=</span>test)</span>
-<span id="cb27-8"><a href="index.html#cb27-8" aria-hidden="true"></a>MSE.lasso &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainreglasso)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
-<span id="cb27-9"><a href="index.html#cb27-9" aria-hidden="true"></a>R2.lasso&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.lasso<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="index.html#cb51-1" aria-hidden="true"></a><span class="co"># flexible model using lasso</span></span>
+<span id="cb51-2"><a href="index.html#cb51-2" aria-hidden="true"></a></span>
+<span id="cb51-3"><a href="index.html#cb51-3" aria-hidden="true"></a><span class="co"># estimating the parameters</span></span>
+<span id="cb51-4"><a href="index.html#cb51-4" aria-hidden="true"></a>reglasso &lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex, <span class="dt">data=</span>train, <span class="dt">post=</span><span class="ot">FALSE</span>)</span>
+<span id="cb51-5"><a href="index.html#cb51-5" aria-hidden="true"></a></span>
+<span id="cb51-6"><a href="index.html#cb51-6" aria-hidden="true"></a><span class="co"># calculating the out-of-sample MSE</span></span>
+<span id="cb51-7"><a href="index.html#cb51-7" aria-hidden="true"></a>trainreglasso&lt;-<span class="st"> </span><span class="kw">predict</span>(reglasso, <span class="dt">newdata=</span>test)</span>
+<span id="cb51-8"><a href="index.html#cb51-8" aria-hidden="true"></a>MSE.lasso &lt;-<span class="st"> </span><span class="kw">sum</span>((y.test<span class="op">-</span>trainreglasso)<span class="op">^</span><span class="dv">2</span>)<span class="op">/</span><span class="kw">length</span>(y.test)</span>
+<span id="cb51-9"><a href="index.html#cb51-9" aria-hidden="true"></a>R2.lasso&lt;-<span class="st"> </span><span class="dv">1</span><span class="op">-</span><span class="st"> </span>MSE.lasso<span class="op">/</span><span class="kw">var</span>(y.test)</span></code></pre></div>
 <ul>
 <li><p>Test <span class="math inline">\(MSE\)</span> for the lasso on flexible model: 0.212698</p></li>
 <li><p>Test <span class="math inline">\(R^2\)</span> for the lasso flexible model: 0.2747882</p></li>
 </ul>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb52-1"><a href="index.html#cb52-1" aria-hidden="true"></a><span class="co"># # flexible model using lasso</span></span>
+<span id="cb52-2"><a href="index.html#cb52-2" aria-hidden="true"></a><span class="co"># # get exogenous variables from training data used in flex model</span></span>
+<span id="cb52-3"><a href="index.html#cb52-3" aria-hidden="true"></a><span class="co"># flex_results_0 = smf.ols(flex , data=train)</span></span>
+<span id="cb52-4"><a href="index.html#cb52-4" aria-hidden="true"></a><span class="co"># X_train = flex_results_0.exog</span></span>
+<span id="cb52-5"><a href="index.html#cb52-5" aria-hidden="true"></a><span class="co"># print(X_train.shape)</span></span>
+<span id="cb52-6"><a href="index.html#cb52-6" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb52-7"><a href="index.html#cb52-7" aria-hidden="true"></a><span class="co"># # Get endogenous variable </span></span>
+<span id="cb52-8"><a href="index.html#cb52-8" aria-hidden="true"></a><span class="co"># lwage_train = train[&quot;lwage&quot;]</span></span>
+<span id="cb52-9"><a href="index.html#cb52-9" aria-hidden="true"></a><span class="co"># print(lwage_train.shape)</span></span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb53-1"><a href="index.html#cb53-1" aria-hidden="true"></a><span class="co"># # calculating the out-of-sample MSE</span></span>
+<span id="cb53-2"><a href="index.html#cb53-2" aria-hidden="true"></a><span class="co"># reg = linear_model.Lasso(alpha=0.1)</span></span>
+<span id="cb53-3"><a href="index.html#cb53-3" aria-hidden="true"></a><span class="co"># lwage_lasso_fitted = reg.fit(X_train, lwage_train).predict( X_test )</span></span>
+<span id="cb53-4"><a href="index.html#cb53-4" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb53-5"><a href="index.html#cb53-5" aria-hidden="true"></a><span class="co"># MSE_lasso = np.sum((lwage_test-lwage_lasso_fitted)**2)/len(lwage_test)</span></span>
+<span id="cb53-6"><a href="index.html#cb53-6" aria-hidden="true"></a><span class="co"># R2_lasso  = 1 - MSE_lasso/np.var(lwage_test)</span></span>
+<span id="cb53-7"><a href="index.html#cb53-7" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb53-8"><a href="index.html#cb53-8" aria-hidden="true"></a><span class="co"># print(&quot;Test MSE for the flexible model: &quot;, MSE_lasso, &quot; &quot;)</span></span>
+<span id="cb53-9"><a href="index.html#cb53-9" aria-hidden="true"></a><span class="co"># print(&quot;Test R2 for the flexible model: &quot;, R2_lasso)</span></span></code></pre></div>
+</div>
+</div>
 <p>Finally, let us summarize the results:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="index.html#cb28-1" aria-hidden="true"></a>Models &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Basic regression&quot;</span>,<span class="st">&quot;Flexible regression&quot;</span>,<span class="st">&quot;Lasso regression&quot;</span>)</span>
-<span id="cb28-2"><a href="index.html#cb28-2" aria-hidden="true"></a>R_<span class="dv">2</span>_SAMPLE &lt;-<span class="st"> </span><span class="kw">c</span>(R2.test1,R2.test2,R2.lasso)</span>
-<span id="cb28-3"><a href="index.html#cb28-3" aria-hidden="true"></a>MSE_SAMPLE&lt;-<span class="st"> </span><span class="kw">c</span>(MSE.test1,MSE.test2,MSE.lasso)</span>
-<span id="cb28-4"><a href="index.html#cb28-4" aria-hidden="true"></a></span>
-<span id="cb28-5"><a href="index.html#cb28-5" aria-hidden="true"></a><span class="kw">data.frame</span>(Models,R_<span class="dv">2</span>_SAMPLE,MSE_SAMPLE) <span class="op">%&gt;%</span></span>
-<span id="cb28-6"><a href="index.html#cb28-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics - Random Process&quot;</span>)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:48%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="index.html#cb54-1" aria-hidden="true"></a>Models &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Basic regression&quot;</span>,<span class="st">&quot;Flexible regression&quot;</span>,<span class="st">&quot;Lasso regression&quot;</span>)</span>
+<span id="cb54-2"><a href="index.html#cb54-2" aria-hidden="true"></a>R_<span class="dv">2</span>_SAMPLE &lt;-<span class="st"> </span><span class="kw">c</span>(R2.test1,R2.test2,R2.lasso)</span>
+<span id="cb54-3"><a href="index.html#cb54-3" aria-hidden="true"></a>MSE_SAMPLE&lt;-<span class="st"> </span><span class="kw">c</span>(MSE.test1,MSE.test2,MSE.lasso)</span>
+<span id="cb54-4"><a href="index.html#cb54-4" aria-hidden="true"></a></span>
+<span id="cb54-5"><a href="index.html#cb54-5" aria-hidden="true"></a><span class="kw">data.frame</span>(Models,R_<span class="dv">2</span>_SAMPLE,MSE_SAMPLE) <span class="op">%&gt;%</span></span>
+<span id="cb54-6"><a href="index.html#cb54-6" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Descriptive Statistics - Random Process&quot;</span>)</span></code></pre></div>
 <table>
 <caption><span id="tab:summarize-results">Table 1.4: </span>Descriptive Statistics - Random Process</caption>
 <thead>
@@ -1315,11 +1669,35 @@ Number of raw regressors:2</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="index.html#cb29-1" aria-hidden="true"></a><span class="kw">print</span>(<span class="kw">data.frame</span>(Models,R_<span class="dv">2</span>,MSE),<span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="index.html#cb55-1" aria-hidden="true"></a><span class="kw">print</span>(<span class="kw">data.frame</span>(Models,R_<span class="dv">2</span>,MSE),<span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
 <pre><code>##                Models       R_2       MSE
 ## 1    Basic regression 0.3100465 0.2244251
 ## 2 Flexible regression 0.3511099 0.2110681
 ## 3    Lasso regression 0.2778653 0.2348928</code></pre>
+</div><div class="column" style="width:4%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:48%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb57-1"><a href="index.html#cb57-1" aria-hidden="true"></a><span class="co"># Package for latex table </span></span>
+<span id="cb57-2"><a href="index.html#cb57-2" aria-hidden="true"></a><span class="co"># import array_to_latex as a2l</span></span>
+<span id="cb57-3"><a href="index.html#cb57-3" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb57-4"><a href="index.html#cb57-4" aria-hidden="true"></a><span class="co"># table2 = np.zeros((3, 2))</span></span>
+<span id="cb57-5"><a href="index.html#cb57-5" aria-hidden="true"></a><span class="co"># table2[0,0] = MSE_test1</span></span>
+<span id="cb57-6"><a href="index.html#cb57-6" aria-hidden="true"></a><span class="co"># table2[1,0] = MSE_test2</span></span>
+<span id="cb57-7"><a href="index.html#cb57-7" aria-hidden="true"></a><span class="co"># table2[2,0] = MSE_lasso</span></span>
+<span id="cb57-8"><a href="index.html#cb57-8" aria-hidden="true"></a><span class="co"># table2[0,1] = R2_test1</span></span>
+<span id="cb57-9"><a href="index.html#cb57-9" aria-hidden="true"></a><span class="co"># table2[1,1] = R2_test2</span></span>
+<span id="cb57-10"><a href="index.html#cb57-10" aria-hidden="true"></a><span class="co"># table2[2,1] = R2_lasso</span></span>
+<span id="cb57-11"><a href="index.html#cb57-11" aria-hidden="true"></a><span class="co"># </span></span>
+<span id="cb57-12"><a href="index.html#cb57-12" aria-hidden="true"></a><span class="co"># table2 = pd.DataFrame(table2, columns = [&quot;$MSE_{test}$&quot;, &quot;$R^2_{test}$&quot;], \</span></span>
+<span id="cb57-13"><a href="index.html#cb57-13" aria-hidden="true"></a><span class="co">#                       index = [&quot;basic reg&quot;,&quot;flexible reg&quot;,&quot;lasso regression&quot;])</span></span>
+<span id="cb57-14"><a href="index.html#cb57-14" aria-hidden="true"></a><span class="co"># table2</span></span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb58-1"><a href="index.html#cb58-1" aria-hidden="true"></a><span class="co"># table2.to_latex</span></span>
+<span id="cb58-2"><a href="index.html#cb58-2" aria-hidden="true"></a><span class="co"># print(table2.to_latex())</span></span></code></pre></div>
+</div>
+</div>
 
 </div>
 </div>
