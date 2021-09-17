@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Predictive Inference The Gender Wage Gap | Machine Learning and Causal Inference</title>
+  <meta name="description" content="Chapter 2 Predictive Inference The Gender Wage Gap | Machine Learning and Causal Inference" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Predictive Inference The Gender Wage Gap | Machine Learning and Causal Inference" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Predictive Inference The Gender Wage Gap | Machine Learning and Causal Inference" />
+  
+  
+  
+
+<meta name="author" content="Alexander Quispe" />
+
+
+<meta name="date" content="2021-09-17" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="testing-the-convergence-hypothesis.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Machine Learning and Causal Inference</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Predictive Inference 1</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#data"><i class="fa fa-check"></i><b>1.1</b> Data</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-analysis"><i class="fa fa-check"></i><b>1.2</b> Data Analysis</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#r-and-python-code"><i class="fa fa-check"></i><b>1.2.1</b> R and Python code</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#prediction-question"><i class="fa fa-check"></i><b>1.3</b> Prediction Question</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="index.html"><a href="index.html#basic-model"><i class="fa fa-check"></i><b>1.3.1</b> Basic Model:</a></li>
+<li class="chapter" data-level="1.3.2" data-path="index.html"><a href="index.html#flexible-model"><i class="fa fa-check"></i><b>1.3.2</b> Flexible Model:</a></li>
+<li class="chapter" data-level="1.3.3" data-path="index.html"><a href="index.html#lasso-model"><i class="fa fa-check"></i><b>1.3.3</b> Lasso Model:</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#data-splitting"><i class="fa fa-check"></i><b>1.4</b> Data Splitting</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html"><i class="fa fa-check"></i><b>2</b> Predictive Inference The Gender Wage Gap</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#data-analysis-1"><i class="fa fa-check"></i><b>2.1</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression"><i class="fa fa-check"></i><b>2.1.1</b> OLS Regression</a></li>
+<li class="chapter" data-level="2.1.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression-with-controls"><i class="fa fa-check"></i><b>2.1.2</b> Ols regression with controls</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html"><i class="fa fa-check"></i><b>3</b> Testing the Convergence Hypothesis</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Machine Learning and Causal Inference</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="predictive-inference-the-gender-wage-gap" class="section level1" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Predictive Inference The Gender Wage Gap</h1>
+<p>In the previous lab, we already analyzed data from the March Supplement of the U.S. Current Population Survey (2015) and answered the question how to use job-relevant characteristics, such as education and experience, to best predict wages. Now, we focus on the following inference question:</p>
+<p>What is the difference in predicted wages between men and women with the same job-relevant characteristics?</p>
+<p>Thus, we analyze if there is a difference in the payment of men and women (gender wage gap). The gender wage gap may partly reflect discrimination against women in the labor market or may partly reflect a selection effect, namely that women are relatively more likely to take on occupations that pay somewhat less (for example, school teaching).</p>
+<p>To investigate the gender wage gap, we consider the following log-linear regression model</p>
+<p><span class="math display">\[log(Y) = \beta&#39;X + \epsilon \]</span>
+<span class="math display">\[log(Y) = \beta_1 D  + \beta_2&#39; W + \epsilon\]</span></p>
+<p>where <span class="math inline">\(D\)</span> is the indicator of being female (<span class="math inline">\(1\)</span> if female and <span class="math inline">\(0\)</span> otherwise) and the
+<span class="math inline">\(W\)</span>’s are controls explaining variation in wages. Considering transformed wages by the logarithm, we are analyzing the relative difference in the payment of men and women.</p>
+<div id="data-analysis-1" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Data analysis</h2>
+<p>We consider the same subsample of the U.S. Current Population Survey (2015) as in the previous lab. Let us load the data set.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="predictive-inference-the-gender-wage-gap.html#cb1-1" aria-hidden="true"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="predictive-inference-the-gender-wage-gap.html#cb1-2" aria-hidden="true"></a><span class="kw">library</span>(kableExtra)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="predictive-inference-the-gender-wage-gap.html#cb2-1" aria-hidden="true"></a><span class="kw">load</span>(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span></code></pre></div>
+<p>To start our (causal) analysis, we compare the sample means given gender:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="predictive-inference-the-gender-wage-gap.html#cb3-1" aria-hidden="true"></a>table1 &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb3-2"><a href="predictive-inference-the-gender-wage-gap.html#cb3-2" aria-hidden="true"></a><span class="st">  </span><span class="kw">select</span>(lwage,sex,shs,hsg,scl,clg,ad,ne,mw,so,we,exp1)</span>
+<span id="cb3-3"><a href="predictive-inference-the-gender-wage-gap.html#cb3-3" aria-hidden="true"></a></span>
+<span id="cb3-4"><a href="predictive-inference-the-gender-wage-gap.html#cb3-4" aria-hidden="true"></a>All &lt;-<span class="st"> </span><span class="kw">apply</span>(table1,<span class="dv">2</span>,mean)</span>
+<span id="cb3-5"><a href="predictive-inference-the-gender-wage-gap.html#cb3-5" aria-hidden="true"></a>Men &lt;-<span class="st"> </span><span class="kw">apply</span>(table1[table1<span class="op">$</span>sex<span class="op">==</span><span class="dv">0</span>,],<span class="dv">2</span>,mean)</span>
+<span id="cb3-6"><a href="predictive-inference-the-gender-wage-gap.html#cb3-6" aria-hidden="true"></a>Women &lt;-<span class="st"> </span><span class="kw">apply</span>(table1[table1<span class="op">$</span>sex<span class="op">==</span><span class="dv">1</span>,],<span class="dv">2</span>,mean)</span>
+<span id="cb3-7"><a href="predictive-inference-the-gender-wage-gap.html#cb3-7" aria-hidden="true"></a></span>
+<span id="cb3-8"><a href="predictive-inference-the-gender-wage-gap.html#cb3-8" aria-hidden="true"></a>Variables &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Less then High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;Collage Graduate&quot;</span>,<span class="st">&quot;Advanced Degree&quot;</span>, <span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Experience&quot;</span>)</span>
+<span id="cb3-9"><a href="predictive-inference-the-gender-wage-gap.html#cb3-9" aria-hidden="true"></a></span>
+<span id="cb3-10"><a href="predictive-inference-the-gender-wage-gap.html#cb3-10" aria-hidden="true"></a><span class="kw">data.frame</span>(Variables,All,Men,Women) <span class="op">%&gt;%</span></span>
+<span id="cb3-11"><a href="predictive-inference-the-gender-wage-gap.html#cb3-11" aria-hidden="true"></a><span class="st">  </span><span class="kw">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="dt">caption =</span> <span class="st">&quot;Sample means given gender&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:mean-sample">Table 2.1: </span>Sample means given gender</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Variables</th>
+<th align="right">All</th>
+<th align="right">Men</th>
+<th align="right">Women</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">lwage</td>
+<td align="left">Log Wage</td>
+<td align="right">2.9707867</td>
+<td align="right">2.9878296</td>
+<td align="right">2.9494849</td>
+</tr>
+<tr class="even">
+<td align="left">sex</td>
+<td align="left">Sex</td>
+<td align="right">0.4444660</td>
+<td align="right">0.0000000</td>
+<td align="right">1.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">shs</td>
+<td align="left">Less then High School</td>
+<td align="right">0.0233010</td>
+<td align="right">0.0318071</td>
+<td align="right">0.0126693</td>
+</tr>
+<tr class="even">
+<td align="left">hsg</td>
+<td align="left">High School Graduate</td>
+<td align="right">0.2438835</td>
+<td align="right">0.2943027</td>
+<td align="right">0.1808650</td>
+</tr>
+<tr class="odd">
+<td align="left">scl</td>
+<td align="left">Some College</td>
+<td align="right">0.2780583</td>
+<td align="right">0.2733310</td>
+<td align="right">0.2839668</td>
+</tr>
+<tr class="even">
+<td align="left">clg</td>
+<td align="left">Collage Graduate</td>
+<td align="right">0.3176699</td>
+<td align="right">0.2939532</td>
+<td align="right">0.3473132</td>
+</tr>
+<tr class="odd">
+<td align="left">ad</td>
+<td align="left">Advanced Degree</td>
+<td align="right">0.1370874</td>
+<td align="right">0.1066061</td>
+<td align="right">0.1751857</td>
+</tr>
+<tr class="even">
+<td align="left">ne</td>
+<td align="left">Northeast</td>
+<td align="right">0.2277670</td>
+<td align="right">0.2219504</td>
+<td align="right">0.2350371</td>
+</tr>
+<tr class="odd">
+<td align="left">mw</td>
+<td align="left">Midwest</td>
+<td align="right">0.2596117</td>
+<td align="right">0.2590003</td>
+<td align="right">0.2603757</td>
+</tr>
+<tr class="even">
+<td align="left">so</td>
+<td align="left">South</td>
+<td align="right">0.2965049</td>
+<td align="right">0.2981475</td>
+<td align="right">0.2944517</td>
+</tr>
+<tr class="odd">
+<td align="left">we</td>
+<td align="left">West</td>
+<td align="right">0.2161165</td>
+<td align="right">0.2209018</td>
+<td align="right">0.2101354</td>
+</tr>
+<tr class="even">
+<td align="left">exp1</td>
+<td align="left">Experience</td>
+<td align="right">13.7605825</td>
+<td align="right">13.7839916</td>
+<td align="right">13.7313237</td>
+</tr>
+</tbody>
+</table>
+<p>Alternatively, we can also print the table as latex.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="predictive-inference-the-gender-wage-gap.html#cb4-1" aria-hidden="true"></a><span class="kw">print</span>(<span class="kw">data.frame</span>(Variables,All,Men,Women) ,<span class="dt">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
+<pre><code>##                   Variables         All         Men       Women
+## lwage              Log Wage  2.97078670  2.98782963  2.94948490
+## sex                     Sex  0.44446602  0.00000000  1.00000000
+## shs   Less then High School  0.02330097  0.03180706  0.01266929
+## hsg    High School Graduate  0.24388350  0.29430269  0.18086501
+## scl            Some College  0.27805825  0.27333100  0.28396680
+## clg        Collage Graduate  0.31766990  0.29395316  0.34731324
+## ad          Advanced Degree  0.13708738  0.10660608  0.17518567
+## ne                Northeast  0.22776699  0.22195037  0.23503713
+## mw                  Midwest  0.25961165  0.25900035  0.26037571
+## so                    South  0.29650485  0.29814750  0.29445173
+## we                     West  0.21611650  0.22090178  0.21013543
+## exp1             Experience 13.76058252 13.78399161 13.73132372</code></pre>
+<p>In particular, the table above shows that the difference in average <em>logwage</em> between men and women is equal to <span class="math inline">\(0,038\)</span>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="predictive-inference-the-gender-wage-gap.html#cb6-1" aria-hidden="true"></a><span class="kw">mean</span>(table1<span class="op">$</span>lwage[table1<span class="op">$</span>sex<span class="op">==</span><span class="dv">1</span>])<span class="op">-</span><span class="kw">mean</span>(table1<span class="op">$</span>lwage[table1<span class="op">$</span>sex<span class="op">==</span><span class="dv">0</span>])</span></code></pre></div>
+<pre><code>## [1] -0.03834473</code></pre>
+<p>Thus, the unconditional gender wage gap is about <span class="math inline">\(3,8 \%\)</span> for the group of never married workers (women get paid less on average in our sample). We also observe that never married working women are relatively more educated than working men and have lower working experience.</p>
+<p>This unconditional (predictive) effect of gender equals the coefficient <span class="math inline">\(\beta\)</span> in the univariate ols regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(D\)</span>:</p>
+<p><span class="math display">\[log(Y) =\beta D + \epsilon\]</span>
+We verify this by running an ols regression in R.</p>
+<div id="ols-regression" class="section level3" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> OLS Regression</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="predictive-inference-the-gender-wage-gap.html#cb8-1" aria-hidden="true"></a><span class="kw">library</span>(sandwich)</span></code></pre></div>
+<pre><code>## Warning: package &#39;sandwich&#39; was built under R version 4.0.5</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="predictive-inference-the-gender-wage-gap.html#cb10-1" aria-hidden="true"></a>nocontrol.fit &lt;-<span class="st"> </span><span class="kw">lm</span>(lwage <span class="op">~</span><span class="st"> </span>sex, <span class="dt">data =</span> data)</span>
+<span id="cb10-2"><a href="predictive-inference-the-gender-wage-gap.html#cb10-2" aria-hidden="true"></a>nocontrol.est &lt;-<span class="st"> </span><span class="kw">summary</span>(nocontrol.fit)<span class="op">$</span>coef[<span class="st">&quot;sex&quot;</span>,<span class="dv">1</span>]</span>
+<span id="cb10-3"><a href="predictive-inference-the-gender-wage-gap.html#cb10-3" aria-hidden="true"></a>HCV.coefs &lt;-<span class="st"> </span><span class="kw">vcovHC</span>(nocontrol.fit, <span class="dt">type =</span> <span class="st">&#39;HC&#39;</span>);</span>
+<span id="cb10-4"><a href="predictive-inference-the-gender-wage-gap.html#cb10-4" aria-hidden="true"></a>nocontrol.se &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(HCV.coefs))[<span class="dv">2</span>] <span class="co"># Estimated std errors</span></span></code></pre></div>
+<p>The estimated gender coefficient is -0.0383447, and the corresponding robust standard error is 0.0159019.</p>
+<p>Note that the standard error is computed with the <em>R</em> package <em>sandwich</em> to be robust to heteroskedasticity.</p>
+<p>Next, we run an ols regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((D,W)\)</span> to control for the effect of covariates summarized in <span class="math inline">\(W\)</span>:</p>
+<p><span class="math display">\[log(Y) =\beta_1 D  + \beta_2&#39; W + \epsilon\]</span></p>
+<p>Here, we are considering the flexible model from the previous lab. Hence, <span class="math inline">\(W\)</span> controls for experience, education, region, and occupation and industry indicators plus transformations and two-way interactions.</p>
+<p>Let us run the <strong>ols regression</strong> with controls.</p>
+</div>
+<div id="ols-regression-with-controls" class="section level3" number="2.1.2">
+<h3><span class="header-section-number">2.1.2</span> Ols regression with controls</h3>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="predictive-inference-the-gender-wage-gap.html#cb11-1" aria-hidden="true"></a>flex &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we)</span>
+<span id="cb11-2"><a href="predictive-inference-the-gender-wage-gap.html#cb11-2" aria-hidden="true"></a></span>
+<span id="cb11-3"><a href="predictive-inference-the-gender-wage-gap.html#cb11-3" aria-hidden="true"></a><span class="co">#   Note that ()*() operation in formula objects in R creates a formula of the sort:</span></span>
+<span id="cb11-4"><a href="predictive-inference-the-gender-wage-gap.html#cb11-4" aria-hidden="true"></a><span class="co">#  (exp1+exp2+exp3+exp4)+ (shs+hsg+scl+clg+occ2+ind2+mw+so+we) +  (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)</span></span>
+<span id="cb11-5"><a href="predictive-inference-the-gender-wage-gap.html#cb11-5" aria-hidden="true"></a><span class="co">#  This is not intuitive at all, but that&#39;s what it does.</span></span>
+<span id="cb11-6"><a href="predictive-inference-the-gender-wage-gap.html#cb11-6" aria-hidden="true"></a></span>
+<span id="cb11-7"><a href="predictive-inference-the-gender-wage-gap.html#cb11-7" aria-hidden="true"></a>control.fit &lt;-<span class="st"> </span><span class="kw">lm</span>(flex, <span class="dt">data=</span>data)</span>
+<span id="cb11-8"><a href="predictive-inference-the-gender-wage-gap.html#cb11-8" aria-hidden="true"></a>control.est &lt;-<span class="st"> </span><span class="kw">summary</span>(control.fit)<span class="op">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb11-9"><a href="predictive-inference-the-gender-wage-gap.html#cb11-9" aria-hidden="true"></a></span>
+<span id="cb11-10"><a href="predictive-inference-the-gender-wage-gap.html#cb11-10" aria-hidden="true"></a><span class="kw">summary</span>(control.fit)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = flex, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.9384 -0.2782 -0.0041  0.2733  3.4934 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  3.8602606  0.4286188   9.006  &lt; 2e-16 ***
+## sex         -0.0695532  0.0152180  -4.570 4.99e-06 ***
+## exp1        -0.0677247  0.1519756  -0.446 0.655885    
+## exp2         1.6362944  1.6909253   0.968 0.333246    
+## exp3        -0.9154735  0.6880249  -1.331 0.183388    
+## exp4         0.1429357  0.0907569   1.575 0.115337    
+## shs         -0.1233089  0.9068325  -0.136 0.891845    
+## hsg         -0.5289024  0.1977559  -2.675 0.007508 ** 
+## scl         -0.2920581  0.1260155  -2.318 0.020510 *  
+## clg         -0.0411641  0.0703862  -0.585 0.558688    
+## occ22        0.1613397  0.1297243   1.244 0.213665    
+## occ23        0.2101514  0.1686774   1.246 0.212869    
+## occ24        0.0708570  0.1837167   0.386 0.699746    
+## occ25       -0.3960076  0.1885398  -2.100 0.035745 *  
+## occ26       -0.2310611  0.1869662  -1.236 0.216576    
+## occ27        0.3147249  0.1941519   1.621 0.105077    
+## occ28       -0.1875417  0.1692988  -1.108 0.268022    
+## occ29       -0.3390270  0.1672301  -2.027 0.042685 *  
+## occ210       0.0209545  0.1564982   0.134 0.893490    
+## occ211      -0.6424177  0.3090899  -2.078 0.037723 *  
+## occ212      -0.0674774  0.2520486  -0.268 0.788929    
+## occ213      -0.2329781  0.2315379  -1.006 0.314359    
+## occ214       0.2562009  0.3226729   0.794 0.427236    
+## occ215      -0.1938585  0.2595082  -0.747 0.455086    
+## occ216      -0.0551256  0.1470658  -0.375 0.707798    
+## occ217      -0.4156093  0.1361144  -3.053 0.002275 ** 
+## occ218      -0.4822168  1.0443540  -0.462 0.644290    
+## occ219      -0.2579412  0.3325215  -0.776 0.437956    
+## occ220      -0.3010203  0.2341022  -1.286 0.198556    
+## occ221      -0.4271811  0.2206486  -1.936 0.052922 .  
+## occ222      -0.8694527  0.2975222  -2.922 0.003490 ** 
+## ind23       -1.2473654  0.6454941  -1.932 0.053365 .  
+## ind24       -0.0948281  0.4636021  -0.205 0.837935    
+## ind25       -0.5293860  0.4345990  -1.218 0.223244    
+## ind26       -0.6221688  0.4347226  -1.431 0.152441    
+## ind27       -0.5047497  0.5024770  -1.005 0.315176    
+## ind28       -0.7295442  0.4674008  -1.561 0.118623    
+## ind29       -0.8025334  0.4252462  -1.887 0.059190 .  
+## ind210      -0.5805840  0.4808776  -1.207 0.227358    
+## ind211      -0.9852350  0.4481566  -2.198 0.027966 *  
+## ind212      -0.7375777  0.4243260  -1.738 0.082232 .  
+## ind213      -1.0183283  0.4826544  -2.110 0.034922 *  
+## ind214      -0.5860174  0.4159033  -1.409 0.158892    
+## ind215      -0.3801359  0.5908517  -0.643 0.520014    
+## ind216      -0.5703905  0.4386579  -1.300 0.193556    
+## ind217      -0.8201843  0.4259846  -1.925 0.054239 .  
+## ind218      -0.7613604  0.4238287  -1.796 0.072495 .  
+## ind219      -0.8812815  0.4565671  -1.930 0.053635 .  
+## ind220      -0.9099021  0.4484198  -2.029 0.042499 *  
+## ind221      -0.7586534  0.4405801  -1.722 0.085143 .  
+## ind222      -0.4040775  0.4328735  -0.933 0.350620    
+## mw           0.1106834  0.0814463   1.359 0.174218    
+## so           0.0224244  0.0743855   0.301 0.763075    
+## we          -0.0215659  0.0841591  -0.256 0.797767    
+## exp1:shs    -0.1919981  0.1955408  -0.982 0.326206    
+## exp1:hsg    -0.0173433  0.0572279  -0.303 0.761859    
+## exp1:scl    -0.0664505  0.0433730  -1.532 0.125570    
+## exp1:clg    -0.0550346  0.0310279  -1.774 0.076172 .  
+## exp1:occ22  -0.0736239  0.0501108  -1.469 0.141837    
+## exp1:occ23  -0.0714859  0.0637688  -1.121 0.262336    
+## exp1:occ24  -0.0723997  0.0747715  -0.968 0.332953    
+## exp1:occ25   0.0946732  0.0794005   1.192 0.233182    
+## exp1:occ26  -0.0348928  0.0712136  -0.490 0.624175    
+## exp1:occ27  -0.2279338  0.0784860  -2.904 0.003699 ** 
+## exp1:occ28  -0.0727459  0.0645883  -1.126 0.260094    
+## exp1:occ29   0.0274143  0.0669517   0.409 0.682217    
+## exp1:occ210  0.0075628  0.0581715   0.130 0.896564    
+## exp1:occ211  0.1014221  0.1005094   1.009 0.312986    
+## exp1:occ212 -0.0862744  0.0874768  -0.986 0.324057    
+## exp1:occ213  0.0067149  0.0761825   0.088 0.929768    
+## exp1:occ214 -0.1369153  0.0974458  -1.405 0.160073    
+## exp1:occ215 -0.0400425  0.0898931  -0.445 0.656017    
+## exp1:occ216 -0.0539314  0.0520926  -1.035 0.300580    
+## exp1:occ217  0.0147277  0.0467903   0.315 0.752958    
+## exp1:occ218  0.1074099  0.4718440   0.228 0.819937    
+## exp1:occ219  0.0047165  0.1060745   0.044 0.964536    
+## exp1:occ220  0.0243156  0.0743274   0.327 0.743575    
+## exp1:occ221  0.0791776  0.0696947   1.136 0.255985    
+## exp1:occ222  0.1093246  0.0880828   1.241 0.214607    
+## exp1:ind23   0.4758891  0.2227484   2.136 0.032693 *  
+## exp1:ind24   0.0147304  0.1571102   0.094 0.925305    
+## exp1:ind25   0.1256987  0.1531626   0.821 0.411864    
+## exp1:ind26   0.1540275  0.1524289   1.010 0.312312    
+## exp1:ind27   0.1029245  0.1786939   0.576 0.564654    
+## exp1:ind28   0.2357669  0.1689203   1.396 0.162859    
+## exp1:ind29   0.1359079  0.1489486   0.912 0.361578    
+## exp1:ind210  0.1512578  0.1644341   0.920 0.357687    
+## exp1:ind211  0.3174885  0.1590023   1.997 0.045907 *  
+## exp1:ind212  0.2591089  0.1510588   1.715 0.086356 .  
+## exp1:ind213  0.3396094  0.1669241   2.035 0.041954 *  
+## exp1:ind214  0.1441411  0.1477994   0.975 0.329485    
+## exp1:ind215 -0.0568181  0.2349853  -0.242 0.808950    
+## exp1:ind216  0.0847295  0.1550425   0.546 0.584753    
+## exp1:ind217  0.1728867  0.1513280   1.142 0.253317    
+## exp1:ind218  0.1565399  0.1494171   1.048 0.294842    
+## exp1:ind219  0.1516103  0.1620851   0.935 0.349641    
+## exp1:ind220  0.1326629  0.1566883   0.847 0.397222    
+## exp1:ind221  0.2190905  0.1555052   1.409 0.158930    
+## exp1:ind222  0.1145814  0.1523427   0.752 0.452010    
+## exp1:mw     -0.0279931  0.0296572  -0.944 0.345274    
+## exp1:so     -0.0099678  0.0266868  -0.374 0.708786    
+## exp1:we      0.0063077  0.0301417   0.209 0.834248    
+## exp2:shs     1.9005060  1.4502480   1.310 0.190098    
+## exp2:hsg     0.1171642  0.5509729   0.213 0.831609    
+## exp2:scl     0.6217923  0.4629986   1.343 0.179344    
+## exp2:clg     0.4096746  0.3802171   1.077 0.281321    
+## exp2:occ22   0.6632173  0.5523220   1.201 0.229895    
+## exp2:occ23   0.6415456  0.7102783   0.903 0.366448    
+## exp2:occ24   0.9748422  0.8655351   1.126 0.260099    
+## exp2:occ25  -0.9778823  0.9737990  -1.004 0.315335    
+## exp2:occ26   0.1050860  0.8002267   0.131 0.895527    
+## exp2:occ27   3.1407119  0.9389423   3.345 0.000829 ***
+## exp2:occ28   0.6710877  0.7192077   0.933 0.350818    
+## exp2:occ29   0.0231977  0.7629142   0.030 0.975744    
+## exp2:occ210 -0.2692292  0.6405270  -0.420 0.674267    
+## exp2:occ211 -1.0816539  1.0057575  -1.075 0.282221    
+## exp2:occ212  0.8323737  0.9341245   0.891 0.372933    
+## exp2:occ213 -0.2209813  0.7728463  -0.286 0.774942    
+## exp2:occ214  0.7511163  0.9272548   0.810 0.417955    
+## exp2:occ215 -0.0326858  0.9409116  -0.035 0.972290    
+## exp2:occ216  0.3635814  0.5509550   0.660 0.509342    
+## exp2:occ217 -0.2659285  0.4861131  -0.547 0.584369    
+## exp2:occ218 -2.5608762  5.1700911  -0.495 0.620393    
+## exp2:occ219 -0.1291756  1.0616901  -0.122 0.903165    
+## exp2:occ220 -0.3323297  0.7229071  -0.460 0.645743    
+## exp2:occ221 -0.9099997  0.6854114  -1.328 0.184349    
+## exp2:occ222 -0.8550536  0.8279414  -1.033 0.301773    
+## exp2:ind23  -5.9368948  2.4067939  -2.467 0.013670 *  
+## exp2:ind24  -1.1053411  1.7101982  -0.646 0.518100    
+## exp2:ind25  -2.0149181  1.6919190  -1.191 0.233748    
+## exp2:ind26  -2.2277748  1.6816902  -1.325 0.185325    
+## exp2:ind27  -1.4648099  2.0137888  -0.727 0.467022    
+## exp2:ind28  -2.9479949  1.8595425  -1.585 0.112955    
+## exp2:ind29  -1.7796219  1.6471248  -1.080 0.279999    
+## exp2:ind210 -2.1973300  1.7738638  -1.239 0.215507    
+## exp2:ind211 -3.8776807  1.7637372  -2.199 0.027956 *  
+## exp2:ind212 -3.1690425  1.6819362  -1.884 0.059602 .  
+## exp2:ind213 -3.9651983  1.8130709  -2.187 0.028789 *  
+## exp2:ind214 -2.0783289  1.6490355  -1.260 0.207610    
+## exp2:ind215  0.1911692  2.6075396   0.073 0.941559    
+## exp2:ind216 -1.3265850  1.7185648  -0.772 0.440202    
+## exp2:ind217 -2.2002873  1.6837183  -1.307 0.191341    
+## exp2:ind218 -2.2006232  1.6566630  -1.328 0.184125    
+## exp2:ind219 -1.9308536  1.7876673  -1.080 0.280152    
+## exp2:ind220 -1.9467267  1.7244008  -1.129 0.258983    
+## exp2:ind221 -3.1127363  1.7237908  -1.806 0.071019 .  
+## exp2:ind222 -1.8578340  1.6849542  -1.103 0.270254    
+## exp2:mw      0.2005611  0.3172911   0.632 0.527348    
+## exp2:so      0.0544354  0.2815662   0.193 0.846708    
+## exp2:we      0.0012717  0.3207873   0.004 0.996837    
+## exp3:shs    -0.6721239  0.4426627  -1.518 0.128987    
+## exp3:hsg    -0.0179937  0.2083176  -0.086 0.931171    
+## exp3:scl    -0.1997877  0.1855189  -1.077 0.281572    
+## exp3:clg    -0.1025230  0.1643648  -0.624 0.532819    
+## exp3:occ22  -0.2039403  0.2211386  -0.922 0.356455    
+## exp3:occ23  -0.2369620  0.2870372  -0.826 0.409103    
+## exp3:occ24  -0.4366958  0.3520168  -1.241 0.214830    
+## exp3:occ25   0.3885298  0.4118861   0.943 0.345577    
+## exp3:occ26   0.0484737  0.3293525   0.147 0.882997    
+## exp3:occ27  -1.3949288  0.4050109  -3.444 0.000578 ***
+## exp3:occ28  -0.2053899  0.2895727  -0.709 0.478181    
+## exp3:occ29  -0.0909660  0.3143348  -0.289 0.772293    
+## exp3:occ210  0.1854753  0.2575565   0.720 0.471477    
+## exp3:occ211  0.3931553  0.3817758   1.030 0.303152    
+## exp3:occ212 -0.2202559  0.3660206  -0.602 0.547363    
+## exp3:occ213  0.0950356  0.2904370   0.327 0.743519    
+## exp3:occ214 -0.1443933  0.3341622  -0.432 0.665684    
+## exp3:occ215  0.1477077  0.3645191   0.405 0.685339    
+## exp3:occ216 -0.0378548  0.2151288  -0.176 0.860330    
+## exp3:occ217  0.1510497  0.1878081   0.804 0.421276    
+## exp3:occ218  1.4084443  1.8852467   0.747 0.455047    
+## exp3:occ219  0.0923425  0.4042308   0.228 0.819314    
+## exp3:occ220  0.1806994  0.2652079   0.681 0.495682    
+## exp3:occ221  0.3779083  0.2553031   1.480 0.138875    
+## exp3:occ222  0.2855058  0.2984206   0.957 0.338754    
+## exp3:ind23   2.6665808  0.9807497   2.719 0.006573 ** 
+## exp3:ind24   0.7298431  0.6879811   1.061 0.288811    
+## exp3:ind25   0.9942250  0.6842435   1.453 0.146280    
+## exp3:ind26   1.0641428  0.6800948   1.565 0.117718    
+## exp3:ind27   0.7089089  0.8337963   0.850 0.395245    
+## exp3:ind28   1.2340948  0.7483474   1.649 0.099193 .  
+## exp3:ind29   0.8287315  0.6675904   1.241 0.214526    
+## exp3:ind210  1.0448162  0.7066717   1.479 0.139337    
+## exp3:ind211  1.6877578  0.7162155   2.356 0.018487 *  
+## exp3:ind212  1.3734455  0.6835570   2.009 0.044564 *  
+## exp3:ind213  1.6376669  0.7259301   2.256 0.024117 *  
+## exp3:ind214  1.0162910  0.6714525   1.514 0.130199    
+## exp3:ind215  0.1879483  1.0299675   0.182 0.855214    
+## exp3:ind216  0.6889680  0.6968028   0.989 0.322831    
+## exp3:ind217  1.0085540  0.6836992   1.475 0.140238    
+## exp3:ind218  1.0605598  0.6725232   1.577 0.114863    
+## exp3:ind219  0.8959865  0.7225602   1.240 0.215029    
+## exp3:ind220  0.9768944  0.6955822   1.404 0.160255    
+## exp3:ind221  1.4415215  0.6996480   2.060 0.039418 *  
+## exp3:ind222  0.9687884  0.6828498   1.419 0.156037    
+## exp3:mw     -0.0625771  0.1241291  -0.504 0.614194    
+## exp3:so     -0.0115842  0.1084217  -0.107 0.914917    
+## exp3:we     -0.0124875  0.1251376  -0.100 0.920515    
+## exp4:shs     0.0777418  0.0475427   1.635 0.102071    
+## exp4:hsg     0.0004913  0.0265964   0.018 0.985264    
+## exp4:scl     0.0210760  0.0245289   0.859 0.390256    
+## exp4:clg     0.0078695  0.0227528   0.346 0.729457    
+## exp4:occ22   0.0176389  0.0289257   0.610 0.542021    
+## exp4:occ23   0.0303057  0.0376552   0.805 0.420962    
+## exp4:occ24   0.0584146  0.0457704   1.276 0.201927    
+## exp4:occ25  -0.0515181  0.0549489  -0.938 0.348514    
+## exp4:occ26  -0.0170182  0.0440847  -0.386 0.699488    
+## exp4:occ27   0.1905353  0.0558757   3.410 0.000655 ***
+## exp4:occ28   0.0196522  0.0379084   0.518 0.604195    
+## exp4:occ29   0.0190014  0.0421099   0.451 0.651841    
+## exp4:occ210 -0.0333347  0.0338825  -0.984 0.325246    
+## exp4:occ211 -0.0465914  0.0479018  -0.973 0.330778    
+## exp4:occ212  0.0110212  0.0470536   0.234 0.814820    
+## exp4:occ213 -0.0136895  0.0358988  -0.381 0.702970    
+## exp4:occ214  0.0055582  0.0400331   0.139 0.889581    
+## exp4:occ215 -0.0327444  0.0462379  -0.708 0.478872    
+## exp4:occ216 -0.0089706  0.0275729  -0.325 0.744937    
+## exp4:occ217 -0.0256735  0.0239306  -1.073 0.283400    
+## exp4:occ218 -0.2121372  0.2204003  -0.963 0.335841    
+## exp4:occ219 -0.0169398  0.0513428  -0.330 0.741463    
+## exp4:occ220 -0.0296125  0.0323353  -0.916 0.359819    
+## exp4:occ221 -0.0524577  0.0317251  -1.654 0.098291 .  
+## exp4:occ222 -0.0350646  0.0360687  -0.972 0.331018    
+## exp4:ind23  -0.3851791  0.1329065  -2.898 0.003771 ** 
+## exp4:ind24  -0.1209478  0.0899580  -1.344 0.178852    
+## exp4:ind25  -0.1441045  0.0897994  -1.605 0.108616    
+## exp4:ind26  -0.1526110  0.0892689  -1.710 0.087410 .  
+## exp4:ind27  -0.1001993  0.1119398  -0.895 0.370768    
+## exp4:ind28  -0.1609664  0.0979780  -1.643 0.100471    
+## exp4:ind29  -0.1178080  0.0877821  -1.342 0.179642    
+## exp4:ind210 -0.1482842  0.0918416  -1.615 0.106469    
+## exp4:ind211 -0.2322961  0.0944506  -2.459 0.013949 *  
+## exp4:ind212 -0.1872911  0.0899985  -2.081 0.037481 *  
+## exp4:ind213 -0.2155617  0.0946011  -2.279 0.022731 *  
+## exp4:ind214 -0.1483524  0.0884992  -1.676 0.093740 .  
+## exp4:ind215 -0.0532195  0.1313815  -0.405 0.685439    
+## exp4:ind216 -0.1044336  0.0916252  -1.140 0.254429    
+## exp4:ind217 -0.1427349  0.0899315  -1.587 0.112543    
+## exp4:ind218 -0.1546248  0.0885883  -1.745 0.080973 .  
+## exp4:ind219 -0.1269592  0.0948784  -1.338 0.180918    
+## exp4:ind220 -0.1468554  0.0911188  -1.612 0.107094    
+## exp4:ind221 -0.2032619  0.0920972  -2.207 0.027358 *  
+## exp4:ind222 -0.1480951  0.0897937  -1.649 0.099154 .  
+## exp4:mw      0.0062439  0.0158699   0.393 0.694007    
+## exp4:so      0.0003145  0.0136275   0.023 0.981591    
+## exp4:we      0.0017685  0.0159602   0.111 0.911776    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.4708 on 4904 degrees of freedom
+## Multiple R-squared:  0.3511, Adjusted R-squared:  0.3187 
+## F-statistic: 10.83 on 245 and 4904 DF,  p-value: &lt; 2.2e-16</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="predictive-inference-the-gender-wage-gap.html#cb13-1" aria-hidden="true"></a><span class="kw">cat</span>(<span class="st">&quot;Coefficient for OLS with controls&quot;</span>, control.est)</span></code></pre></div>
+<pre><code>## Coefficient for OLS with controls -0.0695532</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="predictive-inference-the-gender-wage-gap.html#cb15-1" aria-hidden="true"></a>HCV.coefs &lt;-<span class="st"> </span><span class="kw">vcovHC</span>(control.fit, <span class="dt">type =</span> <span class="st">&#39;HC&#39;</span>);</span>
+<span id="cb15-2"><a href="predictive-inference-the-gender-wage-gap.html#cb15-2" aria-hidden="true"></a>control.se &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(HCV.coefs))[<span class="dv">2</span>] <span class="co"># Estimated std errors</span></span></code></pre></div>
+<p>The estimated regression coefficient <span class="math inline">\(\beta_1\approx-0.0696\)</span> measures how our linear prediction of wage changes if we set the gender variable <span class="math inline">\(D\)</span> from 0 to 1, holding the controls <span class="math inline">\(W\)</span> fixed.
+We can call this the <em>predictive effect</em> (PE), as it measures the impact of a variable on the prediction we make. Overall, we see that the unconditional wage gap of size <span class="math inline">\(4\%\)</span> for women increases to about <span class="math inline">\(7\%\)</span> after controlling for worker characteristics.</p>
+<p>Next, we are using the Frisch-Waugh-Lovell theorem from the lecture partialling-out the linear effect of the controls via ols.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="predictive-inference-the-gender-wage-gap.html#cb16-1" aria-hidden="true"></a><span class="co"># Partialling-Out using ols</span></span>
+<span id="cb16-2"><a href="predictive-inference-the-gender-wage-gap.html#cb16-2" aria-hidden="true"></a></span>
+<span id="cb16-3"><a href="predictive-inference-the-gender-wage-gap.html#cb16-3" aria-hidden="true"></a><span class="co"># models</span></span>
+<span id="cb16-4"><a href="predictive-inference-the-gender-wage-gap.html#cb16-4" aria-hidden="true"></a>flex.y &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st">  </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we) <span class="co"># model for Y</span></span>
+<span id="cb16-5"><a href="predictive-inference-the-gender-wage-gap.html#cb16-5" aria-hidden="true"></a>flex.d &lt;-<span class="st"> </span>sex <span class="op">~</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we) <span class="co"># model for D</span></span>
+<span id="cb16-6"><a href="predictive-inference-the-gender-wage-gap.html#cb16-6" aria-hidden="true"></a></span>
+<span id="cb16-7"><a href="predictive-inference-the-gender-wage-gap.html#cb16-7" aria-hidden="true"></a><span class="co"># partialling-out the linear effect of W from Y</span></span>
+<span id="cb16-8"><a href="predictive-inference-the-gender-wage-gap.html#cb16-8" aria-hidden="true"></a>t.Y &lt;-<span class="st"> </span><span class="kw">lm</span>(flex.y, <span class="dt">data=</span>data)<span class="op">$</span>res</span>
+<span id="cb16-9"><a href="predictive-inference-the-gender-wage-gap.html#cb16-9" aria-hidden="true"></a><span class="co"># partialling-out the linear effect of W from D</span></span>
+<span id="cb16-10"><a href="predictive-inference-the-gender-wage-gap.html#cb16-10" aria-hidden="true"></a>t.D &lt;-<span class="st"> </span><span class="kw">lm</span>(flex.d, <span class="dt">data=</span>data)<span class="op">$</span>res</span>
+<span id="cb16-11"><a href="predictive-inference-the-gender-wage-gap.html#cb16-11" aria-hidden="true"></a></span>
+<span id="cb16-12"><a href="predictive-inference-the-gender-wage-gap.html#cb16-12" aria-hidden="true"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
+<span id="cb16-13"><a href="predictive-inference-the-gender-wage-gap.html#cb16-13" aria-hidden="true"></a>partial.fit &lt;-<span class="st"> </span><span class="kw">lm</span>(t.Y<span class="op">~</span>t.D)</span>
+<span id="cb16-14"><a href="predictive-inference-the-gender-wage-gap.html#cb16-14" aria-hidden="true"></a>partial.est &lt;-<span class="st"> </span><span class="kw">summary</span>(partial.fit)<span class="op">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb16-15"><a href="predictive-inference-the-gender-wage-gap.html#cb16-15" aria-hidden="true"></a></span>
+<span id="cb16-16"><a href="predictive-inference-the-gender-wage-gap.html#cb16-16" aria-hidden="true"></a><span class="kw">cat</span>(<span class="st">&quot;Coefficient for D via partialling-out&quot;</span>, partial.est)</span></code></pre></div>
+<pre><code>## Coefficient for D via partialling-out -0.0695532</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="predictive-inference-the-gender-wage-gap.html#cb18-1" aria-hidden="true"></a><span class="co"># standard error</span></span>
+<span id="cb18-2"><a href="predictive-inference-the-gender-wage-gap.html#cb18-2" aria-hidden="true"></a>HCV.coefs &lt;-<span class="st"> </span><span class="kw">vcovHC</span>(partial.fit, <span class="dt">type =</span> <span class="st">&#39;HC&#39;</span>)</span>
+<span id="cb18-3"><a href="predictive-inference-the-gender-wage-gap.html#cb18-3" aria-hidden="true"></a>partial.se &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(HCV.coefs))[<span class="dv">2</span>]</span>
+<span id="cb18-4"><a href="predictive-inference-the-gender-wage-gap.html#cb18-4" aria-hidden="true"></a></span>
+<span id="cb18-5"><a href="predictive-inference-the-gender-wage-gap.html#cb18-5" aria-hidden="true"></a><span class="co"># confidence interval</span></span>
+<span id="cb18-6"><a href="predictive-inference-the-gender-wage-gap.html#cb18-6" aria-hidden="true"></a><span class="kw">confint</span>(partial.fit)[<span class="dv">2</span>,]</span></code></pre></div>
+<pre><code>##       2.5 %      97.5 % 
+## -0.09867142 -0.04043498</code></pre>
+<p>Again, the estimated coefficient measures the linear predictive effect (PE) of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span> after taking out the linear effect of <span class="math inline">\(W\)</span> on both of these variables. This coefficient equals the estimated coefficient from the ols regression with controls.</p>
+<p>We know that the partialling-out approach works well when the dimension of <span class="math inline">\(W\)</span> is low
+in relation to the sample size <span class="math inline">\(n\)</span>. When the dimension of <span class="math inline">\(W\)</span> is relatively high, we need to use variable selection
+or penalization for regularization purposes.</p>
+<p>In the following, we illustrate the partialling-out approach using lasso instead of ols.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="predictive-inference-the-gender-wage-gap.html#cb20-1" aria-hidden="true"></a><span class="co"># Partialling-Out using lasso</span></span>
+<span id="cb20-2"><a href="predictive-inference-the-gender-wage-gap.html#cb20-2" aria-hidden="true"></a></span>
+<span id="cb20-3"><a href="predictive-inference-the-gender-wage-gap.html#cb20-3" aria-hidden="true"></a><span class="kw">library</span>(hdm)</span></code></pre></div>
+<pre><code>## Warning: package &#39;hdm&#39; was built under R version 4.0.5</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="predictive-inference-the-gender-wage-gap.html#cb22-1" aria-hidden="true"></a><span class="co"># models</span></span>
+<span id="cb22-2"><a href="predictive-inference-the-gender-wage-gap.html#cb22-2" aria-hidden="true"></a>flex.y &lt;-<span class="st"> </span>lwage <span class="op">~</span><span class="st">  </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we) <span class="co"># model for Y</span></span>
+<span id="cb22-3"><a href="predictive-inference-the-gender-wage-gap.html#cb22-3" aria-hidden="true"></a>flex.d &lt;-<span class="st"> </span>sex <span class="op">~</span><span class="st"> </span>(exp1<span class="op">+</span>exp2<span class="op">+</span>exp3<span class="op">+</span>exp4)<span class="op">*</span>(shs<span class="op">+</span>hsg<span class="op">+</span>scl<span class="op">+</span>clg<span class="op">+</span>occ2<span class="op">+</span>ind2<span class="op">+</span>mw<span class="op">+</span>so<span class="op">+</span>we) <span class="co"># model for D</span></span>
+<span id="cb22-4"><a href="predictive-inference-the-gender-wage-gap.html#cb22-4" aria-hidden="true"></a></span>
+<span id="cb22-5"><a href="predictive-inference-the-gender-wage-gap.html#cb22-5" aria-hidden="true"></a><span class="co"># partialling-out the linear effect of W from Y</span></span>
+<span id="cb22-6"><a href="predictive-inference-the-gender-wage-gap.html#cb22-6" aria-hidden="true"></a>t.Y &lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex.y, <span class="dt">data=</span>data)<span class="op">$</span>res</span>
+<span id="cb22-7"><a href="predictive-inference-the-gender-wage-gap.html#cb22-7" aria-hidden="true"></a><span class="co"># partialling-out the linear effect of W from D</span></span>
+<span id="cb22-8"><a href="predictive-inference-the-gender-wage-gap.html#cb22-8" aria-hidden="true"></a>t.D &lt;-<span class="st"> </span><span class="kw">rlasso</span>(flex.d, <span class="dt">data=</span>data)<span class="op">$</span>res</span>
+<span id="cb22-9"><a href="predictive-inference-the-gender-wage-gap.html#cb22-9" aria-hidden="true"></a></span>
+<span id="cb22-10"><a href="predictive-inference-the-gender-wage-gap.html#cb22-10" aria-hidden="true"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
+<span id="cb22-11"><a href="predictive-inference-the-gender-wage-gap.html#cb22-11" aria-hidden="true"></a>partial.lasso.fit &lt;-<span class="st"> </span><span class="kw">lm</span>(t.Y<span class="op">~</span>t.D)</span>
+<span id="cb22-12"><a href="predictive-inference-the-gender-wage-gap.html#cb22-12" aria-hidden="true"></a>partial.lasso.est &lt;-<span class="st"> </span><span class="kw">summary</span>(partial.lasso.fit)<span class="op">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb22-13"><a href="predictive-inference-the-gender-wage-gap.html#cb22-13" aria-hidden="true"></a></span>
+<span id="cb22-14"><a href="predictive-inference-the-gender-wage-gap.html#cb22-14" aria-hidden="true"></a><span class="kw">cat</span>(<span class="st">&quot;Coefficient for D via partialling-out using lasso&quot;</span>, partial.lasso.est)</span></code></pre></div>
+<pre><code>## Coefficient for D via partialling-out using lasso -0.07193551</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="predictive-inference-the-gender-wage-gap.html#cb24-1" aria-hidden="true"></a><span class="co"># standard error</span></span>
+<span id="cb24-2"><a href="predictive-inference-the-gender-wage-gap.html#cb24-2" aria-hidden="true"></a>HCV.coefs &lt;-<span class="st"> </span><span class="kw">vcovHC</span>(partial.lasso.fit, <span class="dt">type =</span> <span class="st">&#39;HC&#39;</span>)</span>
+<span id="cb24-3"><a href="predictive-inference-the-gender-wage-gap.html#cb24-3" aria-hidden="true"></a>partial.lasso.se &lt;-<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">diag</span>(HCV.coefs))[<span class="dv">2</span>]</span></code></pre></div>
+<p>Using lasso for partialling-out here provides similar results as using ols.</p>
+<p>Next, we summarize the results.</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="testing-the-convergence-hypothesis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/alexanderquispe/ml_book/edit/master/02-Inference.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/alexanderquispe/ml_book/blob/master/02-Inference.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

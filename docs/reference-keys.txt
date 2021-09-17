@@ -1,5 +1,3 @@
-down-the-rabbit-hole
-the-pool-of-tears
 a-caucus-race-and-a-long-tale
 chapter-1-predictive-inference-1
 data
@@ -23,3 +21,13 @@ flexible-model
 lasso-model
 tab:table-two-html
 r-and-python-code
+predictive-inference-the-gender-wage-gap
+data-analysis-1
+predictive-inference-the-gender-wage-gap-1
+data-analysis-2
+predictive-inference-the-gender-wage-gap-ale
+testing-the-convergence-hypothesis
+introduction
+tab:mean-sample
+ols-regression
+ols-regression-with-controls
