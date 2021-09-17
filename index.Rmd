@@ -26,64 +26,95 @@ The variable of interest $Y$ is the hourly wage rate constructed as the ratio of
 
 ## Data Analysis
 
-### R code
+### R and Python code
 
 1. Import relevant packages
 
-:::: {style="display: flex;"}
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
 
-::: {}
 **R code**
-
 ```{r packages,echo= TRUE,message=FALSE,warning=FALSE}
 library(dplyr)
 library(kableExtra)
 ```
 :::
-
-::: {.col data-latex="{0.05\textwidth}"}
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
 
-::: {}
 **Python code**
-
-```{r}
-print("Hello world")
+```{python python-packages}
+# import pandas as pd
+# import numpy as np
+# import pyreadr
 ```
 :::
-
-::::
+::::::
 
 2. We start loading the data set.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**R code**
 
 ```{r import-data,echo= TRUE}
 load("./data/wage2015_subsample_inference.Rdata")
 ```
+:::
+
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Python code**
+
+```{python import-python-data}
+#rdata_read = pyreadr.read_r("../data/wage2015_subsample_inference.Rdata")
+#data = rdata_read[ 'data' ]
+#type(data)
+#data.shape
+```
+:::
+::::::
 
 The dimensions are `r dim(data)[1]` rows and `r dim(data)[2]` columns.
 
 Let's have a look at the structure of the data.
 
+**R code**
 ```{r type-table, echo=TRUE}
 
 # Calculate the means and convert it into a dataframe
-table0 <- data.frame(apply(data,2,class))%>%
-  rename(Type =`apply.data..2..class.`)
-
-table0$Variables <- rownames(table0)
-rownames(table0) <- c(1:nrow(table0))
+table0 <- data.frame(lapply(data,class))%>%
+  tidyr::gather("Variable","Type")
 
 # Table presentation
-table0 %>% select(2,1)%>%
+table0 %>%
   kable("markdown",caption = "Type of the Variables")
 ```
+
+**Python code**
+
+```{python type-table-python}
+# data.info()
+
+# data.describe()
+```
+
 
 3. Give structure to the variables
 
 We are constructing the output variable $Y$ and the matrix $Z$ which includes the characteristics of workers that are given in the data.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**R code**
 
 ```{r variables-structure, echo=TRUE}
 
@@ -97,33 +128,97 @@ Z <- data[,c("wage","lwage")]
 p <- dim(Z)[2]
 ```
 
-Number of observation: `r n`
+Number of observation: `r n`  
 Number of raw regressors:`r p`
+:::
+
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Python code**
+
+```{python variables-structure-python}
+## Calculate the log wage.
+# Y = np.log2(data['wage']) 
+## Number of observaciones
+# n = len(Y)
+## Regressors
+# z = data.loc[:, ~data.columns.isin(['wage', 'lwage','Unnamed: 0'])]
+## Number of regressors
+# p = z.shape[1]
+# print("Number of observation:", n, '\n')
+# print( "Number of raw regressors:", p)
+```
+:::
+::::::
+
 
 4. For the outcome variable wage and a subset of the raw regressors, we calculate the empirical mean to get familiar with the data.
 
+
+**R code**
 ```{r table-one, echo = TRUE}
 # Select the variables.
 Z_subset <- data[,c("lwage","sex","shs","hsg","scl","clg","ad","mw","so","we","ne","exp1")]
-
 # Create table
 table1 <- data.frame(as.numeric(lapply(Z_subset,mean))) %>%
   mutate(Variables = c("Log Wage","Sex","Some High School","High School Graduate","Some College","College Graduate", "Advanced Degree","Midwest","South","West","Northeast","Experience")) %>%
   rename(`Sample Mean` = `as.numeric.lapply.Z_subset..mean..`) %>%
   select(2,1)
-
 # HTML table
 table1 %>%
   kable("markdown",caption = "Descriptive Statistics")
 ```
 
-E.g., the share of female workers in our sample is $~44% (sex=1$ if female).
+**Python code**
+
+```{python table-one-python}
+# Z_subset = data.loc[:, data.columns.isin(["lwage","sex","shs","hsg","scl","clg","ad","mw","so","we","ne","exp1"])]
+# table = Z_subset.mean(axis=0)
+# table
+```
+
+
+```{python table-one-final-python}
+# table = pd.DataFrame(data=table, columns={"Sample mean":"0"} )
+# table.index
+# index1 = list(table.index)
+# index2 = ["Log Wage","Sex","Some High School","High School Graduate",\
+#           "Some College","College Graduate", "Advanced Degree","Midwest",\
+#           "South","West","Northeast","Experience"]
+
+# table = table.rename(index=dict(zip(index1,index2)))
+# table
+```
+
+E.g., the share of female workers in our sample is ~44% ($sex=1$ if female).
 
 Alternatively, we can also print the table as latex.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**R code**
 
 ```{r table-one-latex, echo=TRUE}
 print(table1, type="latex")
 ```
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Python code**
+```{python table-one-latex-python}
+# print(table.to_latex())
+```
+
+:::
+::::::
 
 ## Prediction Question
 
@@ -147,6 +242,14 @@ Using the **Flexible Model**, enables us to approximate the real relationship by
 
 Now, let us fit both models to our data by running ordinary least squares (ols):
 
+
+### Basic Model:
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**R code**
+
 ```{r basic-model}
 basic <- lwage~ (sex + exp1 + shs + hsg+ scl + clg + mw + so + we+occ2+ind2)
 regbasic <- lm(basic, data=data)
@@ -154,7 +257,41 @@ regbasic # estimated coefficients
 ```
 
 Number of regressors in the basic model **`r length(regbasic$coef)`**.
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
 
+**Python**
+
+Regression packages:
+```{python ols-packages-python}
+# import statsmodels.api as sm
+# import statsmodels.formula.api as smf
+```
+
+```{python basic-model-python}
+# basic = 'lwage ~ sex + exp1 + shs + hsg+ scl + clg + mw + so + we + occ2+ ind2'
+# basic_results = smf.ols(basic , data=data).fit()
+# print(basic_results.summary()) # estimated coefficients
+```
+
+```{python basic-model-python-regressors}
+# print( "Number of regressors in the basic model:",len(basic_results.params), '\n')  # number of regressors in the Basic Model
+```
+
+:::
+::::::
+
+### Flexible Model:
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**R code**
 ```{r flexible-model}
 flex <- lwage ~ sex + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)
 regflex <- lm(flex, data=data)
@@ -162,16 +299,61 @@ regflex # estimated coefficients
 ```
 
 Number of regressors in the flexible model:**`r length(regflex$coef)`**.
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
 
-- **Lasso Model**
+**Python code**
+```{python flexible-model-python}
+# flex = 'lwage ~ sex + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)'
+# flex_results_0 = smf.ols(flex , data=data)
+# flex_results = smf.ols(flex , data=data).fit()
+# print(flex_results.summary()) # estimated coefficients
+# print( "Number of regressors in the basic model:",len(flex_results.params), '\n')
+```
+:::
+::::::
 
-First, we import an essential library.
+### Lasso Model:
+
+First, we import the essential libraries.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**R code**
 
 ```{r hdm-packages, message=FALSE, warning=FALSE}
 library(hdm)
 ```
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Python code**
+
+```{python lasso-packages-python}
+# from sklearn.linear_model import LassoCV
+# from sklearn import linear_model
+# from sklearn.preprocessing import PolynomialFeatures
+# from sklearn.metrics import mean_squared_error
+```
+
+:::
+::::::
 
 Then, we estimate the lasso model.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**R code**
 ```{r lasso-estimation}
 flex <- lwage ~ sex + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)
 lassoreg<- rlasso(flex, data=data)
@@ -179,12 +361,51 @@ lassoreg<- rlasso(flex, data=data)
 sumlasso<- summary(lassoreg)
 ```
 
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Python code**
+
+```{python exogenous-var-python}
+# Get exogenous variables from flexible model
+# X = flex_results_0.exog
+# X.shape
+# 
+# # Set endogenous variable
+# lwage = data["lwage"]
+# lwage.shape
+```
+
+```{python lasso-estimation-python}
+# alpha=0.1
+# # Set penalty value = 0.1
+# #reg = linear_model.Lasso(alpha=0.1/np.log(len(lwage)))
+# reg = linear_model.Lasso(alpha = alpha)
+# 
+# # LASSO regression for flexible model
+# reg.fit(X, lwage)
+# lwage_lasso_fitted = reg.fit(X, lwage).predict( X )
+# 
+# # coefficients 
+# reg.coef_
+# print('Lasso Regression: R^2 score', reg.score(X, lwage))
+```
+
+:::
+::::::
+
 Now, we can evaluate the performance of both models based on the (adjusted) $R^2_{sample}$  and the (adjusted) $MSE_{sample}$:
 
 1. R-Squared $(R^2)$
 
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**R code**
 ```{r r-squared}
-
 # Summary from basic and flexible model.
 sumbasic <- summary(regbasic)
 sumflex <- summary(regflex)
@@ -198,7 +419,6 @@ R2.adj2 <- sumflex$adj.r.squared
 
 R2.L <- sumlasso$r.squared
 R2.adjL <- sumlasso$adj.r.squared
-
 ```
 
 - R-squared for the basic model: `r R2.1`.
@@ -208,8 +428,41 @@ R2.adjL <- sumlasso$adj.r.squared
 - R-squared for the lasso with flexible model: `r R2.L`.
 - Adjusted R-squared for the flexible model: `r R2.adjL`.
 
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**Python**
+
+```{python r-squared-python-two}
+# Assess the predictive performance
+# R2_1 = basic_results.rsquared
+# print("R-squared for the basic model: ", R2_1, "\n")
+# R2_adj1 = basic_results.rsquared_adj
+# print("adjusted R-squared for the basic model: ", R2_adj1, "\n")
+# 
+# R2_2 = flex_results.rsquared
+# print("R-squared for the basic model: ", R2_2, "\n")
+# R2_adj2 = flex_results.rsquared_adj
+# print("adjusted R-squared for the basic model: ", R2_adj2, "\n")
+# R2_L = reg.score(flex_results_0.exog, lwage)
+# print("R-squared for LASSO: ", R2_L, "\n")
+# R2_adjL = 1 - (1-R2_L)*(len(lwage)-1)/(len(lwage)-X.shape[1]-1)
+# print("adjusted R-squared for LASSO: ", R2_adjL, "\n")
+```
+
+:::
+::::::
+
 2. Mean Squared Error $MSE$
 
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**R code**
 ```{r mean-squared-error}
 MSE1 <- mean(sumbasic$res^2)
 p1 <- sumbasic$df[1] # number of regressors
@@ -233,6 +486,49 @@ MSE.adjL <- (n/(n-pL))*MSEL
 * MSE for the lasso flexible model: `r MSEL`
 * Adjusted MSE for the lasso flexible model: `r MSE.adjL`
 
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Python code**
+
+```{python mean-squared-error-python}
+# calculating the MSE
+# MSE1 =  np.mean(basic_results.resid**2)
+# print("MSE for the basic model: ", MSE1, "\n")
+# p1 = len(basic_results.params) # number of regressors
+# n = len(lwage)
+# MSE_adj1  = (n/(n-p1))*MSE1
+# print("adjusted MSE for the basic model: ", MSE_adj1, "\n")
+# 
+# MSE2 =  np.mean(flex_results.resid**2)
+# print("MSE for the flexible model: ", MSE2, "\n")
+# p2 = len(flex_results.params) # number of regressors
+# n = len(lwage)
+# MSE_adj2  = (n/(n-p2))*MSE2
+# print("adjusted MSE for the flexible model: ", MSE_adj2, "\n")
+# 
+# 
+# MSEL = mean_squared_error(lwage, lwage_lasso_fitted)
+# print("MSE for the LASSO model: ", MSEL, "\n")
+# pL = reg.coef_.shape[0] # number of regressors
+# n = len(lwage)
+# MSE_adjL  = (n/(n-pL))*MSEL
+# print("adjusted MSE for LASSO model: ", MSE_adjL, "\n")
+```
+:::
+::::::
+
+Latex presentation
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**R code**
 ```{r table-two}
 Models <- c("Basic reg","Flexible reg","Lasso reg")
 p <- c(p1,p2,pL)
@@ -240,11 +536,37 @@ R_2 <- c(R2.1,R2.2,R2.L)
 MSE <- c(MSE1,MSE2,MSEL)
 R_2_adj <- c(R2.adj1,R2.adj2,R2.adjL)
 MSE_adj <- c(MSE.adj1,MSE.adj2,MSE.adjL)
+```
 
+```{r table-two-html}
 data.frame(Models,p,R_2,MSE,R_2_adj,MSE_adj) %>%
   kable("markdown",caption = "Descriptive Statistics")
 
 ```
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Python code**
+```{python table-two-python}
+# import array_to_latex as a2l
+# 
+# table = np.zeros((3, 5))
+# table[0,0:5] = [p1, R2_1, MSE1, R2_adj1, MSE_adj1]
+# table[1,0:5] = [p2, R2_2, MSE2, R2_adj2, MSE_adj2]
+# table[2,0:5] = [pL, R2_L, MSEL, R2_adjL, MSE_adjL]
+# table
+```
+
+```{python table-two-latex}
+# table = pd.DataFrame(table, columns = ["p","$R^2_{sample}$","$MSE_{sample}$","$R^2_{adjusted}$", "$MSE_{adjusted}$"], index = ["basic reg","flexible reg", "lasso flex"])
+# table
+```
+:::
+::::::
 
 Considering all measures above, the flexible model performs slightly better than the basic model.
 
@@ -262,6 +584,10 @@ Measure the prediction quality of the two models via data splitting:
 
 - Calculate the **Mean Squared Prediction Error** $MSE_{test}$ based on the testing sample for both prediction models.
 
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**R code**
 ```{r data-spliting}
 # to make the results replicable (generating random numbers)
 set.seed(1)
@@ -270,27 +596,106 @@ random_2 <- sample(1:n, floor(n*4/5))
 # training sample
 train <- data[random_2,]
 # testing sample
-test <- data[-random_2,] 
+test <- data[-random_2,]
 ```
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Python code**
+```{python data-splitting-python}
+# # Import relevant packages for splitting data
+# import random
+# import math
+# 
+# # Set Seed
+# # to make the results replicable (generating random numbers)
+# np.random.seed(0)
+# random = np.random.randint(0,n, size=math.floor(n))
+# data["random"] = random
+# random # the array does not change 
+```
+
+```{python random-data-splitting-python}
+# data_2 = data.sort_values(by=['random'])
+# data_2.head()
+```
+
+```{python training-testing-python}
+# Create training and testing sample 
+# train = data_2[ : math.floor(n*4/5)]    # training sample
+# test =  data_2[ math.floor(n*4/5) : ]   # testing sample
+# print(train.shape)
+# print(test.shape)
+```
+:::
+::::::
 
 The train data dimensions are `r dim(train)[1]` rows and `r dim(train)[2]` columns.
 
 We estimate the parameters using the training data set.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
 ```{r basic-training-estimate}
 # basic model
 # estimating the parameters in the training sample
 regbasic <- lm(basic, data=train)
 regbasic
 ```
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
 
-Then predict using the parameters in the testing sample.
+```{python}
+# # basic model
+# # estimating the parameters in the training sample
+# basic_results = smf.ols(basic , data=train).fit()
+# print(basic_results.summary())
+```
+:::
+::::::
+
+Then predict using the parameters in the testing sample. 
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
 ```{r basic-testing-predict}
 # calculating the out-of-sample MSE
 trainregbasic <- predict(regbasic, newdata=test)
 trainregbasic
 ```
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{python}
+# lwage_test = test["lwage"].values
+# test = sm.add_constant(test)   #add constant 
+# 
+# lwage_pred =  basic_results.predict(test) # predict out of sample
+# print(lwage_pred)
+```
+
+:::
+::::::
 
 Finally, we test the predictions.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**R code**
 ```{r basic-mse}
 y.test <- log(test$wage)
 MSE.test1 <- sum((y.test-trainregbasic)^2)/length(y.test)
@@ -300,7 +705,30 @@ R2.test1<- 1- MSE.test1/var(y.test)
 * Test MSE for the basic model: `r MSE.test1`.
 * Test R2 for the basic model: `r R2.test1`.
 
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+```{python}
+# MSE_test1 = np.sum((lwage_test-lwage_pred)**2)/len(lwage_test)
+# R2_test1  = 1 - MSE_test1/np.var(lwage_test)
+# 
+# print("Test MSE for the basic model: ", MSE_test1, " ")
+# print("Test R2 for the basic model: ", R2_test1)
+```
+
+:::
+::::::
+
 In the basic model, the $MSE test$ is quite closed to the $MSE sample$.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
 
 ```{r fexible-estimate-prediction}
 
@@ -319,6 +747,33 @@ R2.test2<- 1- MSE.test2/var(y.test)
 
 * Test R2 for the flexible model: `r R2.test2`.
 
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# # Flexible model
+# # estimating the parameters in the training sample
+# flex_results = smf.ols(flex , data=train).fit()
+# 
+# # calculating the out-of-sample MSE
+# lwage_flex_pred =  flex_results.predict(test) # predict out of sample
+# lwage_test = test["lwage"].values
+# 
+# MSE_test2 = np.sum((lwage_test-lwage_flex_pred)**2)/len(lwage_test)
+# R2_test2  = 1 - MSE_test2/np.var(lwage_test)
+# 
+# print("Test MSE for the flexible model: ", MSE_test2, " ")
+# print("Test R2 for the flexible model: ", R2_test2)
+```
+
+:::
+::::::
+
 In the flexible model, the discrepancy between the $MSE_{test}$ and the $MSE_{sample}$ is not large.
 
 It is worth to notice that the $MSE_{test}$ vary across different data splits. Hence, it is a good idea average the out-of-sample MSE over different data splits to get valid results.
@@ -329,7 +784,10 @@ Next, let us use lasso regression in the flexible model instead of OLS regressio
 
 Note that the out-of-sample $MSE$ on the test sample can be computed for any other black-box prediction method as well. Thus, let us finally compare the performance of lasso regression in the flexible model to OLS regression.
 
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
 
+**R code**
 ```{r flexible-lass-random}
 # flexible model using lasso
 
@@ -345,7 +803,49 @@ R2.lasso<- 1- MSE.lasso/var(y.test)
 
 * Test $R^2$ for the lasso flexible model: `r R2.lasso`
 
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+```{python}
+# # flexible model using lasso
+# # get exogenous variables from training data used in flex model
+# flex_results_0 = smf.ols(flex , data=train)
+# X_train = flex_results_0.exog
+# print(X_train.shape)
+# 
+# # Get endogenous variable 
+# lwage_train = train["lwage"]
+# print(lwage_train.shape)
+```
+
+
+```{python}
+# # calculating the out-of-sample MSE
+# reg = linear_model.Lasso(alpha=0.1)
+# lwage_lasso_fitted = reg.fit(X_train, lwage_train).predict( X_test )
+# 
+# MSE_lasso = np.sum((lwage_test-lwage_lasso_fitted)**2)/len(lwage_test)
+# R2_lasso  = 1 - MSE_lasso/np.var(lwage_test)
+# 
+# print("Test MSE for the flexible model: ", MSE_lasso, " ")
+# print("Test R2 for the flexible model: ", R2_lasso)
+```
+
+:::
+::::::
+
 Finally, let us summarize the results:
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+**R code**
 
 ```{r summarize-results}
 Models <- c("Basic regression","Flexible regression","Lasso regression")
@@ -360,4 +860,36 @@ data.frame(Models,R_2_SAMPLE,MSE_SAMPLE) %>%
 ```{r table-four}
 print(data.frame(Models,R_2,MSE),type="latex")
 ```
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
 
+**Python code**
+```{python}
+# Package for latex table 
+# import array_to_latex as a2l
+# 
+# table2 = np.zeros((3, 2))
+# table2[0,0] = MSE_test1
+# table2[1,0] = MSE_test2
+# table2[2,0] = MSE_lasso
+# table2[0,1] = R2_test1
+# table2[1,1] = R2_test2
+# table2[2,1] = R2_lasso
+# 
+# table2 = pd.DataFrame(table2, columns = ["$MSE_{test}$", "$R^2_{test}$"], \
+#                       index = ["basic reg","flexible reg","lasso regression"])
+# table2
+```
+
+```{python}
+# table2.to_latex
+# print(table2.to_latex())
+```
+
+:::
+::::::

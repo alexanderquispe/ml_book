@@ -12,3 +12,12 @@ pre {
 pre code {
   white-space: inherit;
 }
+
+.columns {display: flex; }
+
+.book .book-body .page-wrapper .page-inner section {
+  font-size: 1.6rem;
+  margin-left: -184px;
+  margin-right: -184px;
+  padding: 0 14px;
+}

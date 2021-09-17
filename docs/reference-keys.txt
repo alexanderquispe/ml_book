@@ -13,3 +13,13 @@ prediction-question
 tab:table-two
 data-splitting
 tab:summarize-results
+r-code-and-python-code
+this-section-will-have-three-columns-trial
+this-section-will-have-two-columns
+python
+r
+basic-model
+flexible-model
+lasso-model
+tab:table-two-html
+r-and-python-code
