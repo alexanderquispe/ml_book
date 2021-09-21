@@ -1,0 +1,177 @@
+# Predictive Inference The Gender Wage Gap 
+
+In the previous lab, we already analyzed data from the March Supplement of the U.S. Current Population Survey (2015) and answered the question how to use job-relevant characteristics, such as education and experience, to best predict wages. Now, we focus on the following inference question:
+
+What is the difference in predicted wages between men and women with the same job-relevant characteristics?
+
+Thus, we analyze if there is a difference in the payment of men and women (gender wage gap). The gender wage gap may partly reflect discrimination against women in the labor market or may partly reflect a selection effect, namely that women are relatively more likely to take on occupations that pay somewhat less (for example, school teaching).
+
+To investigate the gender wage gap, we consider the following log-linear regression model
+
+
+$$log(Y) = \beta'X + \epsilon $$
+$$log(Y) = \beta_1 D  + \beta_2' W + \epsilon$$
+
+where $D$ is the indicator of being female ($1$ if female and $0$ otherwise) and the
+$W$'s are controls explaining variation in wages. Considering transformed wages by the logarithm, we are analyzing the relative difference in the payment of men and women.
+
+
+## Data analysis
+
+We consider the same subsample of the U.S. Current Population Survey (2015) as in the previous lab. Let us load the data set.
+
+```{r packages,echo= TRUE,message=FALSE,warning=FALSE}
+library(dplyr)
+library(kableExtra)
+```
+
+```{r import-data_chapter2,echo= TRUE}
+load("./data/wage2015_subsample_inference.Rdata")
+```
+
+To start our (causal) analysis, we compare the sample means given gender:
+
+```{r mean-sample,echo=TRUE}
+table1 <- data %>% 
+  select(lwage,sex,shs,hsg,scl,clg,ad,ne,mw,so,we,exp1)
+
+All <- apply(table1,2,mean)
+Men <- apply(table1[table1$sex==0,],2,mean)
+Women <- apply(table1[table1$sex==1,],2,mean)
+
+Variables <- c("Log Wage","Sex","Less then High School","High School Graduate","Some College","Collage Graduate","Advanced Degree", "Northeast","Midwest","South","West","Experience")
+
+data.frame(Variables,All,Men,Women) %>%
+  kable("markdown",caption = "Sample means given gender")
+
+```
+
+Alternatively, we can also print the table as latex.
+
+```{r table-stadistics}
+print(data.frame(Variables,All,Men,Women) ,type="latex")
+```
+
+In particular, the table above shows that the difference in average *logwage* between men and women is equal to $0,038$.
+
+```{r mean difference}
+mean(table1$lwage[table1$sex==1])-mean(table1$lwage[table1$sex==0])
+```
+
+Thus, the unconditional gender wage gap is about $3,8 \%$ for the group of never married workers (women get paid less on average in our sample). We also observe that never married working women are relatively more educated than working men and have lower working experience.
+
+This unconditional (predictive) effect of gender equals the coefficient $\beta$ in the univariate ols regression of $Y$ on $D$:
+
+$$log(Y) =\beta D + \epsilon$$
+We verify this by running an ols regression in R.
+
+### OLS Regression
+
+```{r}
+library(sandwich)
+nocontrol.fit <- lm(lwage ~ sex, data = data)
+nocontrol.est <- summary(nocontrol.fit)$coef["sex",1]
+HCV.coefs <- vcovHC(nocontrol.fit, type = 'HC');
+nocontrol.se <- sqrt(diag(HCV.coefs))[2] # Estimated std errors
+```
+
+The estimated gender coefficient is `r nocontrol.est`, and the corresponding robust standard error is `r nocontrol.se`.
+
+Note that the standard error is computed with the *R* package *sandwich* to be robust to heteroskedasticity.
+
+Next, we run an ols regression of $Y$ on $(D,W)$ to control for the effect of covariates summarized in $W$:
+
+$$log(Y) =\beta_1 D  + \beta_2' W + \epsilon$$
+
+Here, we are considering the flexible model from the previous lab. Hence, $W$ controls for experience, education, region, and occupation and industry indicators plus transformations and two-way interactions.
+
+Let us run the **ols regression** with controls.
+
+### Ols regression with controls
+
+```{r ols-control-r}
+flex <- lwage ~ sex + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)
+
+#   Note that ()*() operation in formula objects in R creates a formula of the sort:
+#  (exp1+exp2+exp3+exp4)+ (shs+hsg+scl+clg+occ2+ind2+mw+so+we) +  (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)
+#  This is not intuitive at all, but that's what it does.
+
+control.fit <- lm(flex, data=data)
+control.est <- summary(control.fit)$coef[2,1]
+
+summary(control.fit)
+
+cat("Coefficient for OLS with controls", control.est)
+
+HCV.coefs <- vcovHC(control.fit, type = 'HC');
+control.se <- sqrt(diag(HCV.coefs))[2] # Estimated std errors
+```
+
+The estimated regression coefficient $\beta_1\approx-0.0696$ measures how our linear prediction of wage changes if we set the gender variable $D$ from 0 to 1, holding the controls $W$ fixed.
+We can call this the *predictive effect* (PE), as it measures the impact of a variable on the prediction we make. Overall, we see that the unconditional wage gap of size $4\%$ for women increases to about $7\%$ after controlling for worker characteristics.
+
+Next, we are using the Frisch-Waugh-Lovell theorem from the lecture partialling-out the linear effect of the controls via ols.
+
+```{r partialling-out-ols}
+# Partialling-Out using ols
+
+# models
+flex.y <- lwage ~  (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we) # model for Y
+flex.d <- sex ~ (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we) # model for D
+
+# partialling-out the linear effect of W from Y
+t.Y <- lm(flex.y, data=data)$res
+# partialling-out the linear effect of W from D
+t.D <- lm(flex.d, data=data)$res
+
+# regression of Y on D after partialling-out the effect of W
+partial.fit <- lm(t.Y~t.D)
+partial.est <- summary(partial.fit)$coef[2,1]
+
+cat("Coefficient for D via partialling-out", partial.est)
+
+# standard error
+HCV.coefs <- vcovHC(partial.fit, type = 'HC')
+partial.se <- sqrt(diag(HCV.coefs))[2]
+
+# confidence interval
+confint(partial.fit)[2,]
+```
+
+Again, the estimated coefficient measures the linear predictive effect (PE) of $D$ on $Y$ after taking out the linear effect of $W$ on both of these variables. This coefficient equals the estimated coefficient from the ols regression with controls.
+
+We know that the partialling-out approach works well when the dimension of $W$ is low
+in relation to the sample size $n$. When the dimension of $W$ is relatively high, we need to use variable selection
+or penalization for regularization purposes. 
+
+In the following, we illustrate the partialling-out approach using lasso instead of ols.
+
+```{r partialling-lasso}
+# Partialling-Out using lasso
+library(hdm)
+
+# models
+flex.y <- lwage ~  (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we) # model for Y
+flex.d <- sex ~ (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we) # model for D
+
+# partialling-out the linear effect of W from Y
+t.Y <- rlasso(flex.y, data=data)$res
+# partialling-out the linear effect of W from D
+t.D <- rlasso(flex.d, data=data)$res
+
+# regression of Y on D after partialling-out the effect of W
+partial.lasso.fit <- lm(t.Y~t.D)
+partial.lasso.est <- summary(partial.lasso.fit)$coef[2,1]
+
+cat("Coefficient for D via partialling-out using lasso", partial.lasso.est)
+
+# standard error
+HCV.coefs <- vcovHC(partial.lasso.fit, type = 'HC')
+partial.lasso.se <- sqrt(diag(HCV.coefs))[2]
+```
+
+Using lasso for partialling-out here provides similar results as using ols.
+
+Next, we summarize the results.
+
+
