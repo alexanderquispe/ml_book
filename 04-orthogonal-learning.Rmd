@@ -1,4 +1,5 @@
 # Simulation Design
+
 ## Example 1
 :::::: {.columns}
 ::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
