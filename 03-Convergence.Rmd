@@ -1,11 +1,451 @@
 # Testing the Convergence Hypothesis
-
 ## Introduction
-
 We provide an additional empirical example of partialling-out with Lasso to estimate the regression coefficient $\beta_1$ in the high-dimensional linear regression model:
-
-$$Y = \beta_1 D +  \beta_2'W + \epsilon.$$
+  $$
+  Y = \beta_1 D +  \beta_2'W + \epsilon.
+  $$
   
 Specifically, we are interested in how the rates  at which economies of different countries grow ($Y$) are related to the initial wealth levels in each country ($D$) controlling for country's institutional, educational, and other similar characteristics ($W$).
   
 The relationship is captured by $\beta_1$, the *speed of convergence/divergence*, which measures the speed at which poor countries catch up $(\beta_1< 0)$ or fall behind $(\beta_1> 0)$ rich countries, after controlling for $W$. Our inference question here is: do poor countries grow faster than rich countries, controlling for educational and other characteristics? In other words, is the speed of convergence negative: $ \beta_1 <0?$ This is the Convergence Hypothesis predicted by the Solow Growth Model. This is a structural economic model. Under some strong assumptions, that we won't state here, the predictive exercise we are doing here can be given causal interpretation.
+
+The outcome $Y$ is the realized annual growth rate of a country's wealth  (Gross Domestic Product per capita). The target regressor ($D$) is the initial level of the country's wealth. The target parameter $\beta_1$ is the speed of convergence, which measures the speed at which poor countries catch up with rich countries. The controls ($W$) include measures of education levels, quality of institutions, trade openness, and political stability in the country.
+
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+## Data analysis
+We consider the data set GrowthData which is included in the package *hdm*. First, let us load the data set to get familiar with the data.
+
+
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r}
+library(hdm)
+library(xtable)
+```
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python}
+import pandas as pd
+import numpy as np
+import pyreadr
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+```
+:::
+::::::
+\newline
+
+
+Import data
+
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r}
+growth <- GrowthData
+attach(growth)
+# check variables
+names(growth)
+```
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# I downloaded the data that the author used
+growth_read = pyreadr.read_r("C:/Users/MSI-NB/Documents/GitHub/14.38_Causal_ML/data/GrowthData.RData")
+# Extracting the data frame from rdata_read
+growth = growth_read[ 'GrowthData' ]
+# check variables
+list(growth)
+```
+:::
+::::::
+\newline
+
+We determine the dimension of our data set.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r}
+dim(growth)
+```
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python}
+growth.shape
+```
+:::
+::::::
+\newline
+
+### OLS
+
+The sample contains $90$ countries and $63$ controls. Thus $p \approx 60$, $n=90$ and $p/n$ is not small. We expect the least squares method to provide a poor estimate of $\beta_1$.  We expect the method based on partialling-out with Lasso to provide a high quality estimate of $\beta_1$.
+To check this hypothesis, we analyze the relation between the output variable $Y$ and the other country's characteristics by running a linear regression in the first step.
+
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r}
+reg.ols <- lm(Outcome~.-1,data=growth)
+```
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# We create the main variables
+y = growth['Outcome']
+X = growth.drop('Outcome', 1)
+# OLS regression
+reg_ols  = sm.OLS(y, X).fit()
+```
+:::
+::::::
+\newline
+
+We determine the regression coefficient $\beta_1$ of the target regressor *gdpsh465* ($D$), its 95% confidence interval and the standard error.
+
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r}
+# output: estimated regression coefficient corresponding to the target regressor
+est_ols <- summary(reg.ols)$coef["gdpsh465",1]
+
+# output: std. error
+std_ols <- summary(reg.ols)$coef["gdpsh465",2]
+
+# output: 95% confidence interval
+ci_ols <- confint(reg.ols)[2,]
+
+results_ols <- as.data.frame(cbind(est_ols,std_ols,ci_ols[1],ci_ols[2]))
+colnames(results_ols) <-c("estimator","standard error", "lower bound CI", "upper bound CI")
+rownames(results_ols) <-c("OLS")
+```
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# output: estimated regression coefficient corresponding to the target regressor
+est_ols = reg_ols.summary2().tables[1]['Coef.']['gdpsh465']
+
+# output: std. error
+std_ols = reg_ols.summary2().tables[1]['Std.Err.']['gdpsh465']
+
+# output: 95% confidence interval
+lower_ci = reg_ols.summary2().tables[1]['[0.025']['gdpsh465']
+upper_ci = reg_ols.summary2().tables[1]['0.975]']['gdpsh465']
+```
+:::
+::::::
+\newline
+
+
+
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r}
+table <- matrix(0, 1, 4)
+table[1,1:4]   <- c(est_ols,std_ols,ci_ols[1],ci_ols[2])
+colnames(table) <-c("estimator","standard error", "lower bound CI", "upper bound CI")
+rownames(table) <-c("OLS")
+tab<- xtable(table, digits = 3)
+print(tab,type="html") # set type="latex" for printing table in LaTeX
+```
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python}
+table_1 = np.zeros( (1, 4) )
+table_1[0,0] = est_ols  
+table_1[0,1] = std_ols   
+table_1[0,2] = lower_ci
+table_1[0,3] = upper_ci    
+table_1_pandas = pd.DataFrame( table_1, columns = [ "Estimator","Std. Error", "lower bound CI", "upper bound CI"  ])
+table_1_pandas.index = [ "OLS" ]
+table_1_html = table_1_pandas.to_html()
+table_1_html
+```
+:::
+::::::
+\newline
+
+
+<!-- html table generated in R 3.6.3 by xtable 1.8-4 package -->
+<!-- Tue Jan 19 10:23:32 2021 -->
+<table border=1>
+<tr> <th>  </th> <th> estimator </th> <th> standard error </th> <th> lower bound CI </th> <th> upper bound CI </th>  </tr>
+  <tr> <td align="right"> OLS </td> <td align="right"> -0.009 </td> <td align="right"> 0.030 </td> <td align="right"> -0.071 </td> <td align="right"> 0.052 </td> </tr>
+   </table>
+
+### Lasso
+
+
+Least squares provides a rather noisy estimate (high standard error) of the
+speed of convergence, and does not allow us to answer the question
+about the convergence hypothesis since the confidence interval includes zero.
+In contrast, we can use the partialling-out approach based on lasso regression ("Double Lasso").
+
+
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r}
+Y <- growth[, 1, drop = F] # output variable
+W <- as.matrix(growth)[, -c(1, 2,3)] # controls
+D <- growth[, 3, drop = F] # target regressor
+```
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python}
+Y = growth['Outcome']
+W = growth.drop(['Outcome','intercept', 'gdpsh465'], 1 )
+D = growth['gdpsh465']
+```
+:::
+::::::
+\newline
+
+we run the regression using lasso 
+
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r, eval=TRUE}
+r.Y <- rlasso(x=W,y=Y)$res # creates the "residual" output variable
+r.D <- rlasso(x=W,y=D)$res # creates the "residual" target regressor
+partial.lasso <- lm(r.Y ~ r.D)
+est_lasso <- partial.lasso$coef[2]
+std_lasso <- summary(partial.lasso)$coef[2,2]
+ci_lasso <- confint(partial.lasso)[2,]
+```
+
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python, eval=TRUE}
+from sklearn import linear_model
+# Seat values for Lasso
+lasso_model = linear_model.Lasso( alpha = 0.00077 )
+r_Y = Y - lasso_model.fit( W, Y ).predict( W )
+r_Y = r_Y.rename('r_Y')
+r_D = D - lasso_model.fit( W, D ).predict( W ) # Part. out d
+r_D = r_D.rename('r_D')
+partial_lasso_fit = sm.OLS(r_Y, r_D).fit() # Regress residuales
+
+est_lasso = partial_lasso_fit.summary2().tables[1]['Coef.']['r_D']
+std_lasso = partial_lasso_fit.summary2().tables[1]['Std.Err.']['r_D']
+lower_ci_lasso = partial_lasso_fit.summary2().tables[1]['[0.025']['r_D']
+upper_ci_lasso = partial_lasso_fit.summary2().tables[1]['0.975]']['r_D']
+```
+
+
+:::
+::::::
+\newline
+
+
+now we export results into a table 
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r, eval=FALSE}
+table <- matrix(0, 1, 4)
+table[1,1:4]   <- c(est_lasso,std_lasso,ci_lasso[1],ci_lasso[2])
+colnames(table) <-c("estimator","standard error", "lower bound CI", "upper bound CI")
+rownames(table) <-c("Double Lasso")
+tab<- xtable(table, digits = 3)
+print(tab,type="html") # set type="latex" for printing table in LaTeX
+```
+
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python, eval=FALSE}
+table_2 = np.zeros( (1, 4) )
+table_2[0,0] = est_lasso  
+table_2[0,1] = std_lasso   
+table_2[0,2] = lower_ci_lasso
+table_2[0,3] = upper_ci_lasso    
+table_2_pandas = pd.DataFrame( table_2, columns = [ "Estimator","Std. Error", "lower bound CI", "upper bound CI"  ])
+table_2_pandas.index = [ "LASSO" ]
+table_2_pandas
+```
+
+
+:::
+::::::
+\newline
+
+<!-- html table generated in R 3.6.3 by xtable 1.8-4 package -->
+<!-- Tue Jan 19 10:23:51 2021 -->
+<table border=1>
+<tr> <th>  </th> <th> estimator </th> <th> standard error </th> <th> lower bound CI </th> <th> upper bound CI </th>  </tr>
+  <tr> <td align="right"> Double Lasso </td> <td align="right"> -0.050 </td> <td align="right"> 0.014 </td> <td align="right"> -0.078 </td> <td align="right"> -0.022 </td> </tr>
+   </table>
+
+
+
+Lasso provides a more precise estimate (lower standard error). The Lasso based
+point estimate is  about $5\%$ and the $95\%$ confidence interval for the
+(annual) rate of convergence is $7.8\%$ to $2.2\%$. This empirical
+evidence does support the convergence hypothesis.
+
+Note: Alternatively, one could also use the *rlassoEffect* funtion from the *hdm* package that directly applies the partialling-out approach.
+
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r, eval=FALSE}
+lasso.effect = rlassoEffect(x = W, y = Y, d = D, method = "partialling out")
+lasso.effect
+```
+
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python, eval=FALSE}
+print("no package in python")
+```
+
+
+:::
+::::::
+\newline
+
+
+### Summary results
+
+Finally, let us have a look at the results.
+
+:::::: {.columns}
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r, eval=TRUE}
+table <- matrix(0, 2, 4)
+table[1,1:4]   <- c(est_ols,std_ols,ci_ols[1],ci_ols[2])
+table[2,1:4]   <- c(est_lasso,std_lasso,ci_lasso[1],ci_lasso[2])
+colnames(table) <-c("estimator","standard error", "lower bound CI", "upper bound CI")
+rownames(table) <-c("OLS","Double Lasso")
+tab<- xtable(table, digits = 3)
+# print(tab,type="html") # set type="latex" for printing table in LaTeX
+table
+```
+
+
+:::
+::: {.column width="4%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+
+```{python, eval=TRUE}
+table_2 = np.zeros( (1, 4) )
+table_2[0,0] = est_lasso  
+table_2[0,1] = std_lasso   
+table_2[0,2] = lower_ci_lasso
+table_2[0,3] = upper_ci_lasso    
+table_2_pandas = pd.DataFrame( table_2, columns = [ "Estimator","Std. Error", "lower bound CI", "upper bound CI"  ])
+table_2_pandas.index = [ "Double LASSO" ]
+table_3 = table_1_pandas.append(table_2_pandas)
+table_3
+```
+
+
+:::
+::::::
+\newline
+
+
+The least square method provides a rather noisy estimate of the speed of convergence. We can not answer the question if poor countries grow faster than rich countries. The least square method does not work when the ratio $p/n$ is large.
+
+In sharp contrast, partialling-out via Lasso provides a more precise estimate. The Lasso based point estimate is $-5\%$ and the $95\%$ confidence interval for the (annual) rate of convergence $[-7.8\%,-2.2\%]$ only includes negative numbers. This empirical evidence does support the convergence hypothesis.
+
+<!-- html table generated in R 3.6.3 by xtable 1.8-4 package -->
+<!-- Tue Jan 19 10:28:15 2021 -->
+<table border=1>
+<tr> <th>  </th> <th> estimator </th> <th> standard error </th> <th> lower bound CI </th> <th> upper bound CI </th>  </tr>
+  <tr> <td align="right"> OLS </td> <td align="right"> -0.009 </td> <td align="right"> 0.030 </td> <td align="right"> -0.071 </td> <td align="right"> 0.052 </td> </tr>
+  <tr> <td align="right"> Double Lasso </td> <td align="right"> -0.050 </td> <td align="right"> 0.014 </td> <td align="right"> -0.078 </td> <td align="right"> -0.022 </td> </tr>
+   </table>
+
+

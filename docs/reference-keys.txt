@@ -31,3 +31,6 @@ introduction
 tab:mean-sample
 ols-regression
 ols-regression-with-controls
+ols
+lasso
+summary-results
