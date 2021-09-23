@@ -24,7 +24,7 @@
 <meta name="author" content="Alexander Quispe" />
 
 
-<meta name="date" content="2021-09-22" />
+<meta name="date" content="2021-09-23" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -159,6 +159,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.1.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression"><i class="fa fa-check"></i><b>2.1.1</b> OLS Regression</a></li>
 <li class="chapter" data-level="2.1.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression-with-controls"><i class="fa fa-check"></i><b>2.1.2</b> Ols regression with controls</a></li>
 </ul></li>
+<li class="chapter" data-level="2.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-ols"><i class="fa fa-check"></i><b>2.2</b> Partialling-Out using ols</a></li>
+<li class="chapter" data-level="2.3" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-lasso"><i class="fa fa-check"></i><b>2.3</b> Partialling-Out using lasso</a></li>
+<li class="chapter" data-level="2.4" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#extra-flexible-model"><i class="fa fa-check"></i><b>2.4</b> “Extra” flexible model</a></li>
+<li class="chapter" data-level="2.5" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#laso-extra-flexible-model"><i class="fa fa-check"></i><b>2.5</b> Laso “Extra” Flexible model</a></li>
+<li class="chapter" data-level="2.6" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#summarize-the-results"><i class="fa fa-check"></i><b>2.6</b> Summarize the results</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html"><i class="fa fa-check"></i><b>3</b> Testing the Convergence Hypothesis</a>
 <ul>
@@ -260,6 +265,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

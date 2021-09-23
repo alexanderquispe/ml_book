@@ -23,3 +23,11 @@ example-2
 tab:type-table
 tab:table-one
 tab:table-two-html
+tab:mean-sample
+partialling-out-using-ols
+partialling-out-using-lasso
+tab:results-r
+extra-flexible-model
+laso-extra-flexible-model
+summarize-the-results
+tab:unnamed-chunk-7
