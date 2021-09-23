@@ -24,7 +24,7 @@
 <meta name="author" content="Alexander Quispe" />
 
 
-<meta name="date" content="2021-09-19" />
+<meta name="date" content="2021-09-23" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -159,10 +159,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.1.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression"><i class="fa fa-check"></i><b>2.1.1</b> OLS Regression</a></li>
 <li class="chapter" data-level="2.1.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression-with-controls"><i class="fa fa-check"></i><b>2.1.2</b> Ols regression with controls</a></li>
 </ul></li>
+<li class="chapter" data-level="2.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-ols"><i class="fa fa-check"></i><b>2.2</b> Partialling-Out using ols</a></li>
+<li class="chapter" data-level="2.3" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-lasso"><i class="fa fa-check"></i><b>2.3</b> Partialling-Out using lasso</a></li>
+<li class="chapter" data-level="2.4" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#extra-flexible-model"><i class="fa fa-check"></i><b>2.4</b> “Extra” flexible model</a></li>
+<li class="chapter" data-level="2.5" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#laso-extra-flexible-model"><i class="fa fa-check"></i><b>2.5</b> Laso “Extra” Flexible model</a></li>
+<li class="chapter" data-level="2.6" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#summarize-the-results"><i class="fa fa-check"></i><b>2.6</b> Summarize the results</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html"><i class="fa fa-check"></i><b>3</b> Testing the Convergence Hypothesis</a>
 <ul>
 <li class="chapter" data-level="3.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#data-analysis-2"><i class="fa fa-check"></i><b>3.2</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#ols"><i class="fa fa-check"></i><b>3.2.1</b> OLS</a></li>
+<li class="chapter" data-level="3.2.2" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#lasso"><i class="fa fa-check"></i><b>3.2.2</b> Lasso</a></li>
+<li class="chapter" data-level="3.2.3" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#summary-results"><i class="fa fa-check"></i><b>3.2.3</b> Summary results</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="simulation-design.html"><a href="simulation-design.html"><i class="fa fa-check"></i><b>4</b> Simulation Design</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="simulation-design.html"><a href="simulation-design.html#example-1"><i class="fa fa-check"></i><b>4.1</b> Example 1</a></li>
+<li class="chapter" data-level="4.2" data-path="simulation-design.html"><a href="simulation-design.html#example-2"><i class="fa fa-check"></i><b>4.2</b> Example 2</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -196,21 +212,53 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="data-analysis-1" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Data analysis</h2>
 <p>We consider the same subsample of the U.S. Current Population Survey (2015) as in the previous lab. Let us load the data set.</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="predictive-inference-the-gender-wage-gap.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-2"><a href="predictive-inference-the-gender-wage-gap.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="predictive-inference-the-gender-wage-gap.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="predictive-inference-the-gender-wage-gap.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="predictive-inference-the-gender-wage-gap.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="predictive-inference-the-gender-wage-gap.html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyreadr</span>
+<span id="cb2-4"><a href="predictive-inference-the-gender-wage-gap.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span></code></pre></div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="predictive-inference-the-gender-wage-gap.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span>
+<span id="cb3-2"><a href="predictive-inference-the-gender-wage-gap.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions</span></span>
+<span id="cb3-3"><a href="predictive-inference-the-gender-wage-gap.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(data)</span></code></pre></div>
+<pre><code>## [1] 5150   20</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="predictive-inference-the-gender-wage-gap.html#cb5-1" aria-hidden="true" tabindex="-1"></a>rdata_read <span class="op">=</span> pyreadr.read_r(<span class="st">&quot;./data/wage2015_subsample_inference.Rdata&quot;</span>)</span>
+<span id="cb5-2"><a href="predictive-inference-the-gender-wage-gap.html#cb5-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> rdata_read[ <span class="st">&#39;data&#39;</span> ]</span>
+<span id="cb5-3"><a href="predictive-inference-the-gender-wage-gap.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Dimensions</span></span>
+<span id="cb5-4"><a href="predictive-inference-the-gender-wage-gap.html#cb5-4" aria-hidden="true" tabindex="-1"></a>data.shape</span></code></pre></div>
+<pre><code>## (5150, 20)</code></pre>
+</div>
+</div>
 <p>To start our (causal) analysis, we compare the sample means given gender:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="predictive-inference-the-gender-wage-gap.html#cb3-1" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="predictive-inference-the-gender-wage-gap.html#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(lwage,sex,shs,hsg,scl,clg,ad,ne,mw,so,we,exp1)</span>
-<span id="cb3-3"><a href="predictive-inference-the-gender-wage-gap.html#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="predictive-inference-the-gender-wage-gap.html#cb3-4" aria-hidden="true" tabindex="-1"></a>All <span class="ot">&lt;-</span> <span class="fu">apply</span>(table1,<span class="dv">2</span>,mean)</span>
-<span id="cb3-5"><a href="predictive-inference-the-gender-wage-gap.html#cb3-5" aria-hidden="true" tabindex="-1"></a>Men <span class="ot">&lt;-</span> <span class="fu">apply</span>(table1[table1<span class="sc">$</span>sex<span class="sc">==</span><span class="dv">0</span>,],<span class="dv">2</span>,mean)</span>
-<span id="cb3-6"><a href="predictive-inference-the-gender-wage-gap.html#cb3-6" aria-hidden="true" tabindex="-1"></a>Women <span class="ot">&lt;-</span> <span class="fu">apply</span>(table1[table1<span class="sc">$</span>sex<span class="sc">==</span><span class="dv">1</span>,],<span class="dv">2</span>,mean)</span>
-<span id="cb3-7"><a href="predictive-inference-the-gender-wage-gap.html#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="predictive-inference-the-gender-wage-gap.html#cb3-8" aria-hidden="true" tabindex="-1"></a>Variables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Less then High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;Collage Graduate&quot;</span>,<span class="st">&quot;Advanced Degree&quot;</span>, <span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Experience&quot;</span>)</span>
-<span id="cb3-9"><a href="predictive-inference-the-gender-wage-gap.html#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="predictive-inference-the-gender-wage-gap.html#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(Variables,All,Men,Women) <span class="sc">%&gt;%</span></span>
-<span id="cb3-11"><a href="predictive-inference-the-gender-wage-gap.html#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="at">caption =</span> <span class="st">&quot;Sample means given gender&quot;</span>)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="predictive-inference-the-gender-wage-gap.html#cb7-1" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="predictive-inference-the-gender-wage-gap.html#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(lwage,sex,shs,hsg,scl,clg,ad,ne,mw,so,we,exp1)</span>
+<span id="cb7-3"><a href="predictive-inference-the-gender-wage-gap.html#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="predictive-inference-the-gender-wage-gap.html#cb7-4" aria-hidden="true" tabindex="-1"></a>All <span class="ot">&lt;-</span> <span class="fu">apply</span>(table1,<span class="dv">2</span>,mean)</span>
+<span id="cb7-5"><a href="predictive-inference-the-gender-wage-gap.html#cb7-5" aria-hidden="true" tabindex="-1"></a>Men <span class="ot">&lt;-</span> <span class="fu">apply</span>(table1[table1<span class="sc">$</span>sex<span class="sc">==</span><span class="dv">0</span>,],<span class="dv">2</span>,mean)</span>
+<span id="cb7-6"><a href="predictive-inference-the-gender-wage-gap.html#cb7-6" aria-hidden="true" tabindex="-1"></a>Women <span class="ot">&lt;-</span> <span class="fu">apply</span>(table1[table1<span class="sc">$</span>sex<span class="sc">==</span><span class="dv">1</span>,],<span class="dv">2</span>,mean)</span>
+<span id="cb7-7"><a href="predictive-inference-the-gender-wage-gap.html#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="predictive-inference-the-gender-wage-gap.html#cb7-8" aria-hidden="true" tabindex="-1"></a>Variables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Less then High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;Collage Graduate&quot;</span>,<span class="st">&quot;Advanced Degree&quot;</span>, <span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Experience&quot;</span>)</span>
+<span id="cb7-9"><a href="predictive-inference-the-gender-wage-gap.html#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="predictive-inference-the-gender-wage-gap.html#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(Variables,All,Men,Women) <span class="sc">%&gt;%</span></span>
+<span id="cb7-11"><a href="predictive-inference-the-gender-wage-gap.html#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="st">&quot;markdown&quot;</span>,<span class="at">caption =</span> <span class="st">&quot;Sample means given gender&quot;</span>)</span></code></pre></div>
 <table>
 <caption><span id="tab:mean-sample">Table 2.1: </span>Sample means given gender</caption>
 <thead>
@@ -309,8 +357,48 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 </tbody>
 </table>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="predictive-inference-the-gender-wage-gap.html#cb8-1" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> data[ [<span class="st">&quot;lwage&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;shs&quot;</span>,<span class="st">&quot;hsg&quot;</span>,<span class="st">&quot;scl&quot;</span>,<span class="st">&quot;clg&quot;</span>,<span class="st">&quot;ad&quot;</span>,<span class="st">&quot;ne&quot;</span>,<span class="st">&quot;mw&quot;</span>,<span class="st">&quot;so&quot;</span>,<span class="st">&quot;we&quot;</span>,<span class="st">&quot;exp1&quot;</span>] ]</span>
+<span id="cb8-2"><a href="predictive-inference-the-gender-wage-gap.html#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="predictive-inference-the-gender-wage-gap.html#cb8-3" aria-hidden="true" tabindex="-1"></a>data_female <span class="op">=</span> data[data[ <span class="st">&#39;sex&#39;</span> ] <span class="op">==</span> <span class="dv">1</span> ]</span>
+<span id="cb8-4"><a href="predictive-inference-the-gender-wage-gap.html#cb8-4" aria-hidden="true" tabindex="-1"></a>Z_female <span class="op">=</span> data_female[ [<span class="st">&quot;lwage&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;shs&quot;</span>,<span class="st">&quot;hsg&quot;</span>,<span class="st">&quot;scl&quot;</span>,<span class="st">&quot;clg&quot;</span>,<span class="st">&quot;ad&quot;</span>,<span class="st">&quot;ne&quot;</span>,<span class="st">&quot;mw&quot;</span>,<span class="st">&quot;so&quot;</span>,<span class="st">&quot;we&quot;</span>,<span class="st">&quot;exp1&quot;</span>] ]</span>
+<span id="cb8-5"><a href="predictive-inference-the-gender-wage-gap.html#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="predictive-inference-the-gender-wage-gap.html#cb8-6" aria-hidden="true" tabindex="-1"></a>data_male <span class="op">=</span> data[ data[ <span class="st">&#39;sex&#39;</span> ] <span class="op">==</span> <span class="dv">0</span> ]</span>
+<span id="cb8-7"><a href="predictive-inference-the-gender-wage-gap.html#cb8-7" aria-hidden="true" tabindex="-1"></a>Z_male <span class="op">=</span> data_male[ [ <span class="st">&quot;lwage&quot;</span>,<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;shs&quot;</span>,<span class="st">&quot;hsg&quot;</span>,<span class="st">&quot;scl&quot;</span>,<span class="st">&quot;clg&quot;</span>,<span class="st">&quot;ad&quot;</span>,<span class="st">&quot;ne&quot;</span>,<span class="st">&quot;mw&quot;</span>,<span class="st">&quot;so&quot;</span>,<span class="st">&quot;we&quot;</span>,<span class="st">&quot;exp1&quot;</span> ] ]</span>
+<span id="cb8-8"><a href="predictive-inference-the-gender-wage-gap.html#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="predictive-inference-the-gender-wage-gap.html#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="predictive-inference-the-gender-wage-gap.html#cb8-10" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> np.zeros( (<span class="dv">12</span>, <span class="dv">3</span>) )</span>
+<span id="cb8-11"><a href="predictive-inference-the-gender-wage-gap.html#cb8-11" aria-hidden="true" tabindex="-1"></a>table[:, <span class="dv">0</span>] <span class="op">=</span> Z.mean().values</span>
+<span id="cb8-12"><a href="predictive-inference-the-gender-wage-gap.html#cb8-12" aria-hidden="true" tabindex="-1"></a>table[:, <span class="dv">1</span>] <span class="op">=</span> Z_male.mean().values</span>
+<span id="cb8-13"><a href="predictive-inference-the-gender-wage-gap.html#cb8-13" aria-hidden="true" tabindex="-1"></a>table[:, <span class="dv">2</span>] <span class="op">=</span> Z_female.mean().values</span>
+<span id="cb8-14"><a href="predictive-inference-the-gender-wage-gap.html#cb8-14" aria-hidden="true" tabindex="-1"></a>table_pandas <span class="op">=</span> pd.DataFrame( table, columns <span class="op">=</span> [ <span class="st">&#39;All&#39;</span>, <span class="st">&#39;Men&#39;</span>, <span class="st">&#39;Women&#39;</span>])</span>
+<span id="cb8-15"><a href="predictive-inference-the-gender-wage-gap.html#cb8-15" aria-hidden="true" tabindex="-1"></a>table_pandas.index <span class="op">=</span> [<span class="st">&quot;Log Wage&quot;</span>,<span class="st">&quot;Sex&quot;</span>,<span class="st">&quot;Less then High School&quot;</span>,<span class="st">&quot;High School Graduate&quot;</span>,<span class="st">&quot;Some College&quot;</span>,<span class="st">&quot;Gollage Graduate&quot;</span>,<span class="st">&quot;Advanced Degree&quot;</span>, <span class="st">&quot;Northeast&quot;</span>,<span class="st">&quot;Midwest&quot;</span>,<span class="st">&quot;South&quot;</span>,<span class="st">&quot;West&quot;</span>,<span class="st">&quot;Experience&quot;</span>]</span>
+<span id="cb8-16"><a href="predictive-inference-the-gender-wage-gap.html#cb8-16" aria-hidden="true" tabindex="-1"></a>table_html <span class="op">=</span> table_pandas.to_html()</span>
+<span id="cb8-17"><a href="predictive-inference-the-gender-wage-gap.html#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="predictive-inference-the-gender-wage-gap.html#cb8-18" aria-hidden="true" tabindex="-1"></a>table_pandas</span></code></pre></div>
+<pre><code>##                              All        Men      Women
+## Log Wage                2.970787   2.987830   2.949485
+## Sex                     0.444466   0.000000   1.000000
+## Less then High School   0.023301   0.031807   0.012669
+## High School Graduate    0.243883   0.294303   0.180865
+## Some College            0.278058   0.273331   0.283967
+## Gollage Graduate        0.317670   0.293953   0.347313
+## Advanced Degree         0.137087   0.106606   0.175186
+## Northeast               0.227767   0.221950   0.235037
+## Midwest                 0.259612   0.259000   0.260376
+## South                   0.296505   0.298148   0.294452
+## West                    0.216117   0.220902   0.210135
+## Experience             13.760583  13.783992  13.731324</code></pre>
+</div>
+</div>
 <p>Alternatively, we can also print the table as latex.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="predictive-inference-the-gender-wage-gap.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">data.frame</span>(Variables,All,Men,Women) ,<span class="at">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="predictive-inference-the-gender-wage-gap.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">data.frame</span>(Variables,All,Men,Women) ,<span class="at">type=</span><span class="st">&quot;latex&quot;</span>)</span></code></pre></div>
 <pre><code>##                   Variables         All         Men       Women
 ## lwage              Log Wage  2.97078670  2.98782963  2.94948490
 ## sex                     Sex  0.44446602  0.00000000  1.00000000
@@ -324,20 +412,67 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ## so                    South  0.29650485  0.29814750  0.29445173
 ## we                     West  0.21611650  0.22090178  0.21013543
 ## exp1             Experience 13.76058252 13.78399161 13.73132372</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="predictive-inference-the-gender-wage-gap.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print(table_pandas, type=&quot;latex&quot;)</span></span></code></pre></div>
+</div>
+</div>
 <p>In particular, the table above shows that the difference in average <em>logwage</em> between men and women is equal to <span class="math inline">\(0,038\)</span>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="predictive-inference-the-gender-wage-gap.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(table1<span class="sc">$</span>lwage[table1<span class="sc">$</span>sex<span class="sc">==</span><span class="dv">1</span>])<span class="sc">-</span><span class="fu">mean</span>(table1<span class="sc">$</span>lwage[table1<span class="sc">$</span>sex<span class="sc">==</span><span class="dv">0</span>])</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="predictive-inference-the-gender-wage-gap.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(table1<span class="sc">$</span>lwage[table1<span class="sc">$</span>sex<span class="sc">==</span><span class="dv">1</span>])<span class="sc">-</span><span class="fu">mean</span>(table1<span class="sc">$</span>lwage[table1<span class="sc">$</span>sex<span class="sc">==</span><span class="dv">0</span>])</span></code></pre></div>
 <pre><code>## [1] -0.03834473</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="predictive-inference-the-gender-wage-gap.html#cb15-1" aria-hidden="true" tabindex="-1"></a>data_female[<span class="st">&#39;lwage&#39;</span>].mean() <span class="op">-</span> data_male[<span class="st">&#39;lwage&#39;</span>].mean()</span></code></pre></div>
+<pre><code>## -0.03834473367441493</code></pre>
+</div>
+</div>
 <p>Thus, the unconditional gender wage gap is about <span class="math inline">\(3,8 \%\)</span> for the group of never married workers (women get paid less on average in our sample). We also observe that never married working women are relatively more educated than working men and have lower working experience.</p>
 <p>This unconditional (predictive) effect of gender equals the coefficient <span class="math inline">\(\beta\)</span> in the univariate ols regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(D\)</span>:</p>
 <p><span class="math display">\[log(Y) =\beta D + \epsilon\]</span>
-We verify this by running an ols regression in R.</p>
+We verify this by running an ols regression in R and Python.</p>
 <div id="ols-regression" class="section level3" number="2.1.1">
 <h3><span class="header-section-number">2.1.1</span> OLS Regression</h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="predictive-inference-the-gender-wage-gap.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
-<span id="cb8-2"><a href="predictive-inference-the-gender-wage-gap.html#cb8-2" aria-hidden="true" tabindex="-1"></a>nocontrol.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(lwage <span class="sc">~</span> sex, <span class="at">data =</span> data)</span>
-<span id="cb8-3"><a href="predictive-inference-the-gender-wage-gap.html#cb8-3" aria-hidden="true" tabindex="-1"></a>nocontrol.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(nocontrol.fit)<span class="sc">$</span>coef[<span class="st">&quot;sex&quot;</span>,<span class="dv">1</span>]</span>
-<span id="cb8-4"><a href="predictive-inference-the-gender-wage-gap.html#cb8-4" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(nocontrol.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>);</span>
-<span id="cb8-5"><a href="predictive-inference-the-gender-wage-gap.html#cb8-5" aria-hidden="true" tabindex="-1"></a>nocontrol.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>] <span class="co"># Estimated std errors</span></span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="predictive-inference-the-gender-wage-gap.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="predictive-inference-the-gender-wage-gap.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb18-2"><a href="predictive-inference-the-gender-wage-gap.html#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span></code></pre></div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="predictive-inference-the-gender-wage-gap.html#cb19-1" aria-hidden="true" tabindex="-1"></a>nocontrol.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(lwage <span class="sc">~</span> sex, <span class="at">data =</span> data)</span>
+<span id="cb19-2"><a href="predictive-inference-the-gender-wage-gap.html#cb19-2" aria-hidden="true" tabindex="-1"></a>nocontrol.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(nocontrol.fit)<span class="sc">$</span>coef[<span class="st">&quot;sex&quot;</span>,<span class="dv">1</span>]</span>
+<span id="cb19-3"><a href="predictive-inference-the-gender-wage-gap.html#cb19-3" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(nocontrol.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>);</span>
+<span id="cb19-4"><a href="predictive-inference-the-gender-wage-gap.html#cb19-4" aria-hidden="true" tabindex="-1"></a>nocontrol.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>] <span class="co"># Estimated std errors</span></span>
+<span id="cb19-5"><a href="predictive-inference-the-gender-wage-gap.html#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> (<span class="st">&quot;The estimated gender coefficient is&quot;</span>,nocontrol.est,<span class="st">&quot; and the corresponding robust standard error is&quot;</span>,nocontrol.se) </span></code></pre></div>
+<pre><code>## The estimated gender coefficient is -0.03834473  and the corresponding robust standard error is 0.01590194</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="predictive-inference-the-gender-wage-gap.html#cb21-1" aria-hidden="true" tabindex="-1"></a>nocontrol_model <span class="op">=</span> smf.ols( formula <span class="op">=</span> <span class="st">&#39;lwage ~ sex&#39;</span>, data <span class="op">=</span> data )</span>
+<span id="cb21-2"><a href="predictive-inference-the-gender-wage-gap.html#cb21-2" aria-hidden="true" tabindex="-1"></a>nocontrol_est <span class="op">=</span> nocontrol_model.fit().summary2().tables[<span class="dv">1</span>][<span class="st">&#39;Coef.&#39;</span>][<span class="st">&#39;sex&#39;</span>]</span>
+<span id="cb21-3"><a href="predictive-inference-the-gender-wage-gap.html#cb21-3" aria-hidden="true" tabindex="-1"></a>HCV_coefs <span class="op">=</span> nocontrol_model.fit().cov_HC0</span>
+<span id="cb21-4"><a href="predictive-inference-the-gender-wage-gap.html#cb21-4" aria-hidden="true" tabindex="-1"></a>nocontrol_se <span class="op">=</span> np.power( HCV_coefs.diagonal() , <span class="fl">0.5</span>)[<span class="dv">1</span>]</span>
+<span id="cb21-5"><a href="predictive-inference-the-gender-wage-gap.html#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&#39;The estimated gender coefficient is </span><span class="sc">{</span>nocontrol_est<span class="sc">}</span><span class="ss"> and the corresponding robust standard error is </span><span class="sc">{</span>nocontrol_se<span class="sc">}</span><span class="ss">&#39;</span> )</span></code></pre></div>
+<pre><code>## The estimated gender coefficient is -0.038344733674414364 and the corresponding robust standard error is 0.015901935079095812</code></pre>
+</div>
+</div>
 <p>The estimated gender coefficient is -0.0383447, and the corresponding robust standard error is 0.0159019.</p>
 <p>Note that the standard error is computed with the <em>R</em> package <em>sandwich</em> to be robust to heteroskedasticity.</p>
 <p>Next, we run an ols regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\((D,W)\)</span> to control for the effect of covariates summarized in <span class="math inline">\(W\)</span>:</p>
@@ -347,16 +482,18 @@ We verify this by running an ols regression in R.</p>
 </div>
 <div id="ols-regression-with-controls" class="section level3" number="2.1.2">
 <h3><span class="header-section-number">2.1.2</span> Ols regression with controls</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="predictive-inference-the-gender-wage-gap.html#cb9-1" aria-hidden="true" tabindex="-1"></a>flex <span class="ot">&lt;-</span> lwage <span class="sc">~</span> sex <span class="sc">+</span> (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we)</span>
-<span id="cb9-2"><a href="predictive-inference-the-gender-wage-gap.html#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="predictive-inference-the-gender-wage-gap.html#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   Note that ()*() operation in formula objects in R creates a formula of the sort:</span></span>
-<span id="cb9-4"><a href="predictive-inference-the-gender-wage-gap.html#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#  (exp1+exp2+exp3+exp4)+ (shs+hsg+scl+clg+occ2+ind2+mw+so+we) +  (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)</span></span>
-<span id="cb9-5"><a href="predictive-inference-the-gender-wage-gap.html#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#  This is not intuitive at all, but that&#39;s what it does.</span></span>
-<span id="cb9-6"><a href="predictive-inference-the-gender-wage-gap.html#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="predictive-inference-the-gender-wage-gap.html#cb9-7" aria-hidden="true" tabindex="-1"></a>control.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(flex, <span class="at">data=</span>data)</span>
-<span id="cb9-8"><a href="predictive-inference-the-gender-wage-gap.html#cb9-8" aria-hidden="true" tabindex="-1"></a>control.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(control.fit)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
-<span id="cb9-9"><a href="predictive-inference-the-gender-wage-gap.html#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="predictive-inference-the-gender-wage-gap.html#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(control.fit)</span></code></pre></div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="predictive-inference-the-gender-wage-gap.html#cb23-1" aria-hidden="true" tabindex="-1"></a>flex <span class="ot">&lt;-</span> lwage <span class="sc">~</span> sex <span class="sc">+</span> (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we)</span>
+<span id="cb23-2"><a href="predictive-inference-the-gender-wage-gap.html#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="predictive-inference-the-gender-wage-gap.html#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   Note that ()*() operation in formula objects in R creates a formula of the sort:</span></span>
+<span id="cb23-4"><a href="predictive-inference-the-gender-wage-gap.html#cb23-4" aria-hidden="true" tabindex="-1"></a> <span class="co"># (exp1+exp2+exp3+exp4)+ (shs+hsg+scl+clg+occ2+ind2+mw+so+we) +  (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)</span></span>
+<span id="cb23-5"><a href="predictive-inference-the-gender-wage-gap.html#cb23-5" aria-hidden="true" tabindex="-1"></a> <span class="co"># This is not intuitive at all, but that&#39;s what it does.</span></span>
+<span id="cb23-6"><a href="predictive-inference-the-gender-wage-gap.html#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="predictive-inference-the-gender-wage-gap.html#cb23-7" aria-hidden="true" tabindex="-1"></a>control.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(flex, <span class="at">data=</span>data)</span>
+<span id="cb23-8"><a href="predictive-inference-the-gender-wage-gap.html#cb23-8" aria-hidden="true" tabindex="-1"></a>control.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(control.fit)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb23-9"><a href="predictive-inference-the-gender-wage-gap.html#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="predictive-inference-the-gender-wage-gap.html#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(control.fit)</span></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = flex, data = data)
@@ -619,68 +756,411 @@ We verify this by running an ols regression in R.</p>
 ## Residual standard error: 0.4708 on 4904 degrees of freedom
 ## Multiple R-squared:  0.3511, Adjusted R-squared:  0.3187 
 ## F-statistic: 10.83 on 245 and 4904 DF,  p-value: &lt; 2.2e-16</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="predictive-inference-the-gender-wage-gap.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coefficient for OLS with controls&quot;</span>, control.est)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="predictive-inference-the-gender-wage-gap.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coefficient for OLS with controls&quot;</span>, control.est)</span></code></pre></div>
 <pre><code>## Coefficient for OLS with controls -0.0695532</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="predictive-inference-the-gender-wage-gap.html#cb13-1" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(control.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>);</span>
-<span id="cb13-2"><a href="predictive-inference-the-gender-wage-gap.html#cb13-2" aria-hidden="true" tabindex="-1"></a>control.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>] <span class="co"># Estimated std errors</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="predictive-inference-the-gender-wage-gap.html#cb27-1" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(control.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>);</span>
+<span id="cb27-2"><a href="predictive-inference-the-gender-wage-gap.html#cb27-2" aria-hidden="true" tabindex="-1"></a>control.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>] <span class="co"># Estimated std errors</span></span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="predictive-inference-the-gender-wage-gap.html#cb28-1" aria-hidden="true" tabindex="-1"></a>flex <span class="op">=</span> <span class="st">&#39;lwage ~ sex + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)&#39;</span></span>
+<span id="cb28-2"><a href="predictive-inference-the-gender-wage-gap.html#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="predictive-inference-the-gender-wage-gap.html#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The smf api replicates R script when it transform data</span></span>
+<span id="cb28-4"><a href="predictive-inference-the-gender-wage-gap.html#cb28-4" aria-hidden="true" tabindex="-1"></a>control_model <span class="op">=</span> smf.ols( formula <span class="op">=</span> flex, data <span class="op">=</span> data )</span>
+<span id="cb28-5"><a href="predictive-inference-the-gender-wage-gap.html#cb28-5" aria-hidden="true" tabindex="-1"></a>control_est <span class="op">=</span> control_model.fit().summary2().tables[<span class="dv">1</span>][<span class="st">&#39;Coef.&#39;</span>][<span class="st">&#39;sex&#39;</span>]</span>
+<span id="cb28-6"><a href="predictive-inference-the-gender-wage-gap.html#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="predictive-inference-the-gender-wage-gap.html#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(control_model.fit().summary2().tables[<span class="dv">1</span>])</span></code></pre></div>
+<pre><code>##                Coef.  Std.Err.          t         P&gt;|t|    [0.025    0.975]
+## Intercept   3.279677  0.284196  11.540202  2.037819e-30  2.722526  3.836828
+## occ2[T.10]  0.020954  0.156498   0.133896  8.934903e-01 -0.285852  0.327761
+## occ2[T.11] -0.642418  0.309090  -2.078417  3.772286e-02 -1.248372 -0.036463
+## occ2[T.12] -0.067477  0.252049  -0.267716  7.889294e-01 -0.561605  0.426651
+## occ2[T.13] -0.232978  0.231538  -1.006220  3.143593e-01 -0.686896  0.220940
+## ...              ...       ...        ...           ...       ...       ...
+## exp4:scl    0.021076  0.024529   0.859230  3.902557e-01 -0.027012  0.069164
+## exp4:clg    0.007869  0.022753   0.345868  7.294565e-01 -0.036736  0.052475
+## exp4:mw     0.006244  0.015870   0.393446  6.940073e-01 -0.024868  0.037356
+## exp4:so     0.000314  0.013628   0.023075  9.815913e-01 -0.026402  0.027031
+## exp4:we     0.001768  0.015960   0.110804  9.117763e-01 -0.029521  0.033058
+## 
+## [246 rows x 6 columns]</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="predictive-inference-the-gender-wage-gap.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&quot;Coefficient for OLS with controls </span><span class="sc">{</span>control_est<span class="sc">}</span><span class="ss">&quot;</span> )</span></code></pre></div>
+<pre><code>## Coefficient for OLS with controls -0.06955320329684506</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="predictive-inference-the-gender-wage-gap.html#cb32-1" aria-hidden="true" tabindex="-1"></a>HCV_coefs <span class="op">=</span> control_model.fit().cov_HC0</span>
+<span id="cb32-2"><a href="predictive-inference-the-gender-wage-gap.html#cb32-2" aria-hidden="true" tabindex="-1"></a>control_se <span class="op">=</span> np.power( HCV_coefs.diagonal() , <span class="fl">0.5</span>)[<span class="dv">1</span>]</span></code></pre></div>
+</div>
+</div>
 <p>The estimated regression coefficient <span class="math inline">\(\beta_1\approx-0.0696\)</span> measures how our linear prediction of wage changes if we set the gender variable <span class="math inline">\(D\)</span> from 0 to 1, holding the controls <span class="math inline">\(W\)</span> fixed.
 We can call this the <em>predictive effect</em> (PE), as it measures the impact of a variable on the prediction we make. Overall, we see that the unconditional wage gap of size <span class="math inline">\(4\%\)</span> for women increases to about <span class="math inline">\(7\%\)</span> after controlling for worker characteristics.</p>
 <p>Next, we are using the Frisch-Waugh-Lovell theorem from the lecture partialling-out the linear effect of the controls via ols.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="predictive-inference-the-gender-wage-gap.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Partialling-Out using ols</span></span>
-<span id="cb14-2"><a href="predictive-inference-the-gender-wage-gap.html#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="predictive-inference-the-gender-wage-gap.html#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># models</span></span>
-<span id="cb14-4"><a href="predictive-inference-the-gender-wage-gap.html#cb14-4" aria-hidden="true" tabindex="-1"></a>flex.y <span class="ot">&lt;-</span> lwage <span class="sc">~</span>  (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we) <span class="co"># model for Y</span></span>
-<span id="cb14-5"><a href="predictive-inference-the-gender-wage-gap.html#cb14-5" aria-hidden="true" tabindex="-1"></a>flex.d <span class="ot">&lt;-</span> sex <span class="sc">~</span> (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we) <span class="co"># model for D</span></span>
-<span id="cb14-6"><a href="predictive-inference-the-gender-wage-gap.html#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="predictive-inference-the-gender-wage-gap.html#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from Y</span></span>
-<span id="cb14-8"><a href="predictive-inference-the-gender-wage-gap.html#cb14-8" aria-hidden="true" tabindex="-1"></a>t.Y <span class="ot">&lt;-</span> <span class="fu">lm</span>(flex.y, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
-<span id="cb14-9"><a href="predictive-inference-the-gender-wage-gap.html#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from D</span></span>
-<span id="cb14-10"><a href="predictive-inference-the-gender-wage-gap.html#cb14-10" aria-hidden="true" tabindex="-1"></a>t.D <span class="ot">&lt;-</span> <span class="fu">lm</span>(flex.d, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
-<span id="cb14-11"><a href="predictive-inference-the-gender-wage-gap.html#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="predictive-inference-the-gender-wage-gap.html#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
-<span id="cb14-13"><a href="predictive-inference-the-gender-wage-gap.html#cb14-13" aria-hidden="true" tabindex="-1"></a>partial.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(t.Y<span class="sc">~</span>t.D)</span>
-<span id="cb14-14"><a href="predictive-inference-the-gender-wage-gap.html#cb14-14" aria-hidden="true" tabindex="-1"></a>partial.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(partial.fit)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
-<span id="cb14-15"><a href="predictive-inference-the-gender-wage-gap.html#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-16"><a href="predictive-inference-the-gender-wage-gap.html#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coefficient for D via partialling-out&quot;</span>, partial.est)</span></code></pre></div>
+</div>
+</div>
+<div id="partialling-out-using-ols" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Partialling-Out using ols</h2>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="predictive-inference-the-gender-wage-gap.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Partialling-Out using ols</span></span>
+<span id="cb33-2"><a href="predictive-inference-the-gender-wage-gap.html#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="predictive-inference-the-gender-wage-gap.html#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># models</span></span>
+<span id="cb33-4"><a href="predictive-inference-the-gender-wage-gap.html#cb33-4" aria-hidden="true" tabindex="-1"></a>flex.y <span class="ot">&lt;-</span> lwage <span class="sc">~</span>  (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we) <span class="co"># model for Y</span></span>
+<span id="cb33-5"><a href="predictive-inference-the-gender-wage-gap.html#cb33-5" aria-hidden="true" tabindex="-1"></a>flex.d <span class="ot">&lt;-</span> sex <span class="sc">~</span> (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we) <span class="co"># model for D</span></span>
+<span id="cb33-6"><a href="predictive-inference-the-gender-wage-gap.html#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="predictive-inference-the-gender-wage-gap.html#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from Y</span></span>
+<span id="cb33-8"><a href="predictive-inference-the-gender-wage-gap.html#cb33-8" aria-hidden="true" tabindex="-1"></a>t.Y <span class="ot">&lt;-</span> <span class="fu">lm</span>(flex.y, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
+<span id="cb33-9"><a href="predictive-inference-the-gender-wage-gap.html#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from D</span></span>
+<span id="cb33-10"><a href="predictive-inference-the-gender-wage-gap.html#cb33-10" aria-hidden="true" tabindex="-1"></a>t.D <span class="ot">&lt;-</span> <span class="fu">lm</span>(flex.d, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
+<span id="cb33-11"><a href="predictive-inference-the-gender-wage-gap.html#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="predictive-inference-the-gender-wage-gap.html#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
+<span id="cb33-13"><a href="predictive-inference-the-gender-wage-gap.html#cb33-13" aria-hidden="true" tabindex="-1"></a>partial.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(t.Y<span class="sc">~</span>t.D)</span>
+<span id="cb33-14"><a href="predictive-inference-the-gender-wage-gap.html#cb33-14" aria-hidden="true" tabindex="-1"></a>partial.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(partial.fit)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb33-15"><a href="predictive-inference-the-gender-wage-gap.html#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-16"><a href="predictive-inference-the-gender-wage-gap.html#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coefficient for D via partialling-out&quot;</span>, partial.est)</span></code></pre></div>
 <pre><code>## Coefficient for D via partialling-out -0.0695532</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="predictive-inference-the-gender-wage-gap.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span>
-<span id="cb16-2"><a href="predictive-inference-the-gender-wage-gap.html#cb16-2" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(partial.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>)</span>
-<span id="cb16-3"><a href="predictive-inference-the-gender-wage-gap.html#cb16-3" aria-hidden="true" tabindex="-1"></a>partial.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>]</span>
-<span id="cb16-4"><a href="predictive-inference-the-gender-wage-gap.html#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="predictive-inference-the-gender-wage-gap.html#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># confidence interval</span></span>
-<span id="cb16-6"><a href="predictive-inference-the-gender-wage-gap.html#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(partial.fit)[<span class="dv">2</span>,]</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="predictive-inference-the-gender-wage-gap.html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span>
+<span id="cb35-2"><a href="predictive-inference-the-gender-wage-gap.html#cb35-2" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(partial.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>)</span>
+<span id="cb35-3"><a href="predictive-inference-the-gender-wage-gap.html#cb35-3" aria-hidden="true" tabindex="-1"></a>partial.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>]</span>
+<span id="cb35-4"><a href="predictive-inference-the-gender-wage-gap.html#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="predictive-inference-the-gender-wage-gap.html#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># confidence interval</span></span>
+<span id="cb35-6"><a href="predictive-inference-the-gender-wage-gap.html#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(partial.fit)[<span class="dv">2</span>,]</span></code></pre></div>
 <pre><code>##       2.5 %      97.5 % 
 ## -0.09867142 -0.04043498</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb37-1"><a href="predictive-inference-the-gender-wage-gap.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># models</span></span>
+<span id="cb37-2"><a href="predictive-inference-the-gender-wage-gap.html#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># model for Y</span></span>
+<span id="cb37-3"><a href="predictive-inference-the-gender-wage-gap.html#cb37-3" aria-hidden="true" tabindex="-1"></a>flex_y <span class="op">=</span> <span class="st">&#39;lwage ~  (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)&#39;</span></span>
+<span id="cb37-4"><a href="predictive-inference-the-gender-wage-gap.html#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># model for D</span></span>
+<span id="cb37-5"><a href="predictive-inference-the-gender-wage-gap.html#cb37-5" aria-hidden="true" tabindex="-1"></a>flex_d <span class="op">=</span> <span class="st">&#39;sex ~ (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)&#39;</span> </span>
+<span id="cb37-6"><a href="predictive-inference-the-gender-wage-gap.html#cb37-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-7"><a href="predictive-inference-the-gender-wage-gap.html#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from Y</span></span>
+<span id="cb37-8"><a href="predictive-inference-the-gender-wage-gap.html#cb37-8" aria-hidden="true" tabindex="-1"></a>t_Y <span class="op">=</span> smf.ols( formula <span class="op">=</span> flex_y , data <span class="op">=</span> data ).fit().resid</span>
+<span id="cb37-9"><a href="predictive-inference-the-gender-wage-gap.html#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="predictive-inference-the-gender-wage-gap.html#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from D</span></span>
+<span id="cb37-11"><a href="predictive-inference-the-gender-wage-gap.html#cb37-11" aria-hidden="true" tabindex="-1"></a>t_D <span class="op">=</span> smf.ols( formula <span class="op">=</span> flex_d , data <span class="op">=</span> data ).fit().resid</span>
+<span id="cb37-12"><a href="predictive-inference-the-gender-wage-gap.html#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="predictive-inference-the-gender-wage-gap.html#cb37-13" aria-hidden="true" tabindex="-1"></a>data_res <span class="op">=</span> pd.DataFrame( np.vstack(( t_Y.values , t_D.values )).T , columns <span class="op">=</span> [ <span class="st">&#39;t_Y&#39;</span>, <span class="st">&#39;t_D&#39;</span> ] )</span>
+<span id="cb37-14"><a href="predictive-inference-the-gender-wage-gap.html#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
+<span id="cb37-15"><a href="predictive-inference-the-gender-wage-gap.html#cb37-15" aria-hidden="true" tabindex="-1"></a>partial_fit <span class="op">=</span>  smf.ols( formula <span class="op">=</span> <span class="st">&#39;t_Y ~ t_D&#39;</span> , data <span class="op">=</span> data_res ).fit()</span>
+<span id="cb37-16"><a href="predictive-inference-the-gender-wage-gap.html#cb37-16" aria-hidden="true" tabindex="-1"></a>partial_est <span class="op">=</span> partial_fit.summary2().tables[<span class="dv">1</span>][<span class="st">&#39;Coef.&#39;</span>][<span class="st">&#39;t_D&#39;</span>]</span>
+<span id="cb37-17"><a href="predictive-inference-the-gender-wage-gap.html#cb37-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-18"><a href="predictive-inference-the-gender-wage-gap.html#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Coefficient for D via partialling-out&quot;</span>, partial_est)</span>
+<span id="cb37-19"><a href="predictive-inference-the-gender-wage-gap.html#cb37-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-20"><a href="predictive-inference-the-gender-wage-gap.html#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span></code></pre></div>
+<pre><code>## Coefficient for D via partialling-out -0.0695532032968462</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="predictive-inference-the-gender-wage-gap.html#cb39-1" aria-hidden="true" tabindex="-1"></a>HCV_coefs <span class="op">=</span> partial_fit.cov_HC0</span>
+<span id="cb39-2"><a href="predictive-inference-the-gender-wage-gap.html#cb39-2" aria-hidden="true" tabindex="-1"></a>partial_se <span class="op">=</span> np.power( HCV_coefs.diagonal() , <span class="fl">0.5</span>)[<span class="dv">1</span>]</span>
+<span id="cb39-3"><a href="predictive-inference-the-gender-wage-gap.html#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="predictive-inference-the-gender-wage-gap.html#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># confidence interval</span></span>
+<span id="cb39-5"><a href="predictive-inference-the-gender-wage-gap.html#cb39-5" aria-hidden="true" tabindex="-1"></a>partial_fit.conf_int( alpha<span class="op">=</span><span class="fl">0.05</span> ).iloc[<span class="dv">1</span>, :]</span></code></pre></div>
+<pre><code>## 0   -0.098671
+## 1   -0.040435
+## Name: t_D, dtype: float64</code></pre>
+</div>
+</div>
 <p>Again, the estimated coefficient measures the linear predictive effect (PE) of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span> after taking out the linear effect of <span class="math inline">\(W\)</span> on both of these variables. This coefficient equals the estimated coefficient from the ols regression with controls.</p>
 <p>We know that the partialling-out approach works well when the dimension of <span class="math inline">\(W\)</span> is low
 in relation to the sample size <span class="math inline">\(n\)</span>. When the dimension of <span class="math inline">\(W\)</span> is relatively high, we need to use variable selection
 or penalization for regularization purposes.</p>
 <p>In the following, we illustrate the partialling-out approach using lasso instead of ols.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="predictive-inference-the-gender-wage-gap.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Partialling-Out using lasso</span></span>
-<span id="cb18-2"><a href="predictive-inference-the-gender-wage-gap.html#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdm)</span>
-<span id="cb18-3"><a href="predictive-inference-the-gender-wage-gap.html#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="predictive-inference-the-gender-wage-gap.html#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># models</span></span>
-<span id="cb18-5"><a href="predictive-inference-the-gender-wage-gap.html#cb18-5" aria-hidden="true" tabindex="-1"></a>flex.y <span class="ot">&lt;-</span> lwage <span class="sc">~</span>  (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we) <span class="co"># model for Y</span></span>
-<span id="cb18-6"><a href="predictive-inference-the-gender-wage-gap.html#cb18-6" aria-hidden="true" tabindex="-1"></a>flex.d <span class="ot">&lt;-</span> sex <span class="sc">~</span> (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we) <span class="co"># model for D</span></span>
-<span id="cb18-7"><a href="predictive-inference-the-gender-wage-gap.html#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="predictive-inference-the-gender-wage-gap.html#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from Y</span></span>
-<span id="cb18-9"><a href="predictive-inference-the-gender-wage-gap.html#cb18-9" aria-hidden="true" tabindex="-1"></a>t.Y <span class="ot">&lt;-</span> <span class="fu">rlasso</span>(flex.y, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
-<span id="cb18-10"><a href="predictive-inference-the-gender-wage-gap.html#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from D</span></span>
-<span id="cb18-11"><a href="predictive-inference-the-gender-wage-gap.html#cb18-11" aria-hidden="true" tabindex="-1"></a>t.D <span class="ot">&lt;-</span> <span class="fu">rlasso</span>(flex.d, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
-<span id="cb18-12"><a href="predictive-inference-the-gender-wage-gap.html#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-13"><a href="predictive-inference-the-gender-wage-gap.html#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
-<span id="cb18-14"><a href="predictive-inference-the-gender-wage-gap.html#cb18-14" aria-hidden="true" tabindex="-1"></a>partial.lasso.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(t.Y<span class="sc">~</span>t.D)</span>
-<span id="cb18-15"><a href="predictive-inference-the-gender-wage-gap.html#cb18-15" aria-hidden="true" tabindex="-1"></a>partial.lasso.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(partial.lasso.fit)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
-<span id="cb18-16"><a href="predictive-inference-the-gender-wage-gap.html#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-17"><a href="predictive-inference-the-gender-wage-gap.html#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coefficient for D via partialling-out using lasso&quot;</span>, partial.lasso.est)</span></code></pre></div>
+</div>
+<div id="partialling-out-using-lasso" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Partialling-Out using lasso</h2>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="predictive-inference-the-gender-wage-gap.html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Partialling-Out using lasso</span></span>
+<span id="cb41-2"><a href="predictive-inference-the-gender-wage-gap.html#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdm)</span>
+<span id="cb41-3"><a href="predictive-inference-the-gender-wage-gap.html#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="predictive-inference-the-gender-wage-gap.html#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># models</span></span>
+<span id="cb41-5"><a href="predictive-inference-the-gender-wage-gap.html#cb41-5" aria-hidden="true" tabindex="-1"></a>flex.y <span class="ot">&lt;-</span> lwage <span class="sc">~</span>  (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we) <span class="co"># model for Y</span></span>
+<span id="cb41-6"><a href="predictive-inference-the-gender-wage-gap.html#cb41-6" aria-hidden="true" tabindex="-1"></a>flex.d <span class="ot">&lt;-</span> sex <span class="sc">~</span> (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4)<span class="sc">*</span>(shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we) <span class="co"># model for D</span></span>
+<span id="cb41-7"><a href="predictive-inference-the-gender-wage-gap.html#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="predictive-inference-the-gender-wage-gap.html#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from Y</span></span>
+<span id="cb41-9"><a href="predictive-inference-the-gender-wage-gap.html#cb41-9" aria-hidden="true" tabindex="-1"></a>t.Y <span class="ot">&lt;-</span> <span class="fu">rlasso</span>(flex.y, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
+<span id="cb41-10"><a href="predictive-inference-the-gender-wage-gap.html#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from D</span></span>
+<span id="cb41-11"><a href="predictive-inference-the-gender-wage-gap.html#cb41-11" aria-hidden="true" tabindex="-1"></a>t.D <span class="ot">&lt;-</span> <span class="fu">rlasso</span>(flex.d, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
+<span id="cb41-12"><a href="predictive-inference-the-gender-wage-gap.html#cb41-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-13"><a href="predictive-inference-the-gender-wage-gap.html#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
+<span id="cb41-14"><a href="predictive-inference-the-gender-wage-gap.html#cb41-14" aria-hidden="true" tabindex="-1"></a>partial.lasso.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(t.Y<span class="sc">~</span>t.D)</span>
+<span id="cb41-15"><a href="predictive-inference-the-gender-wage-gap.html#cb41-15" aria-hidden="true" tabindex="-1"></a>partial.lasso.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(partial.lasso.fit)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb41-16"><a href="predictive-inference-the-gender-wage-gap.html#cb41-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-17"><a href="predictive-inference-the-gender-wage-gap.html#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coefficient for D via partialling-out using lasso&quot;</span>, partial.lasso.est)</span></code></pre></div>
 <pre><code>## Coefficient for D via partialling-out using lasso -0.07193551</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="predictive-inference-the-gender-wage-gap.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span>
-<span id="cb20-2"><a href="predictive-inference-the-gender-wage-gap.html#cb20-2" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(partial.lasso.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>)</span>
-<span id="cb20-3"><a href="predictive-inference-the-gender-wage-gap.html#cb20-3" aria-hidden="true" tabindex="-1"></a>partial.lasso.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="predictive-inference-the-gender-wage-gap.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span>
+<span id="cb43-2"><a href="predictive-inference-the-gender-wage-gap.html#cb43-2" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(partial.lasso.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>)</span>
+<span id="cb43-3"><a href="predictive-inference-the-gender-wage-gap.html#cb43-3" aria-hidden="true" tabindex="-1"></a>partial.lasso.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>]</span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb44"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="predictive-inference-the-gender-wage-gap.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> linear_model</span>
+<span id="cb44-2"><a href="predictive-inference-the-gender-wage-gap.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># flex_y</span></span>
+<span id="cb44-3"><a href="predictive-inference-the-gender-wage-gap.html#cb44-3" aria-hidden="true" tabindex="-1"></a>lasso_model <span class="op">=</span> linear_model.Lasso( alpha <span class="op">=</span> <span class="fl">0.1</span> )</span>
+<span id="cb44-4"><a href="predictive-inference-the-gender-wage-gap.html#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="predictive-inference-the-gender-wage-gap.html#cb44-5" aria-hidden="true" tabindex="-1"></a>flex_y_covariables <span class="op">=</span> smf.ols(formula <span class="op">=</span> flex_y, data <span class="op">=</span> data)</span>
+<span id="cb44-6"><a href="predictive-inference-the-gender-wage-gap.html#cb44-6" aria-hidden="true" tabindex="-1"></a>Y_lasso_fitted <span class="op">=</span> lasso_model.fit( flex_y_covariables.exog, data[[ <span class="st">&#39;lwage&#39;</span> ]] ).predict( flex_y_covariables.exog )</span>
+<span id="cb44-7"><a href="predictive-inference-the-gender-wage-gap.html#cb44-7" aria-hidden="true" tabindex="-1"></a>t_Y <span class="op">=</span> data[[ <span class="st">&#39;lwage&#39;</span> ]] <span class="op">-</span> Y_lasso_fitted.reshape( Y_lasso_fitted.size, <span class="dv">1</span>)</span>
+<span id="cb44-8"><a href="predictive-inference-the-gender-wage-gap.html#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-9"><a href="predictive-inference-the-gender-wage-gap.html#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="co"># extraflex_d</span></span>
+<span id="cb44-10"><a href="predictive-inference-the-gender-wage-gap.html#cb44-10" aria-hidden="true" tabindex="-1"></a>flex_d_covariables <span class="op">=</span> smf.ols( flex_d, data<span class="op">=</span>data)</span>
+<span id="cb44-11"><a href="predictive-inference-the-gender-wage-gap.html#cb44-11" aria-hidden="true" tabindex="-1"></a>D_lasso_fitted <span class="op">=</span> lasso_model.fit( flex_d_covariables.exog, data[[ <span class="st">&#39;sex&#39;</span> ]] ).predict( flex_d_covariables.exog )</span>
+<span id="cb44-12"><a href="predictive-inference-the-gender-wage-gap.html#cb44-12" aria-hidden="true" tabindex="-1"></a>t_D <span class="op">=</span> data[[ <span class="st">&#39;sex&#39;</span> ]] <span class="op">-</span> D_lasso_fitted.reshape( D_lasso_fitted.size, <span class="dv">1</span>)</span>
+<span id="cb44-13"><a href="predictive-inference-the-gender-wage-gap.html#cb44-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-14"><a href="predictive-inference-the-gender-wage-gap.html#cb44-14" aria-hidden="true" tabindex="-1"></a>data_res <span class="op">=</span> pd.DataFrame( np.hstack(( t_Y , t_D )) , columns <span class="op">=</span> [ <span class="st">&#39;t_Y&#39;</span>, <span class="st">&#39;t_D&#39;</span> ] )</span>
+<span id="cb44-15"><a href="predictive-inference-the-gender-wage-gap.html#cb44-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-16"><a href="predictive-inference-the-gender-wage-gap.html#cb44-16" aria-hidden="true" tabindex="-1"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
+<span id="cb44-17"><a href="predictive-inference-the-gender-wage-gap.html#cb44-17" aria-hidden="true" tabindex="-1"></a>partial_lasso_fit <span class="op">=</span> smf.ols( formula <span class="op">=</span> <span class="st">&#39;t_Y ~ t_D&#39;</span> , data <span class="op">=</span> data_res ).fit()</span>
+<span id="cb44-18"><a href="predictive-inference-the-gender-wage-gap.html#cb44-18" aria-hidden="true" tabindex="-1"></a>partial_lasso_est <span class="op">=</span> partial_lasso_fit.summary2().tables[<span class="dv">1</span>][<span class="st">&#39;Coef.&#39;</span>][<span class="st">&#39;t_D&#39;</span>]</span>
+<span id="cb44-19"><a href="predictive-inference-the-gender-wage-gap.html#cb44-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-20"><a href="predictive-inference-the-gender-wage-gap.html#cb44-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&quot;Coefficient for D via partialling-out using lasso </span><span class="sc">{</span>partial_lasso_est<span class="sc">}</span><span class="ss">&quot;</span> )</span>
+<span id="cb44-21"><a href="predictive-inference-the-gender-wage-gap.html#cb44-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-22"><a href="predictive-inference-the-gender-wage-gap.html#cb44-22" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span></code></pre></div>
+<pre><code>## Coefficient for D via partialling-out using lasso -0.06487798557263091</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb46-1"><a href="predictive-inference-the-gender-wage-gap.html#cb46-1" aria-hidden="true" tabindex="-1"></a>HCV_coefs <span class="op">=</span> partial_lasso_fit.cov_HC0</span>
+<span id="cb46-2"><a href="predictive-inference-the-gender-wage-gap.html#cb46-2" aria-hidden="true" tabindex="-1"></a>partial_lasso_se <span class="op">=</span> np.power( HCV_coefs.diagonal() , <span class="fl">0.5</span>)[<span class="dv">1</span>]</span></code></pre></div>
+</div>
+</div>
 <p>Using lasso for partialling-out here provides similar results as using ols.</p>
 <p>Next, we summarize the results.</p>
-
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="predictive-inference-the-gender-wage-gap.html#cb47-1" aria-hidden="true" tabindex="-1"></a>Estimate <span class="ot">&lt;-</span> <span class="fu">c</span>(nocontrol.est,control.est,partial.est,partial.lasso.est)</span>
+<span id="cb47-2"><a href="predictive-inference-the-gender-wage-gap.html#cb47-2" aria-hidden="true" tabindex="-1"></a>StdError <span class="ot">&lt;-</span> <span class="fu">c</span>(nocontrol.se,control.se,partial.se,partial.lasso.se)</span>
+<span id="cb47-3"><a href="predictive-inference-the-gender-wage-gap.html#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="predictive-inference-the-gender-wage-gap.html#cb47-4" aria-hidden="true" tabindex="-1"></a>table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Estimate,StdError)</span>
+<span id="cb47-5"><a href="predictive-inference-the-gender-wage-gap.html#cb47-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-6"><a href="predictive-inference-the-gender-wage-gap.html#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(table)<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Estimate&quot;</span>,<span class="st">&quot;Std. Error&quot;</span>)</span>
+<span id="cb47-7"><a href="predictive-inference-the-gender-wage-gap.html#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(table)<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Without controls&quot;</span>, <span class="st">&quot;full reg&quot;</span>, <span class="st">&quot;partial reg&quot;</span>, <span class="st">&quot;partial reg via lasso&quot;</span>)</span>
+<span id="cb47-8"><a href="predictive-inference-the-gender-wage-gap.html#cb47-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-9"><a href="predictive-inference-the-gender-wage-gap.html#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(table,<span class="at">format =</span> <span class="st">&quot;markdown&quot;</span>,<span class="at">caption =</span> <span class="st">&quot;Partialling-out-Lasso&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:results-r">Table 2.2: </span>Partialling-out-Lasso</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Estimate</th>
+<th align="right">Std. Error</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Without controls</td>
+<td align="right">-0.0383447</td>
+<td align="right">0.0159019</td>
+</tr>
+<tr class="even">
+<td align="left">full reg</td>
+<td align="right">-0.0695532</td>
+<td align="right">0.0150005</td>
+</tr>
+<tr class="odd">
+<td align="left">partial reg</td>
+<td align="right">-0.0695532</td>
+<td align="right">0.0150005</td>
+</tr>
+<tr class="even">
+<td align="left">partial reg via lasso</td>
+<td align="right">-0.0719355</td>
+<td align="right">0.0153910</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb48"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb48-1"><a href="predictive-inference-the-gender-wage-gap.html#cb48-1" aria-hidden="true" tabindex="-1"></a>table2 <span class="op">=</span> np.zeros( (<span class="dv">4</span>, <span class="dv">2</span>) )</span>
+<span id="cb48-2"><a href="predictive-inference-the-gender-wage-gap.html#cb48-2" aria-hidden="true" tabindex="-1"></a>table2[<span class="dv">0</span>,<span class="dv">0</span>] <span class="op">=</span> nocontrol_est  </span>
+<span id="cb48-3"><a href="predictive-inference-the-gender-wage-gap.html#cb48-3" aria-hidden="true" tabindex="-1"></a>table2[<span class="dv">0</span>,<span class="dv">1</span>] <span class="op">=</span> nocontrol_se   </span>
+<span id="cb48-4"><a href="predictive-inference-the-gender-wage-gap.html#cb48-4" aria-hidden="true" tabindex="-1"></a>table2[<span class="dv">1</span>,<span class="dv">0</span>] <span class="op">=</span> control_est</span>
+<span id="cb48-5"><a href="predictive-inference-the-gender-wage-gap.html#cb48-5" aria-hidden="true" tabindex="-1"></a>table2[<span class="dv">1</span>,<span class="dv">1</span>] <span class="op">=</span> control_se    </span>
+<span id="cb48-6"><a href="predictive-inference-the-gender-wage-gap.html#cb48-6" aria-hidden="true" tabindex="-1"></a>table2[<span class="dv">2</span>,<span class="dv">0</span>] <span class="op">=</span> partial_est  </span>
+<span id="cb48-7"><a href="predictive-inference-the-gender-wage-gap.html#cb48-7" aria-hidden="true" tabindex="-1"></a>table2[<span class="dv">2</span>,<span class="dv">1</span>] <span class="op">=</span> partial_se  </span>
+<span id="cb48-8"><a href="predictive-inference-the-gender-wage-gap.html#cb48-8" aria-hidden="true" tabindex="-1"></a>table2[<span class="dv">3</span>,<span class="dv">0</span>] <span class="op">=</span>  partial_lasso_est</span>
+<span id="cb48-9"><a href="predictive-inference-the-gender-wage-gap.html#cb48-9" aria-hidden="true" tabindex="-1"></a>table2[<span class="dv">3</span>,<span class="dv">1</span>] <span class="op">=</span> partial_lasso_se </span>
+<span id="cb48-10"><a href="predictive-inference-the-gender-wage-gap.html#cb48-10" aria-hidden="true" tabindex="-1"></a>table2_pandas <span class="op">=</span> pd.DataFrame( table2, columns <span class="op">=</span> [ <span class="st">&quot;Estimate&quot;</span>,<span class="st">&quot;Std. Error&quot;</span> ])</span>
+<span id="cb48-11"><a href="predictive-inference-the-gender-wage-gap.html#cb48-11" aria-hidden="true" tabindex="-1"></a>table2_pandas.index <span class="op">=</span> [ <span class="st">&quot;Without controls&quot;</span>, <span class="st">&quot;full reg&quot;</span>, <span class="st">&quot;partial reg&quot;</span>, <span class="st">&quot;partial reg via lasso&quot;</span> ]</span>
+<span id="cb48-12"><a href="predictive-inference-the-gender-wage-gap.html#cb48-12" aria-hidden="true" tabindex="-1"></a>table2_html <span class="op">=</span> table2_pandas.to_html()</span>
+<span id="cb48-13"><a href="predictive-inference-the-gender-wage-gap.html#cb48-13" aria-hidden="true" tabindex="-1"></a>table2_pandas</span></code></pre></div>
+<pre><code>##                        Estimate  Std. Error
+## Without controls      -0.038345    0.015902
+## full reg              -0.069553    0.144608
+## partial reg           -0.069553    0.015000
+## partial reg via lasso -0.064878    0.015557</code></pre>
 </div>
+</div>
+<p>It it worth to notice that controlling for worker characteristics increases the gender wage gap from less that 4% to 7%. The controls we used in our analysis include 5 educational attainment indicators (less than high school graduates, high school graduates, some college, college graduate, and advanced degree), 4 region indicators (midwest, south, west, and northeast); a quartic term (first, second, third, and fourth power) in experience and 22 occupation and 23 industry indicators.</p>
+<p>Keep in mind that the predictive effect (PE) does not only measures discrimination (causal effect of being female), it also may reflect
+selection effects of unobserved differences in covariates between men and women in our sample.</p>
+<p>Next we try “extra” flexible model, where we take interactions of all controls, giving us about 1000 controls.</p>
+</div>
+<div id="extra-flexible-model" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> “Extra” flexible model</h2>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="predictive-inference-the-gender-wage-gap.html#cb50-1" aria-hidden="true" tabindex="-1"></a>extraflex <span class="ot">&lt;-</span> lwage <span class="sc">~</span> sex <span class="sc">+</span> (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4<span class="sc">+</span>shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb50-2"><a href="predictive-inference-the-gender-wage-gap.html#cb50-2" aria-hidden="true" tabindex="-1"></a>control.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(extraflex, <span class="at">data=</span>data)</span>
+<span id="cb50-3"><a href="predictive-inference-the-gender-wage-gap.html#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(control.fit)</span></span>
+<span id="cb50-4"><a href="predictive-inference-the-gender-wage-gap.html#cb50-4" aria-hidden="true" tabindex="-1"></a>control.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(control.fit)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb50-5"><a href="predictive-inference-the-gender-wage-gap.html#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Number of Extra-Flex Controls&quot;</span>, <span class="fu">length</span>(control.fit<span class="sc">$</span>coef)<span class="sc">-</span><span class="dv">1</span>, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+<pre><code>## Number of Extra-Flex Controls 979</code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="predictive-inference-the-gender-wage-gap.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coefficient for OLS with extra flex controls&quot;</span>, control.est)</span></code></pre></div>
+<pre><code>## Coefficient for OLS with extra flex controls -0.06127046</code></pre>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="predictive-inference-the-gender-wage-gap.html#cb54-1" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(control.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>);</span>
+<span id="cb54-2"><a href="predictive-inference-the-gender-wage-gap.html#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-3"><a href="predictive-inference-the-gender-wage-gap.html#cb54-3" aria-hidden="true" tabindex="-1"></a>n<span class="ot">=</span> <span class="fu">length</span>(data<span class="sc">$</span>wage); p <span class="ot">=</span><span class="fu">length</span>(control.fit<span class="sc">$</span>coef);</span>
+<span id="cb54-4"><a href="predictive-inference-the-gender-wage-gap.html#cb54-4" aria-hidden="true" tabindex="-1"></a>control.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">sqrt</span>(n<span class="sc">/</span>(n<span class="sc">-</span>p)) <span class="co"># Estimated std errors</span></span>
+<span id="cb54-5"><a href="predictive-inference-the-gender-wage-gap.html#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="co"># crude adjustment for the effect of dimensionality on OLS standard errors, motivated by Cattaneo, Jannson, and Newey (2018)</span></span>
+<span id="cb54-6"><a href="predictive-inference-the-gender-wage-gap.html#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="co"># for really correct way of doing this, we need to implement Cattaneo, Jannson, and Newey (2018)&#39;s procedure.</span></span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb55"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb55-1"><a href="predictive-inference-the-gender-wage-gap.html#cb55-1" aria-hidden="true" tabindex="-1"></a>extraflex <span class="op">=</span> <span class="st">&#39;lwage ~ sex + (exp1+exp2+exp3+exp4+shs+hsg+scl+clg+occ2+ind2+mw+so+we)**2&#39;</span></span>
+<span id="cb55-2"><a href="predictive-inference-the-gender-wage-gap.html#cb55-2" aria-hidden="true" tabindex="-1"></a>control_fit <span class="op">=</span> smf.ols( formula <span class="op">=</span> extraflex, data<span class="op">=</span>data).fit()</span>
+<span id="cb55-3"><a href="predictive-inference-the-gender-wage-gap.html#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="co">#summary( control_fit )</span></span>
+<span id="cb55-4"><a href="predictive-inference-the-gender-wage-gap.html#cb55-4" aria-hidden="true" tabindex="-1"></a>control_est <span class="op">=</span> control_fit.summary2().tables[<span class="dv">1</span>][<span class="st">&#39;Coef.&#39;</span>][<span class="st">&#39;sex&#39;</span>]</span>
+<span id="cb55-5"><a href="predictive-inference-the-gender-wage-gap.html#cb55-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&quot;Number of Extra-Flex Controls </span><span class="sc">{</span>control_fit<span class="sc">.</span>summary2()<span class="sc">.</span>tables[<span class="dv">1</span>]<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="op">-</span><span class="dv">1</span><span class="sc">}</span><span class="ss"> </span><span class="ch">\n</span><span class="ss">Coefficient for OLS with extra flex controls </span><span class="sc">{</span>control_est<span class="sc">}</span><span class="ss">&quot;</span> )</span>
+<span id="cb55-6"><a href="predictive-inference-the-gender-wage-gap.html#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span></code></pre></div>
+<pre><code>## Number of Extra-Flex Controls 979 
+## Coefficient for OLS with extra flex controls -0.0612704637940103</code></pre>
+<div class="sourceCode" id="cb57"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb57-1"><a href="predictive-inference-the-gender-wage-gap.html#cb57-1" aria-hidden="true" tabindex="-1"></a>HCV_coefs <span class="op">=</span> control_fit.cov_HC0</span>
+<span id="cb57-2"><a href="predictive-inference-the-gender-wage-gap.html#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="predictive-inference-the-gender-wage-gap.html#cb57-3" aria-hidden="true" tabindex="-1"></a>n<span class="op">=</span> <span class="bu">len</span>(data[ <span class="st">&#39;wage&#39;</span> ])</span>
+<span id="cb57-4"><a href="predictive-inference-the-gender-wage-gap.html#cb57-4" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="bu">len</span>(control_fit.summary2().tables[<span class="dv">1</span>][<span class="st">&#39;Coef.&#39;</span>])</span>
+<span id="cb57-5"><a href="predictive-inference-the-gender-wage-gap.html#cb57-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-6"><a href="predictive-inference-the-gender-wage-gap.html#cb57-6" aria-hidden="true" tabindex="-1"></a>control_se <span class="op">=</span> control_fit.summary2().tables[<span class="dv">1</span>][<span class="st">&#39;Std.Err.&#39;</span>][<span class="st">&#39;sex&#39;</span>]<span class="op">*</span>math.sqrt(n<span class="op">/</span>(n<span class="op">-</span>p))</span>
+<span id="cb57-7"><a href="predictive-inference-the-gender-wage-gap.html#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="co"># control_se</span></span>
+<span id="cb57-8"><a href="predictive-inference-the-gender-wage-gap.html#cb57-8" aria-hidden="true" tabindex="-1"></a><span class="co"># crude adjustment for the effect of dimensionality on OLS standard errors, motivated by Cattaneo, Jannson, and Newey (2018)</span></span>
+<span id="cb57-9"><a href="predictive-inference-the-gender-wage-gap.html#cb57-9" aria-hidden="true" tabindex="-1"></a><span class="co"># for really correct way of doing this, we need to implement Cattaneo, Jannson, and Newey (2018)&#39;s procedure.</span></span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="laso-extra-flexible-model" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Laso “Extra” Flexible model</h2>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="predictive-inference-the-gender-wage-gap.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdm)</span>
+<span id="cb58-2"><a href="predictive-inference-the-gender-wage-gap.html#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="predictive-inference-the-gender-wage-gap.html#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co"># models</span></span>
+<span id="cb58-4"><a href="predictive-inference-the-gender-wage-gap.html#cb58-4" aria-hidden="true" tabindex="-1"></a>extraflex.y <span class="ot">&lt;-</span> lwage <span class="sc">~</span>  (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4<span class="sc">+</span>shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we)<span class="sc">^</span><span class="dv">2</span> <span class="co"># model for Y</span></span>
+<span id="cb58-5"><a href="predictive-inference-the-gender-wage-gap.html#cb58-5" aria-hidden="true" tabindex="-1"></a>extraflex.d <span class="ot">&lt;-</span> sex <span class="sc">~</span> (exp1<span class="sc">+</span>exp2<span class="sc">+</span>exp3<span class="sc">+</span>exp4<span class="sc">+</span>shs<span class="sc">+</span>hsg<span class="sc">+</span>scl<span class="sc">+</span>clg<span class="sc">+</span>occ2<span class="sc">+</span>ind2<span class="sc">+</span>mw<span class="sc">+</span>so<span class="sc">+</span>we)<span class="sc">^</span><span class="dv">2</span> <span class="co"># model for D</span></span>
+<span id="cb58-6"><a href="predictive-inference-the-gender-wage-gap.html#cb58-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a href="predictive-inference-the-gender-wage-gap.html#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from Y</span></span>
+<span id="cb58-8"><a href="predictive-inference-the-gender-wage-gap.html#cb58-8" aria-hidden="true" tabindex="-1"></a>t.Y <span class="ot">&lt;-</span> <span class="fu">rlasso</span>(extraflex.y, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
+<span id="cb58-9"><a href="predictive-inference-the-gender-wage-gap.html#cb58-9" aria-hidden="true" tabindex="-1"></a><span class="co"># partialling-out the linear effect of W from D</span></span>
+<span id="cb58-10"><a href="predictive-inference-the-gender-wage-gap.html#cb58-10" aria-hidden="true" tabindex="-1"></a>t.D <span class="ot">&lt;-</span> <span class="fu">rlasso</span>(extraflex.d, <span class="at">data=</span>data)<span class="sc">$</span>res</span>
+<span id="cb58-11"><a href="predictive-inference-the-gender-wage-gap.html#cb58-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-12"><a href="predictive-inference-the-gender-wage-gap.html#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
+<span id="cb58-13"><a href="predictive-inference-the-gender-wage-gap.html#cb58-13" aria-hidden="true" tabindex="-1"></a>partial.lasso.fit <span class="ot">&lt;-</span> <span class="fu">lm</span>(t.Y<span class="sc">~</span>t.D)</span>
+<span id="cb58-14"><a href="predictive-inference-the-gender-wage-gap.html#cb58-14" aria-hidden="true" tabindex="-1"></a>partial.lasso.est <span class="ot">&lt;-</span> <span class="fu">summary</span>(partial.lasso.fit)<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb58-15"><a href="predictive-inference-the-gender-wage-gap.html#cb58-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-16"><a href="predictive-inference-the-gender-wage-gap.html#cb58-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Coefficient for D via partialling-out using lasso&quot;</span>, partial.lasso.est)</span></code></pre></div>
+<pre><code>## Coefficient for D via partialling-out using lasso -0.07159928</code></pre>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="predictive-inference-the-gender-wage-gap.html#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span>
+<span id="cb60-2"><a href="predictive-inference-the-gender-wage-gap.html#cb60-2" aria-hidden="true" tabindex="-1"></a>HCV.coefs <span class="ot">&lt;-</span> <span class="fu">vcovHC</span>(partial.lasso.fit, <span class="at">type =</span> <span class="st">&#39;HC&#39;</span>)</span>
+<span id="cb60-3"><a href="predictive-inference-the-gender-wage-gap.html#cb60-3" aria-hidden="true" tabindex="-1"></a>partial.lasso.se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(HCV.coefs))[<span class="dv">2</span>]</span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb61"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb61-1"><a href="predictive-inference-the-gender-wage-gap.html#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># models</span></span>
+<span id="cb61-2"><a href="predictive-inference-the-gender-wage-gap.html#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="co"># model for Y</span></span>
+<span id="cb61-3"><a href="predictive-inference-the-gender-wage-gap.html#cb61-3" aria-hidden="true" tabindex="-1"></a>extraflex_y <span class="op">=</span> <span class="st">&#39;lwage ~  (exp1+exp2+exp3+exp4+shs+hsg+scl+clg+occ2+ind2+mw+so+we)**2&#39;</span></span>
+<span id="cb61-4"><a href="predictive-inference-the-gender-wage-gap.html#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co"># model for </span></span>
+<span id="cb61-5"><a href="predictive-inference-the-gender-wage-gap.html#cb61-5" aria-hidden="true" tabindex="-1"></a>extraflex_d <span class="op">=</span> <span class="st">&#39;sex ~ (exp1+exp2+exp3+exp4+shs+hsg+scl+clg+occ2+ind2+mw+so+we)**2&#39;</span></span>
+<span id="cb61-6"><a href="predictive-inference-the-gender-wage-gap.html#cb61-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-7"><a href="predictive-inference-the-gender-wage-gap.html#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="co"># extraflex_y</span></span>
+<span id="cb61-8"><a href="predictive-inference-the-gender-wage-gap.html#cb61-8" aria-hidden="true" tabindex="-1"></a>lasso_model <span class="op">=</span> linear_model.Lasso( alpha <span class="op">=</span> <span class="fl">0.1</span>  )</span>
+<span id="cb61-9"><a href="predictive-inference-the-gender-wage-gap.html#cb61-9" aria-hidden="true" tabindex="-1"></a>extraflex_y_covariables <span class="op">=</span> smf.ols(formula <span class="op">=</span> extraflex_y, data <span class="op">=</span> data)</span>
+<span id="cb61-10"><a href="predictive-inference-the-gender-wage-gap.html#cb61-10" aria-hidden="true" tabindex="-1"></a>Y_lasso_fitted <span class="op">=</span> lasso_model.fit( extraflex_y_covariables.exog, data[[ <span class="st">&#39;lwage&#39;</span> ]] ).predict( extraflex_y_covariables.exog )</span></code></pre></div>
+<pre><code>## C:\Users\alexa\ANACON~1\envs\R-RETI~1\lib\site-packages\sklearn\linear_model\_coordinate_descent.py:532: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations. Duality gap: 351.0313404455396, tolerance: 0.1675169484647612
+##   positive)</code></pre>
+<div class="sourceCode" id="cb63"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb63-1"><a href="predictive-inference-the-gender-wage-gap.html#cb63-1" aria-hidden="true" tabindex="-1"></a>t_Y <span class="op">=</span> data[[ <span class="st">&#39;lwage&#39;</span> ]] <span class="op">-</span> Y_lasso_fitted.reshape( Y_lasso_fitted.size, <span class="dv">1</span>)</span>
+<span id="cb63-2"><a href="predictive-inference-the-gender-wage-gap.html#cb63-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-3"><a href="predictive-inference-the-gender-wage-gap.html#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="co"># extraflex_d</span></span>
+<span id="cb63-4"><a href="predictive-inference-the-gender-wage-gap.html#cb63-4" aria-hidden="true" tabindex="-1"></a>extraflex_d_covariables <span class="op">=</span> smf.ols( extraflex_d, data<span class="op">=</span>data)</span>
+<span id="cb63-5"><a href="predictive-inference-the-gender-wage-gap.html#cb63-5" aria-hidden="true" tabindex="-1"></a>D_lasso_fitted <span class="op">=</span> lasso_model.fit( extraflex_d_covariables.exog, data[[ <span class="st">&#39;sex&#39;</span> ]] ).predict( extraflex_d_covariables.exog )</span></code></pre></div>
+<pre><code>## C:\Users\alexa\ANACON~1\envs\R-RETI~1\lib\site-packages\sklearn\linear_model\_coordinate_descent.py:532: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations. Duality gap: 2.7031409502701536, tolerance: 0.12716172815533988
+##   positive)</code></pre>
+<div class="sourceCode" id="cb65"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb65-1"><a href="predictive-inference-the-gender-wage-gap.html#cb65-1" aria-hidden="true" tabindex="-1"></a>t_D <span class="op">=</span> data[[ <span class="st">&#39;sex&#39;</span> ]] <span class="op">-</span> D_lasso_fitted.reshape( D_lasso_fitted.size, <span class="dv">1</span>)</span>
+<span id="cb65-2"><a href="predictive-inference-the-gender-wage-gap.html#cb65-2" aria-hidden="true" tabindex="-1"></a>data_res <span class="op">=</span> pd.DataFrame( np.hstack(( t_Y , t_D )) , columns <span class="op">=</span> [ <span class="st">&#39;t_Y&#39;</span>, <span class="st">&#39;t_D&#39;</span> ] )</span>
+<span id="cb65-3"><a href="predictive-inference-the-gender-wage-gap.html#cb65-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-4"><a href="predictive-inference-the-gender-wage-gap.html#cb65-4" aria-hidden="true" tabindex="-1"></a><span class="co"># regression of Y on D after partialling-out the effect of W</span></span>
+<span id="cb65-5"><a href="predictive-inference-the-gender-wage-gap.html#cb65-5" aria-hidden="true" tabindex="-1"></a>partial_lasso_fit <span class="op">=</span> smf.ols( formula <span class="op">=</span> <span class="st">&#39;t_Y ~ t_D&#39;</span> , data <span class="op">=</span> data_res ).fit()</span>
+<span id="cb65-6"><a href="predictive-inference-the-gender-wage-gap.html#cb65-6" aria-hidden="true" tabindex="-1"></a>partial_lasso_est <span class="op">=</span> partial_lasso_fit.summary2().tables[<span class="dv">1</span>][<span class="st">&#39;Coef.&#39;</span>][<span class="st">&#39;t_D&#39;</span>]</span>
+<span id="cb65-7"><a href="predictive-inference-the-gender-wage-gap.html#cb65-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&quot;Coefficient for D via partialling-out using lasso </span><span class="sc">{</span>partial_lasso_est<span class="sc">}</span><span class="ss">&quot;</span> )</span>
+<span id="cb65-8"><a href="predictive-inference-the-gender-wage-gap.html#cb65-8" aria-hidden="true" tabindex="-1"></a><span class="co"># standard error</span></span></code></pre></div>
+<pre><code>## Coefficient for D via partialling-out using lasso -0.0667657102684685</code></pre>
+<div class="sourceCode" id="cb67"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb67-1"><a href="predictive-inference-the-gender-wage-gap.html#cb67-1" aria-hidden="true" tabindex="-1"></a>HCV_coefs <span class="op">=</span> partial_lasso_fit.cov_HC0</span>
+<span id="cb67-2"><a href="predictive-inference-the-gender-wage-gap.html#cb67-2" aria-hidden="true" tabindex="-1"></a>partial_lasso_se <span class="op">=</span> np.power( HCV_coefs.diagonal() , <span class="fl">0.5</span>)[<span class="dv">1</span>]</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="summarize-the-results" class="section level2" number="2.6">
+<h2><span class="header-section-number">2.6</span> Summarize the results</h2>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="predictive-inference-the-gender-wage-gap.html#cb68-1" aria-hidden="true" tabindex="-1"></a>Estimate <span class="ot">&lt;-</span> <span class="fu">c</span>(control.est,partial.lasso.est)</span>
+<span id="cb68-2"><a href="predictive-inference-the-gender-wage-gap.html#cb68-2" aria-hidden="true" tabindex="-1"></a>StdError <span class="ot">&lt;-</span> <span class="fu">c</span>(control.se,partial.lasso.se)</span>
+<span id="cb68-3"><a href="predictive-inference-the-gender-wage-gap.html#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-4"><a href="predictive-inference-the-gender-wage-gap.html#cb68-4" aria-hidden="true" tabindex="-1"></a>table2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Estimate,StdError)</span>
+<span id="cb68-5"><a href="predictive-inference-the-gender-wage-gap.html#cb68-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-6"><a href="predictive-inference-the-gender-wage-gap.html#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(table2)<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Estimate&quot;</span>,<span class="st">&quot;Std. Error&quot;</span>)</span>
+<span id="cb68-7"><a href="predictive-inference-the-gender-wage-gap.html#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(table2)<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;full reg&quot;</span>,<span class="st">&quot;partial reg via lasso&quot;</span>)    </span>
+<span id="cb68-8"><a href="predictive-inference-the-gender-wage-gap.html#cb68-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-9"><a href="predictive-inference-the-gender-wage-gap.html#cb68-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(table2,<span class="at">format =</span> <span class="st">&quot;markdown&quot;</span>,<span class="at">caption =</span> <span class="st">&quot;Summarize the results&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:unnamed-chunk-7">Table 2.3: </span>Summarize the results</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Estimate</th>
+<th align="right">Std. Error</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">full reg</td>
+<td align="right">-0.0612705</td>
+<td align="right">0.0168996</td>
+</tr>
+<tr class="even">
+<td align="left">partial reg via lasso</td>
+<td align="right">-0.0715993</td>
+<td align="right">0.0152640</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb69"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb69-1"><a href="predictive-inference-the-gender-wage-gap.html#cb69-1" aria-hidden="true" tabindex="-1"></a>table3 <span class="op">=</span> np.zeros( ( <span class="dv">2</span>, <span class="dv">2</span> ) )</span>
+<span id="cb69-2"><a href="predictive-inference-the-gender-wage-gap.html#cb69-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-3"><a href="predictive-inference-the-gender-wage-gap.html#cb69-3" aria-hidden="true" tabindex="-1"></a>table3[<span class="dv">0</span>,<span class="dv">0</span>] <span class="op">=</span> control_est</span>
+<span id="cb69-4"><a href="predictive-inference-the-gender-wage-gap.html#cb69-4" aria-hidden="true" tabindex="-1"></a>table3[<span class="dv">0</span>,<span class="dv">1</span>] <span class="op">=</span> control_se    </span>
+<span id="cb69-5"><a href="predictive-inference-the-gender-wage-gap.html#cb69-5" aria-hidden="true" tabindex="-1"></a>table3[<span class="dv">1</span>,<span class="dv">0</span>] <span class="op">=</span>  partial_lasso_est</span>
+<span id="cb69-6"><a href="predictive-inference-the-gender-wage-gap.html#cb69-6" aria-hidden="true" tabindex="-1"></a>table3[<span class="dv">1</span>,<span class="dv">1</span>] <span class="op">=</span> partial_lasso_se </span>
+<span id="cb69-7"><a href="predictive-inference-the-gender-wage-gap.html#cb69-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-8"><a href="predictive-inference-the-gender-wage-gap.html#cb69-8" aria-hidden="true" tabindex="-1"></a>table3_pandas <span class="op">=</span> pd.DataFrame( table3, columns <span class="op">=</span> [ <span class="st">&quot;Estimate&quot;</span>,<span class="st">&quot;Std. Error&quot;</span> ])</span>
+<span id="cb69-9"><a href="predictive-inference-the-gender-wage-gap.html#cb69-9" aria-hidden="true" tabindex="-1"></a>table3_pandas.index <span class="op">=</span> [ <span class="st">&quot;full reg&quot;</span>,<span class="st">&quot;partial reg via lasso&quot;</span> ]</span>
+<span id="cb69-10"><a href="predictive-inference-the-gender-wage-gap.html#cb69-10" aria-hidden="true" tabindex="-1"></a>table3_pandas.<span class="bu">round</span>(<span class="dv">8</span>)</span></code></pre></div>
+<pre><code>##                        Estimate  Std. Error
+## full reg              -0.061270    0.017760
+## partial reg via lasso -0.066766    0.015468</code></pre>
+</div>
+</div>
+
 </div>
 </div>
             </section>
