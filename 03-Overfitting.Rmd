@@ -1,0 +1,270 @@
+# Simple Exercise on Overfitting
+
+## 1. First set p=n
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+
+```{r}
+# No additional packages needed
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+import numpy as np
+import random
+import statsmodels.api as sm
+```
+
+:::
+::::::
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+
+```{r}
+set.seed(123)
+n = 1000
+p = n
+
+X<- matrix(rnorm(n*p), n, p)
+Y<- rnorm(n)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+random.seed(10)
+n = 1000
+p = n
+
+X = np.random.normal(0, 1, size=(n, p))
+Y = np.random.normal(0, 1,n)
+```
+
+:::
+::::::
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+
+```{r}
+print("p/n is")
+print(p/n)
+print("R2 is")
+print(summary(lm(Y~X))$r.squared)
+print("Adjusted R2 is")
+print(summary(lm(Y~X))$adj.r.squared)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+mod = sm.OLS(Y, X)    # Describe model
+res = mod.fit()
+
+est2 = mod.fit()
+
+print("p/n is",p/n)
+print("R2 is",res.rsquared)
+
+print("Adjusted R2 is",est2.rsquared_adj)
+
+```
+
+:::
+::::::
+
+
+## 2. Second, set p=n/2.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+
+```{r}
+set.seed(123)
+n = 1000
+p = n/2
+X<- matrix(rnorm(n*p), n, p)
+Y<- rnorm(n)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+random.seed(10)
+n = 1000
+p = n/2
+```
+
+
+```{python}
+X = np.random.normal(0, 1, size=(n, int(p)))
+Y = np.random.normal(0, 1,n)
+mod = sm.OLS(Y, X)    # Describe model
+res = mod.fit()
+# print(res.summary())
+```
+
+
+:::
+::::::
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+
+```{r}
+print("p/n is")
+print(p/n)
+print("R2 is")
+print(summary(lm(Y~X))$r.squared)
+print("Adjusted R2 is")
+print(summary(lm(Y~X))$adj.r.squared)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+est2 = mod.fit()
+print("p/n is",p/n)
+print("R2 is",res.rsquared)
+print("Adjusted R2 is",est2.rsquared_adj)
+```
+
+:::
+::::::
+
+## 3. Third, set p/n =.05
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+
+```{r}
+set.seed(123)
+n = 1000
+
+p = .05*n
+X<- matrix(rnorm(n*p), n, p)
+Y<- rnorm(n)
+```
+
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+random.seed(10)
+n = 1000
+p = 0.05*n
+int(p)
+```
+
+```{python}
+X = np.random.normal(0, 1, size=(n, int(p)))
+Y = np.random.normal(0, 1,n)
+mod = sm.OLS(Y, X)    # Describe model
+res = mod.fit()
+# print(res.summary())
+```
+
+:::
+::::::
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+**R code**
+
+```{r}
+print("p/n is")
+print(p/n)
+print("R2 is")
+print(summary(lm(Y~X))$r.squared)
+print("Adjusted R2 is")
+print(summary(lm(Y~X))$adj.r.squared)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+
+**Python code**
+
+```{python}
+print("p/n is \n",p/n )
+#print("summary()\n",res.summary())
+print("rsquared\n",res.rsquared)
+print("rsquared_adj\n",res.rsquared_adj)
+```
+
+:::
+::::::
