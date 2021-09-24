@@ -31,3 +31,7 @@ extra-flexible-model
 laso-extra-flexible-model
 summarize-the-results
 tab:unnamed-chunk-7
+simple-exercise-on-overfitting
+first-set-pn
+second-set-pn2.
+third-set-pn-.05
