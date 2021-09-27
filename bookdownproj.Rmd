@@ -1,3 +1,55 @@
+--- 
+title: "Machine Learning and Causal Inference"
+author: "Alexander Quispe"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+---
+
+# Predictive Inference 1
+
+Placeholder
+
+
+## Data
+## Data Analysis
+### R and Python code
+## Prediction Question
+### Basic Model:
+### Flexible Model:
+### Lasso Model:
+## Data Splitting
+
+<!--chapter:end:index.Rmd-->
+
+
+# Predictive Inference The Gender Wage Gap 
+
+Placeholder
+
+
+## Data analysis
+### OLS Regression
+### Ols regression with controls
+## Partialling-Out using ols
+## Partialling-Out using lasso
+## "Extra" flexible model
+## Laso "Extra" Flexible model
+## Summarize the results
+
+<!--chapter:end:02-Inference.Rmd-->
+
+
+# Simple Exercise on Overfitting
+
+Placeholder
+
+
+## 1. First set p=n
+## 2. Second, set p=n/2.
+## 3. Third, set p/n =.05
+
+<!--chapter:end:03-Overfitting.Rmd-->
+
 # Testing the Convergence Hypothesis
 
 ## Introduction
@@ -449,4 +501,18 @@ In sharp contrast, partialling-out via Lasso provides a more precise estimate. T
   <tr> <td align="right"> Double Lasso </td> <td align="right"> -0.050 </td> <td align="right"> 0.014 </td> <td align="right"> -0.078 </td> <td align="right"> -0.022 </td> </tr>
    </table>
 
+
+
+<!--chapter:end:04-Convergence.Rmd-->
+
+
+# Simulation Design
+
+Placeholder
+
+
+## Example 1
+## Example 2
+
+<!--chapter:end:05-orthogonal-learning.Rmd-->
 
