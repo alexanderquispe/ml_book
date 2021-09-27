@@ -35,3 +35,12 @@ simple-exercise-on-overfitting
 first-set-pn
 second-set-pn2.
 third-set-pn-.05
+predictive-inference-1-1
+data-1
+r-and-python-code-1
+prediction-question-1
+basic-model-1
+flexible-model-1
+lasso-model-1
+data-splitting-1
+data-analysis-3
