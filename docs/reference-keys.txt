@@ -44,3 +44,5 @@ flexible-model-1
 lasso-model-1
 data-splitting-1
 data-analysis-3
+penalized-linear-regressions-a-simulation-experiment
+data-generating-process-approximately-sparse

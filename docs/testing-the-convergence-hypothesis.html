@@ -24,7 +24,7 @@
 <meta name="author" content="Alexander Quispe" />
 
 
-<meta name="date" content="2021-09-27" />
+<meta name="date" content="2021-09-28" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,7 +33,7 @@
   
 <link rel="prev" href="simple-exercise-on-overfitting.html"/>
 <link rel="next" href="simulation-design.html"/>
-<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -352,8 +352,8 @@ a column separator --></p>
 <span id="cb15-4"><a href="testing-the-convergence-hypothesis.html#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(table) <span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">&quot;OLS&quot;</span>)</span>
 <span id="cb15-5"><a href="testing-the-convergence-hypothesis.html#cb15-5" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">&lt;-</span> <span class="fu">xtable</span>(table, <span class="at">digits =</span> <span class="dv">3</span>)</span>
 <span id="cb15-6"><a href="testing-the-convergence-hypothesis.html#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tab,<span class="at">type=</span><span class="st">&quot;html&quot;</span>) <span class="co"># set type=&quot;latex&quot; for printing table in LaTeX</span></span></code></pre></div>
-<pre><code>## &lt;!-- html table generated in R 4.0.4 by xtable 1.8-4 package --&gt;
-## &lt;!-- Mon Sep 27 14:52:04 2021 --&gt;
+<pre><code>## &lt;!-- html table generated in R 4.1.1 by xtable 1.8-4 package --&gt;
+## &lt;!-- Tue Sep 28 12:46:42 2021 --&gt;
 ## &lt;table border=1&gt;
 ## &lt;tr&gt; &lt;th&gt;  &lt;/th&gt; &lt;th&gt; estimator &lt;/th&gt; &lt;th&gt; standard error &lt;/th&gt; &lt;th&gt; lower bound CI &lt;/th&gt; &lt;th&gt; upper bound CI &lt;/th&gt;  &lt;/tr&gt;
 ##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; OLS &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; -0.009 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 0.030 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; -0.071 &lt;/td&gt; &lt;td align=&quot;right&quot;&gt; 0.052 &lt;/td&gt; &lt;/tr&gt;
@@ -452,12 +452,12 @@ a column separator --></p>
 <span id="cb22-2"><a href="testing-the-convergence-hypothesis.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Seat values for Lasso</span></span>
 <span id="cb22-3"><a href="testing-the-convergence-hypothesis.html#cb22-3" aria-hidden="true" tabindex="-1"></a>lasso_model <span class="op">=</span> linear_model.Lasso( alpha <span class="op">=</span> <span class="fl">0.00077</span> )</span>
 <span id="cb22-4"><a href="testing-the-convergence-hypothesis.html#cb22-4" aria-hidden="true" tabindex="-1"></a>r_Y <span class="op">=</span> Y <span class="op">-</span> lasso_model.fit( W, Y ).predict( W )</span></code></pre></div>
-<pre><code>## C:\Users\MSI-NB\ANACON~1\lib\site-packages\sklearn\linear_model\_coordinate_descent.py:529: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations. Duality gap: 0.0058288944773880885, tolerance: 2.3434976975716032e-05
-##   model = cd_fast.enet_coordinate_descent(</code></pre>
+<pre><code>## C:\Users\alexa\ANACON~1\envs\R-RETI~1\lib\site-packages\sklearn\linear_model\_coordinate_descent.py:532: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations. Duality gap: 0.005828894477391114, tolerance: 2.343497697571603e-05
+##   positive)</code></pre>
 <div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="testing-the-convergence-hypothesis.html#cb24-1" aria-hidden="true" tabindex="-1"></a>r_Y <span class="op">=</span> r_Y.rename(<span class="st">&#39;r_Y&#39;</span>)</span>
 <span id="cb24-2"><a href="testing-the-convergence-hypothesis.html#cb24-2" aria-hidden="true" tabindex="-1"></a>r_D <span class="op">=</span> D <span class="op">-</span> lasso_model.fit( W, D ).predict( W ) <span class="co"># Part. out d</span></span></code></pre></div>
-<pre><code>## C:\Users\MSI-NB\ANACON~1\lib\site-packages\sklearn\linear_model\_coordinate_descent.py:529: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations. Duality gap: 2.99724470007767, tolerance: 0.007147912790119585
-##   model = cd_fast.enet_coordinate_descent(</code></pre>
+<pre><code>## C:\Users\alexa\ANACON~1\envs\R-RETI~1\lib\site-packages\sklearn\linear_model\_coordinate_descent.py:532: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations. Duality gap: 2.997244700077635, tolerance: 0.007147912790119585
+##   positive)</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="testing-the-convergence-hypothesis.html#cb26-1" aria-hidden="true" tabindex="-1"></a>r_D <span class="op">=</span> r_D.rename(<span class="st">&#39;r_D&#39;</span>)</span>
 <span id="cb26-2"><a href="testing-the-convergence-hypothesis.html#cb26-2" aria-hidden="true" tabindex="-1"></a>partial_lasso_fit <span class="op">=</span> sm.OLS(r_Y, r_D).fit() <span class="co"># Regress residuales</span></span>
 <span id="cb26-3"><a href="testing-the-convergence-hypothesis.html#cb26-3" aria-hidden="true" tabindex="-1"></a></span>

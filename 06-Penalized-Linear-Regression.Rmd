@@ -1,0 +1,131 @@
+# Penalized Linear Regressions: A Simulation Experiment
+
+## Data Generating Process: Approximately Sparse
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+```{r libraries-r,echo= TRUE,message=FALSE,warning=FALSE}
+# No libraries requiered
+```
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+```{python libraries-python, message=FALSE,warning=FALSE}
+import random
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+```
+:::
+::::::
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+```{r seed-r,echo= TRUE,message=FALSE,warning=FALSE}
+set.seed(1)
+
+n = 100
+p = 400
+```
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+```{python seed-python, message=FALSE,warning=FALSE}
+random.seed(1)
+
+n = 100
+p = 400
+```
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r variables-r,echo= TRUE,message=FALSE,warning=FALSE}
+Z= runif(n)-1/2
+W = matrix(runif(n*p)-1/2, n, p)
+```
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python variables-python, message=FALSE,warning=FALSE}
+Z = np.random.uniform( low = 0 , high = 1 , size = n) - 1/2 
+W = ( np.random.uniform( low = 0 , high = 1 , size = n * p ) - 1/2 ).\
+        reshape( n , p )
+```
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r variables-two-r,echo= TRUE,message=FALSE,warning=FALSE}
+beta = 1/seq(1:p)^2   # approximately sparse beta
+gX = exp(4*Z)+ W%*%beta  # leading term nonlinear
+X = cbind(Z, Z^2, Z^3, W )  # polynomials in Zs will be approximating exp(4*Z)
+```
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python variables-two-python, message=FALSE,warning=FALSE}
+beta = ((1/ np.arange(1, p + 1 )) ** 2)
+gX = np.exp( 4 * Z ) + (W @ beta)
+X = np.concatenate( ( Z.reshape(Z.size, 1), Z.reshape(Z.size, 1) \
+                     ** 2, Z.reshape(Z.size, 1) ** 3, W ) , axis = 1 )
+```
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r variables-two-r,echo= TRUE,message=FALSE,warning=FALSE}
+beta = 1/seq(1:p)^2   # approximately sparse beta
+gX = exp(4*Z)+ W%*%beta  # leading term nonlinear
+X = cbind(Z, Z^2, Z^3, W )  # polynomials in Zs will be approximating exp(4*Z)
+```
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python variables-two-python, message=FALSE,warning=FALSE}
+beta = ((1/ np.arange(1, p + 1 )) ** 2)
+gX = np.exp( 4 * Z ) + (W @ beta)
+X = np.concatenate( ( Z.reshape(Z.size, 1), Z.reshape(Z.size, 1) \
+                     ** 2, Z.reshape(Z.size, 1) ** 3, W ) , axis = 1 )
+```
+:::
+::::::
+
