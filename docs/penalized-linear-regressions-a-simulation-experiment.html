@@ -213,6 +213,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 6</span> Penalized Linear Regressions: A Simulation Experiment</h1>
 <div id="data-generating-process-approximately-sparse" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Data Generating Process: Approximately Sparse</h2>
+<ol style="list-style-type: decimal">
+<li>Import libraries</li>
+</ol>
 <div class="columns">
 <div class="column" style="width:49.5%;">
 <p><strong>R code</strong></p>
@@ -229,13 +232,15 @@ a column separator --></p>
 <span id="cb2-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code></pre></div>
 </div>
 </div>
+<ol start="2" style="list-style-type: decimal">
+<li>To set seed</li>
+</ol>
 <div class="columns">
 <div class="column" style="width:49.5%;">
 <p><strong>R code</strong></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb3-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb3-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">100</span></span>
-<span id="cb3-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb3-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">400</span></span></code></pre></div>
+<span id="cb3-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb3-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">100</span></span>
+<span id="cb3-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb3-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="dv">400</span></span></code></pre></div>
 </div><div class="column" style="width:1%;">
 <p> 
 <!-- an empty Div (with a white space), serving as
@@ -243,14 +248,15 @@ a column separator --></p>
 </div><div class="column" style="width:49.5%;">
 <p><strong>Python code</strong></p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb4-1" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">1</span>)</span>
-<span id="cb4-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb4-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
-<span id="cb4-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb4-4" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="dv">400</span></span></code></pre></div>
+<span id="cb4-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb4-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb4-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb4-3" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="dv">400</span></span></code></pre></div>
 </div>
 </div>
+<ol start="3" style="list-style-type: decimal">
+<li>To create variables</li>
+</ol>
 <div class="columns">
 <div class="column" style="width:49.5%;">
-<p><strong>R code</strong></p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb5-1" aria-hidden="true" tabindex="-1"></a>Z<span class="ot">=</span> <span class="fu">runif</span>(n)<span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span></span>
 <span id="cb5-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb5-2" aria-hidden="true" tabindex="-1"></a>W <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(n<span class="sc">*</span>p)<span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, n, p)</span></code></pre></div>
 </div><div class="column" style="width:1%;">
@@ -258,7 +264,6 @@ a column separator --></p>
 <!-- an empty Div (with a white space), serving as
 a column separator --></p>
 </div><div class="column" style="width:49.5%;">
-<p><strong>Python code</strong></p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb6-1" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> np.random.uniform( low <span class="op">=</span> <span class="dv">0</span> , high <span class="op">=</span> <span class="dv">1</span> , size <span class="op">=</span> n) <span class="op">-</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span> </span>
 <span id="cb6-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb6-2" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> ( np.random.uniform( low <span class="op">=</span> <span class="dv">0</span> , high <span class="op">=</span> <span class="dv">1</span> , size <span class="op">=</span> n <span class="op">*</span> p ) <span class="op">-</span> <span class="dv">1</span><span class="op">/</span><span class="dv">2</span> ).<span class="op">\</span></span>
 <span id="cb6-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb6-3" aria-hidden="true" tabindex="-1"></a>        reshape( n , p )</span></code></pre></div>
@@ -266,7 +271,6 @@ a column separator --></p>
 </div>
 <div class="columns">
 <div class="column" style="width:49.5%;">
-<p><strong>R code</strong></p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb7-1" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span><span class="dv">2</span>   <span class="co"># approximately sparse beta</span></span>
 <span id="cb7-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb7-2" aria-hidden="true" tabindex="-1"></a>gX <span class="ot">=</span> <span class="fu">exp</span>(<span class="dv">4</span><span class="sc">*</span>Z)<span class="sc">+</span> W<span class="sc">%*%</span>beta  <span class="co"># leading term nonlinear</span></span>
 <span id="cb7-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb7-3" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">cbind</span>(Z, Z<span class="sc">^</span><span class="dv">2</span>, Z<span class="sc">^</span><span class="dv">3</span>, W )  <span class="co"># polynomials in Zs will be approximating exp(4*Z)</span></span></code></pre></div>
@@ -275,13 +279,143 @@ a column separator --></p>
 <!-- an empty Div (with a white space), serving as
 a column separator --></p>
 </div><div class="column" style="width:49.5%;">
-<p><strong>Python code</strong></p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb8-1" aria-hidden="true" tabindex="-1"></a>beta <span class="op">=</span> ((<span class="dv">1</span><span class="op">/</span> np.arange(<span class="dv">1</span>, p <span class="op">+</span> <span class="dv">1</span> )) <span class="op">**</span> <span class="dv">2</span>)</span>
 <span id="cb8-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb8-2" aria-hidden="true" tabindex="-1"></a>gX <span class="op">=</span> np.exp( <span class="dv">4</span> <span class="op">*</span> Z ) <span class="op">+</span> (W <span class="op">@</span> beta)</span>
 <span id="cb8-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb8-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.concatenate( ( Z.reshape(Z.size, <span class="dv">1</span>), Z.reshape(Z.size, <span class="dv">1</span>) <span class="op">\</span></span>
 <span id="cb8-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb8-4" aria-hidden="true" tabindex="-1"></a>                     <span class="op">**</span> <span class="dv">2</span>, Z.reshape(Z.size, <span class="dv">1</span>) <span class="op">**</span> <span class="dv">3</span>, W ) , axis <span class="op">=</span> <span class="dv">1</span> )</span></code></pre></div>
 </div>
 </div>
+<ol start="4" style="list-style-type: decimal">
+<li>Generate <span class="math inline">\(Y\)</span></li>
+</ol>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb9-1" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> gX <span class="sc">+</span> <span class="fu">rnorm</span>(n)   <span class="co">#generate Y</span></span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb10"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb10-1" aria-hidden="true" tabindex="-1"></a>mean <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb10-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb10-2" aria-hidden="true" tabindex="-1"></a>sd <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb10-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb10-3" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> gX <span class="op">+</span> np.random.normal( mean , sd, n )</span></code></pre></div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb11-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb11-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb11-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb11-5"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb11-6"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gX,Y, <span class="at">xlab=</span><span class="st">&quot;g(X)&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Y&quot;</span>, <span class="fu">title</span>(<span class="st">&quot;Y vs g(X)&quot;</span>)) </span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/plot-r-1.png" width="672" /></p>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb12-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb12-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb12-2" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">&#39;Y vs g(X)&#39;</span>)</span>
+<span id="cb12-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb12-3" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>)</span>
+<span id="cb12-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb12-4" aria-hidden="true" tabindex="-1"></a>plt.scatter( Y, gX)</span>
+<span id="cb12-5"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb12-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">&#39;g(X)&#39;</span>)</span>
+<span id="cb12-6"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb12-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">&#39;Y&#39;</span>)</span>
+<span id="cb12-7"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb12-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/plot-python-1.png" width="672" /></p>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>( <span class="fu">c</span>(<span class="st">&quot;theoretical R2:&quot;</span>, <span class="fu">var</span>(gX)<span class="sc">/</span><span class="fu">var</span>(Y)))</span></code></pre></div>
+<pre><code>## [1] &quot;theoretical R2:&quot;   &quot;0.826881788964026&quot;</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(X)</span></code></pre></div>
+<pre><code>## [1] 100 403</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&quot;theoretical R2:, </span><span class="sc">{np.</span>var(gX) <span class="op">/</span> <span class="sc">np.</span>var( Y )<span class="sc">}</span><span class="ss">&quot;</span> ) </span></code></pre></div>
+<pre><code>## theoretical R2:, 0.7704499894280572</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb19-1" aria-hidden="true" tabindex="-1"></a>X.shape</span></code></pre></div>
+<pre><code>## (100, 403)</code></pre>
+</div>
+</div>
+<p>We use package Glmnet to carry out predictions using cross-validated lasso, ridge, and elastic net.</p>
+<p>We should know that <strong>cv.glmnet</strong> function in r <strong>standarize</strong> <strong><em>X</em></strong> data by default. So, we have to standarize our data before the execution of sklearn package. The <strong>normalize</strong> parameter will help for this. However, the function cv.glamnet is also standarizing the <strong>Y</strong> <a href="https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html">variable</a> and then unstadarize the coefficients from the regression. To do this with sklearn, we will standarize the <strong>Y</strong> variable before fitting with <strong>StandardScaler</strong> function. Finally, the r-function uses 10 folds by default so we will adjust our model to use <span class="math inline">\(cv=10\)</span> ten folds.<br />
+<br />
+The parameter <span class="math inline">\(l1_{ratio}\)</span> corresponds to <strong>alpha</strong> in the glmnet R package while <strong>alpha</strong> corresponds to the <strong>lambda</strong> parameter in <strong>glmnet</strong>. Specifically, <span class="math inline">\(l1_{ratio} = 1\)</span> is the lasso penalty. Currently, <span class="math inline">\(l1_{ratio} &lt;= 0.01\)</span> is not reliable, unless you supply your own sequence of <strong>alpha</strong>.</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LassoCV</span>
+<span id="cb22-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb22-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> RidgeCV, ElasticNetCV</span>
+<span id="cb22-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span></code></pre></div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-1" aria-hidden="true" tabindex="-1"></a>fit.lasso.cv   <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X, Y, <span class="at">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="at">alpha=</span><span class="dv">1</span>)  <span class="co"># family gaussian means that we&#39;ll be using square loss</span></span>
+<span id="cb23-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-2" aria-hidden="true" tabindex="-1"></a>fit.ridge   <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X, Y, <span class="at">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="at">alpha=</span><span class="dv">0</span>)     <span class="co"># family gaussian means that we&#39;ll be using square loss</span></span>
+<span id="cb23-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-3" aria-hidden="true" tabindex="-1"></a>fit.elnet   <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X, Y, <span class="at">family=</span><span class="st">&quot;gaussian&quot;</span>, <span class="at">alpha=</span>.<span class="dv">5</span>)    <span class="co"># family gaussian means that we&#39;ll be using square loss</span></span>
+<span id="cb23-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-5" aria-hidden="true" tabindex="-1"></a>yhat.lasso.cv    <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit.lasso.cv, <span class="at">newx =</span> X)            <span class="co"># predictions</span></span>
+<span id="cb23-6"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-6" aria-hidden="true" tabindex="-1"></a>yhat.ridge   <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit.ridge, <span class="at">newx =</span> X)</span>
+<span id="cb23-7"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-7" aria-hidden="true" tabindex="-1"></a>yhat.elnet   <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit.elnet, <span class="at">newx =</span> X)</span>
+<span id="cb23-8"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-9" aria-hidden="true" tabindex="-1"></a>MSE.lasso.cv <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>((gX<span class="sc">-</span>yhat.lasso.cv)<span class="sc">^</span><span class="dv">2</span><span class="sc">~</span><span class="dv">1</span>))<span class="sc">$</span>coef[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]  <span class="co"># report MSE and standard error for MSE for approximating g(X)</span></span>
+<span id="cb23-10"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-10" aria-hidden="true" tabindex="-1"></a>MSE.ridge <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>((gX<span class="sc">-</span>yhat.ridge)<span class="sc">^</span><span class="dv">2</span><span class="sc">~</span><span class="dv">1</span>))<span class="sc">$</span>coef[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]        <span class="co"># report MSE and standard error for MSE for approximating g(X)</span></span>
+<span id="cb23-11"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb23-11" aria-hidden="true" tabindex="-1"></a>MSE.elnet <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">lm</span>((gX<span class="sc">-</span>yhat.elnet)<span class="sc">^</span><span class="dv">2</span><span class="sc">~</span><span class="dv">1</span>))<span class="sc">$</span>coef[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]        <span class="co"># report MSE and standard error for MSE for approximating g(X)</span></span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshaping Y variable</span></span>
+<span id="cb24-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb24-2" aria-hidden="true" tabindex="-1"></a>Y_vec <span class="op">=</span> Y.reshape( Y.size, <span class="dv">1</span>)</span>
+<span id="cb24-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Scalar distribution</span></span>
+<span id="cb24-5"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb24-5" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb24-6"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb24-6" aria-hidden="true" tabindex="-1"></a>scaler.fit( Y_vec )</span></code></pre></div>
+<pre><code>## StandardScaler()</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb26-1" aria-hidden="true" tabindex="-1"></a>std_Y <span class="op">=</span> scaler.transform( Y_vec )</span>
+<span id="cb26-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Regressions</span></span>
+<span id="cb26-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb26-4" aria-hidden="true" tabindex="-1"></a>fit_lasso_cv <span class="op">=</span> LassoCV(cv <span class="op">=</span> <span class="dv">10</span> , random_state <span class="op">=</span> <span class="dv">0</span> , normalize <span class="op">=</span> <span class="va">True</span> ).fit( X, std_Y )</span></code></pre></div>
+<pre><code>## C:\Users\alexa\ANACON~1\envs\R-RETI~1\lib\site-packages\sklearn\utils\validation.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+##   return f(*args, **kwargs)</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb28-1" aria-hidden="true" tabindex="-1"></a>fit_ridge <span class="op">=</span> ElasticNetCV( cv <span class="op">=</span> <span class="dv">10</span> , normalize <span class="op">=</span> <span class="va">True</span> , random_state <span class="op">=</span> <span class="dv">0</span> , l1_ratio <span class="op">=</span> <span class="fl">0.0001</span> ).fit( X, std_Y )</span></code></pre></div>
+<pre><code>## C:\Users\alexa\ANACON~1\envs\R-RETI~1\lib\site-packages\sklearn\utils\validation.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+##   return f(*args, **kwargs)</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb30-1" aria-hidden="true" tabindex="-1"></a>fit_elnet <span class="op">=</span> ElasticNetCV( cv <span class="op">=</span> <span class="dv">10</span> , normalize <span class="op">=</span> <span class="va">True</span> , random_state <span class="op">=</span> <span class="dv">0</span> , l1_ratio <span class="op">=</span> <span class="fl">0.5</span>, max_iter <span class="op">=</span> <span class="dv">100000</span> ).fit( X, std_Y )</span>
+<span id="cb30-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Predictions</span></span></code></pre></div>
+<pre><code>## C:\Users\alexa\ANACON~1\envs\R-RETI~1\lib\site-packages\sklearn\utils\validation.py:63: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+##   return f(*args, **kwargs)</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb32-1" aria-hidden="true" tabindex="-1"></a>yhat_lasso_cv <span class="op">=</span> scaler.inverse_transform( fit_lasso_cv.predict( X ) )</span>
+<span id="cb32-2"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb32-2" aria-hidden="true" tabindex="-1"></a>yhat_ridge <span class="op">=</span> scaler.inverse_transform( fit_ridge.predict( X ) )</span>
+<span id="cb32-3"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb32-3" aria-hidden="true" tabindex="-1"></a>yhat_elnet <span class="op">=</span> scaler.inverse_transform( fit_elnet.predict( X ) )</span>
+<span id="cb32-4"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb32-5" aria-hidden="true" tabindex="-1"></a>MSE_lasso_cv <span class="op">=</span> sm.OLS( ((gX <span class="op">-</span> yhat_lasso_cv)<span class="op">**</span><span class="dv">2</span> ) , np.ones( yhat_lasso_cv.shape )  ).fit().summary2().tables[<span class="dv">1</span>].<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb32-6"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb32-6" aria-hidden="true" tabindex="-1"></a>MSE_ridge <span class="op">=</span> sm.OLS( ((gX <span class="op">-</span> yhat_ridge)<span class="op">**</span><span class="dv">2</span> ) , np.ones( yhat_ridge.size )  ).fit().summary2().tables[<span class="dv">1</span>].<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb32-7"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb32-7" aria-hidden="true" tabindex="-1"></a>MSE_elnet <span class="op">=</span> sm.OLS( ((gX <span class="op">-</span> yhat_elnet)<span class="op">**</span><span class="dv">2</span> ) , np.ones( yhat_elnet.size )  ).fit().summary2().tables[<span class="dv">1</span>].<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb32-8"><a href="penalized-linear-regressions-a-simulation-experiment.html#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># our coefficient of MSE_elnet are far from r output</span></span></code></pre></div>
+</div>
+</div>
+<p>Here we compute the lasso and ols post lasso using plug-in choices for penalty levels, using package hdm.</p>
+<p>Rlasso functionality: it is searching the right set of regressors. This function was made for the case of <strong><em>p</em></strong> regressors and <strong><em>n</em></strong> observations where <strong><em>p &gt;&gt;&gt;&gt; n</em></strong>. It assumes that the error is i.i.d. The errors may be non-Gaussian or heteroscedastic.</p>
+<p>The post lasso function makes OLS with the selected <strong><em>T</em></strong> regressors.
+To select those parameters, they use <span class="math inline">\(\lambda\)</span> as variable to penalize <strong>Funny thing: the function rlasso was named like that because it is the “rigorous” Lasso.</strong>
+We find a Python code that tries to replicate the main function of hdm r-package. I was made by <a href="https://maxhuppertz.github.io/code/">Max Huppertz</a>.</p>
+<p>His library is this <a href="https://github.com/maxhuppertz/hdmpy">repository</a>. Download its repository and copy this folder to your site-packages folder. In my case it is located here <strong><em>C:-packages</em></strong> .</p>
+<p>We need to install this package <strong><em>pip install multiprocess</em></strong>.</p>
 
 </div>
 </div>
@@ -345,6 +479,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
