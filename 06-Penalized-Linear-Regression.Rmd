@@ -280,3 +280,362 @@ We find a Python code that tries to replicate the main function of hdm r-package
 His library is this [repository](https://github.com/maxhuppertz/hdmpy). Download its repository and copy this folder to your site-packages folder. In my case it is located here ***C:\Python\Python38\Lib\site-packages*** .
 
 We need to install this package ***pip install multiprocess***.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+```{r lib-two-r, message=FALSE,warning=FALSE}
+library(hdm) 
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+```{python lib-two-python, message=FALSE,warning=FALSE}
+import hdmpy
+```
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r second-prediction-r, message=FALSE,warning=FALSE}
+fit.rlasso  <- rlasso(Y~X,  post=FALSE)      # lasso with plug-in penalty level
+fit.rlasso.post <- rlasso(Y~X,  post=TRUE)    # post-lasso with plug-in penalty level
+
+yhat.rlasso   <- predict(fit.rlasso)            #predict g(X) for values of X
+yhat.rlasso.post   <- predict(fit.rlasso.post)  #predict g(X) for values of X
+
+MSE.lasso <- summary(lm((gX-yhat.rlasso)^2~1))$coef[1:2]       # report MSE and standard error for MSE for approximating g(X)
+MSE.lasso.post <- summary(lm((gX-yhat.rlasso.post)^2~1))$coef[1:2]  # report MSE and standard error for MSE for approximating g(X)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python second-prediction-python, message=FALSE,warning=FALSE}
+fit_rlasso = hdmpy.rlasso(X, Y, post = False)
+fit_rlasso_post = hdmpy.rlasso(X, Y, post = True)
+
+yhat_rlasso = Y - fit_rlasso.est['residuals'].reshape( Y.size,  )
+yhat_rlasso_post = Y - fit_rlasso_post.est['residuals'].reshape( Y.size ,  )
+
+MSE_lasso = sm.OLS( ((gX - yhat_rlasso)**2 ) , np.ones( yhat_rlasso.size )  ).fit().summary2().tables[1].round(3)
+MSE_lasso_post = sm.OLS( ((gX - yhat_rlasso_post)**2 ) , np.ones( yhat_rlasso_post.size )  ).fit().summary2().tables[1].round(3)
+```
+:::
+::::::
+
+Next we code up lava, which alternates the fitting of lasso and ridge
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r function-lava-r, message=FALSE,warning=FALSE}
+
+lava.predict<- function(X,Y, iter=5){
+    
+g1 = predict(rlasso(X, Y, post=F))  #lasso step fits "sparse part"
+m1 =  predict(glmnet(X, as.vector(Y-g1), family="gaussian", alpha=0, lambda =20),newx=X ) #ridge step fits the "dense" part
+
+    
+i=1
+while(i<= iter) {
+g1 = predict(rlasso(X, Y, post=F))   #lasso step fits "sparse part"
+m1 = predict(glmnet(X, as.vector(Y-g1), family="gaussian",  alpha=0, lambda =20),newx=X );  #ridge step fits the "dense" part
+i = i+1 }
+
+return(g1+m1);
+    }
+
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python function-lava-python, message=FALSE,warning=FALSE}
+def lava_predict( x, y, iteration = 5 ):
+    
+    g1_rlasso = hdmpy.rlasso( x, y , post = False )
+    g1 = y - g1_rlasso.est['residuals'].reshape( g1_rlasso.est['residuals'].size, )
+    
+    new_dep_var = y-g1
+    new_dep_var_vec = new_dep_var.reshape( new_dep_var.size, 1 )
+    
+    # Scalar distribution
+    scaler = StandardScaler()
+    scaler.fit( new_dep_var_vec )
+    std_new_dep_var_vec = scaler.transform( new_dep_var_vec )
+    
+    fit_ridge_m1 = ElasticNetCV( cv = 10 , normalize = True , random_state = 0 , l1_ratio = 0.0001, alphas = np.array([20]) ).fit( x, std_new_dep_var_vec )
+    m1 = scaler.inverse_transform( fit_ridge_m1.predict( x ) )
+    
+    i = 1
+    while i <= iteration:
+        
+        g1_rlasso = hdmpy.rlasso( x, y , post = False )
+        g1 = y - g1_rlasso.est['residuals'].reshape( g1_rlasso.est['residuals'].size, )
+
+        new_dep_var = y-g1
+        new_dep_var_vec = new_dep_var.reshape( new_dep_var.size, 1 )
+
+        # Scalar distribution
+        scaler = StandardScaler()
+        scaler.fit( new_dep_var_vec )
+        std_new_dep_var_vec = scaler.transform( new_dep_var_vec )
+
+        fit_ridge_m1 = ElasticNetCV( cv = 10 , normalize = True , random_state = 0 , l1_ratio = 0.0001, alphas = np.array([20]) ).fit( x, std_new_dep_var_vec )
+        m1 = scaler.inverse_transform( fit_ridge_m1.predict( x ) )
+        
+        i = i + 1
+        
+    return ( g1 + m1 )
+```
+:::
+::::::
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r estimation-lava-r, message=FALSE,warning=FALSE}
+yhat.lava = lava.predict(X,Y)
+MSE.lava <- summary(lm((gX-yhat.lava)^2~1))$coef[1:2]# report MSE and standard error for MSE for approximating g(X)
+MSE.lava
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python estimation-lava-python, message=FALSE,warning=FALSE}
+yhat_lava = lava_predict( X, Y )
+MSE_lava = sm.OLS( ((gX - yhat_lava)**2 ) , np.ones( yhat_lava.size )  ).fit().summary2().tables[1].round(3)
+MSE_lava
+```
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r result-r, message=FALSE,warning=FALSE}
+library(xtable)
+table<- matrix(0, 6, 2)
+table[1,1:2]   <- MSE.lasso.cv
+table[2,1:2]   <- MSE.ridge
+table[3,1:2]   <- MSE.elnet
+table[4,1:2]   <- MSE.lasso
+table[5,1:2]   <- MSE.lasso.post
+table[6,1:2]   <- MSE.lava
+
+colnames(table)<- c("MSA", "S.E. for MSA")
+rownames(table)<- c("Cross-Validated Lasso", "Cross-Validated ridge","Cross-Validated elnet",
+                    "Lasso","Post-Lasso","Lava")
+tab <- xtable(table, digits =3)
+print(tab,type="latex")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python result-python, message=FALSE,warning=FALSE}
+import pandas as pd
+table2 = np.zeros( (6, 2) )
+
+table2[0, 0:] = MSE_lasso_cv.iloc[0, 0:2].to_list()
+table2[1, 0:] = MSE_ridge.iloc[0, 0:2].to_list()
+table2[2, 0:] = MSE_elnet.iloc[0, 0:2].to_list()
+table2[3, 0:] = MSE_lasso.iloc[0, 0:2].to_list()
+table2[4, 0:] = MSE_lasso_post.iloc[0, 0:2].to_list()
+table2[5, 0:] = MSE_lava.iloc[0, 0:2].to_list()
+
+
+
+table2_pandas = pd.DataFrame( table2, columns = [ "MSA","S.E. for MSA" ])
+table2_pandas.index = [ "Cross-Validated Lasso",\
+                       "Cross-Validated Ridge", "Cross-Validated elnet",\
+                       "Lasso", "Post-Lasso", "Lava" ]
+table2_pandas = table2_pandas.round(3)
+table2_html = table2_pandas.to_html()
+table2_pandas
+```
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r plot-two-r, message=FALSE,warning=FALSE}
+plot(gX, gX, pch=19, cex=1, ylab="predicted value", xlab="true g(X)")
+points(gX, yhat.rlasso, col=2, pch=18, cex = 1.5 )
+points(gX,  yhat.rlasso.post, col=3, pch=17,  cex = 1.2  )
+points( gX, yhat.lasso.cv,col=4, pch=19,  cex = 1.2 )
+legend("bottomright", 
+  legend = c("rLasso", "Post-rLasso", "CV Lasso"),col = c(2,3,4), 
+  pch = c(18,17, 19),bty = "n", 
+  pt.cex = 1.3, cex = 1.2, 
+  text.col = "black", horiz = F ,inset = c(0.1, 0.1))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python plot-two-python, message=FALSE,warning=FALSE}
+import matplotlib.pyplot as plt
+fig = plt.figure()
+ax1 = fig.add_subplot(111)
+ax1.scatter( gX, gX , marker = '.', c = 'black' )
+ax1.scatter( gX, yhat_rlasso , marker = 'D' , c = 'red' , label = 'rLasso' )
+ax1.scatter( gX, yhat_rlasso_post , marker = '^' , c = 'green' , label = 'Post-rLasso')
+ax1.scatter( gX, yhat_lasso_cv , marker = 'o' , c = 'blue' , label = 'CV Lasso')
+plt.legend(loc='lower right')
+plt.show()
+```
+:::
+::::::
+
+## Data Generating Process: Approximately Sparse + Small Dense Part
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**R code**
+```{r sparse-r, message=FALSE,warning=FALSE}
+set.seed(1)
+
+n = 100
+p = 400
+
+Z= runif(n)-1/2
+W = matrix(runif(n*p)-1/2, n, p)
+
+beta = rnorm(p)*.2    # dense beta
+gX = exp(4*Z)+ W%*%beta # leading term nonlinear
+X = cbind(Z, Z^2, Z^3, W ) # polynomials in Zs will be approximating exp(4*Z)
+
+Y = gX + rnorm(n)   #generate Y
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+```{python sparce-python, message=FALSE,warning=FALSE}
+n = 100
+p = 400
+
+Z = np.random.uniform( low = 0 , high = 1 , size = n) - 1/2 
+
+W = ( np.random.uniform( low = 0 , high = 1 , size = n * p ) - 1/2 ).\
+        reshape( n , p )
+mean = 0
+sd = 1
+
+beta = ((np.random.normal( mean , sd, p )) * 0.2)
+gX = np.exp( 4 * Z ) + (W @ beta)
+X = np.concatenate( ( Z.reshape(Z.size, 1), Z.reshape(Z.size, 1) \
+                     ** 2, Z.reshape(Z.size, 1) ** 3, W ) , axis = 1 )
+random.seed(2)
+Y = gX + np.random.normal( mean , sd, n )
+```
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r}
+#
+#
+#
+#
+#
+#
+#
+plot(gX,Y, xlab="g(X)", ylab="Y")    #plot V vs g(X)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# We use package Glmnet to carry out predictions using cross-validated lasso, ridge, and elastic net
+fig = plt.figure()
+fig.suptitle('Y vs g(X)')
+ax = fig.add_subplot(111)
+plt.scatter( Y, gX)
+plt.xlabel('g(X)')
+plt.ylabel('Y')
+plt.show()
+```
+
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{r}
+print( c("theoretical R2:", var(gX)/var(Y)))
+var(gX)/var(Y)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+print( f"theoretical R2:, {np.var(gX) / np.var( Y )}" ) 
+np.var(gX) / np.var( Y ) #theoretical R-square in the simulation example
+```
+
+:::
+::::::
+
