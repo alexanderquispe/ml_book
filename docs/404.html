@@ -189,6 +189,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html"><i class="fa fa-check"></i><b>6</b> Penalized Linear Regressions: A Simulation Experiment</a>
 <ul>
 <li class="chapter" data-level="6.1" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html#data-generating-process-approximately-sparse"><i class="fa fa-check"></i><b>6.1</b> Data Generating Process: Approximately Sparse</a></li>
+<li class="chapter" data-level="6.2" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html#data-generating-process-approximately-sparse-small-dense-part"><i class="fa fa-check"></i><b>6.2</b> Data Generating Process: Approximately Sparse + Small Dense Part</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -275,6 +276,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
