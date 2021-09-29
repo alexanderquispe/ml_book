@@ -878,7 +878,7 @@ table[6,1:2]   <- MSE.lava
 colnames(table)<- c("MSA", "S.E. for MSA")
 rownames(table)<- c("Cross-Validated Lasso", "Cross-Validated ridge","Cross-Validated elnet","Lasso","Post-Lasso","Lava")
 tab <- xtable(table, digits =3)
-print(tab,type="markdown") # set type="latex" for printing table in LaTeX
+print(tab,type="latex") # set type="latex" for printing table in LaTeX
 tab
 ```
 
