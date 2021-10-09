@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Vaccine RCT Examples | Machine Learning and Causal Inference</title>
+  <meta name="description" content="Chapter 4 Vaccine RCT Examples | Machine Learning and Causal Inference" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Vaccine RCT Examples | Machine Learning and Causal Inference" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Vaccine RCT Examples | Machine Learning and Causal Inference" />
+  
+  
+  
+
+<meta name="author" content="Alexander Quispe" />
+
+
+<meta name="date" content="2021-10-09" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="simple-exercise-on-overfitting.html"/>
+<link rel="next" href="penalized-linear-regressions-a-simulation-experiment.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Machine Learning and Causal Inference</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Predictive Inference 1</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#data"><i class="fa fa-check"></i><b>1.1</b> Data</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#data-analysis"><i class="fa fa-check"></i><b>1.2</b> Data Analysis</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#r-and-python-code"><i class="fa fa-check"></i><b>1.2.1</b> R and Python code</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#prediction-question"><i class="fa fa-check"></i><b>1.3</b> Prediction Question</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="index.html"><a href="index.html#basic-model"><i class="fa fa-check"></i><b>1.3.1</b> Basic Model:</a></li>
+<li class="chapter" data-level="1.3.2" data-path="index.html"><a href="index.html#flexible-model"><i class="fa fa-check"></i><b>1.3.2</b> Flexible Model:</a></li>
+<li class="chapter" data-level="1.3.3" data-path="index.html"><a href="index.html#lasso-model"><i class="fa fa-check"></i><b>1.3.3</b> Lasso Model:</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#data-splitting"><i class="fa fa-check"></i><b>1.4</b> Data Splitting</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html"><i class="fa fa-check"></i><b>2</b> Predictive Inference The Gender Wage Gap</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#data-analysis-1"><i class="fa fa-check"></i><b>2.1</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression"><i class="fa fa-check"></i><b>2.1.1</b> OLS Regression</a></li>
+<li class="chapter" data-level="2.1.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression-with-controls"><i class="fa fa-check"></i><b>2.1.2</b> Ols regression with controls</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-ols"><i class="fa fa-check"></i><b>2.2</b> Partialling-Out using ols</a></li>
+<li class="chapter" data-level="2.3" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-lasso"><i class="fa fa-check"></i><b>2.3</b> Partialling-Out using lasso</a></li>
+<li class="chapter" data-level="2.4" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#extra-flexible-model"><i class="fa fa-check"></i><b>2.4</b> “Extra” flexible model</a></li>
+<li class="chapter" data-level="2.5" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#laso-extra-flexible-model"><i class="fa fa-check"></i><b>2.5</b> Laso “Extra” Flexible model</a></li>
+<li class="chapter" data-level="2.6" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#summarize-the-results"><i class="fa fa-check"></i><b>2.6</b> Summarize the results</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html"><i class="fa fa-check"></i><b>3</b> Simple Exercise on Overfitting</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#first-set-pn"><i class="fa fa-check"></i><b>3.1</b> 1. First set p=n</a></li>
+<li class="chapter" data-level="3.2" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#second-set-pn2."><i class="fa fa-check"></i><b>3.2</b> 2. Second, set p=n/2.</a></li>
+<li class="chapter" data-level="3.3" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#third-set-pn-.05"><i class="fa fa-check"></i><b>3.3</b> 3. Third, set p/n =.05</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html"><i class="fa fa-check"></i><b>4</b> Vaccine RCT Examples</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html#polio-rct"><i class="fa fa-check"></i><b>4.1</b> Polio RCT</a></li>
+<li class="chapter" data-level="4.2" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html#pfizerbntx-covid-19-rct"><i class="fa fa-check"></i><b>4.2</b> Pfizer/BNTX Covid-19 RCT</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html"><i class="fa fa-check"></i><b>5</b> Penalized Linear Regressions: A Simulation Experiment</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html#data-generating-process-approximately-sparse"><i class="fa fa-check"></i><b>5.1</b> Data Generating Process: Approximately Sparse</a></li>
+<li class="chapter" data-level="5.2" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html#data-generating-process-approximately-sparse-small-dense-part"><i class="fa fa-check"></i><b>5.2</b> Data Generating Process: Approximately Sparse + Small Dense Part</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="simulation-design.html"><a href="simulation-design.html"><i class="fa fa-check"></i><b>6</b> Simulation Design</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="simulation-design.html"><a href="simulation-design.html#example-1"><i class="fa fa-check"></i><b>6.1</b> Example 1</a></li>
+<li class="chapter" data-level="6.2" data-path="simulation-design.html"><a href="simulation-design.html#example-2"><i class="fa fa-check"></i><b>6.2</b> Example 2</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html"><i class="fa fa-check"></i><b>7</b> Testing the Convergence Hypothesis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#introduction"><i class="fa fa-check"></i><b>7.1</b> Introduction</a></li>
+<li class="chapter" data-level="7.2" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#data-analysis-2"><i class="fa fa-check"></i><b>7.2</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#ols"><i class="fa fa-check"></i><b>7.2.1</b> OLS</a></li>
+<li class="chapter" data-level="7.2.2" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#lasso"><i class="fa fa-check"></i><b>7.2.2</b> Lasso</a></li>
+<li class="chapter" data-level="7.2.3" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#summary-results"><i class="fa fa-check"></i><b>7.2.3</b> Summary results</a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Machine Learning and Causal Inference</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="vaccine-rct-examples" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Vaccine RCT Examples</h1>
+<p>Victor Chernozhukov. This notebook contains some RCT examples that I will be using for teaching.</p>
+<div id="polio-rct" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Polio RCT</h2>
+<p>One of the earliest randomized experiments were the Polio vaccination trias conducted by the Public Health Service in 1954. The question was whether Salk vaccine prevented polio. Children in the study were randomly assigned either a treatment (polio vaccine shot) or a placebo (saline solution shot), without knowing which one they received. The doctors in the study, making the diagnosis, did not know whether a child received a vaccine or not. In other words, the trial was a double-blind, randomized control trial. The trial had to be large, because the rate at which Polio occured in the population was 50 per 100,000. The treatment group saw 33 polio cases per 200,745; the control group saw 115 cases per 201,229. The estimated avearage treatment effect is about</p>
+<p><span class="math display">\[40\]</span></p>
+<p>with the 95% confidence band (based on approximate normality of the two sample means and their differences):</p>
+<p><span class="math display">\[[-52,-28]\]</span></p>
+<p>As this is an RCT, the confidence band suggests that the Polio vaccine caused the reduction in the risk of polio.</p>
+<p>The interesting thing here is that we don’t need the underlying individual data to evaluate the effectivess of the vaccine. This is because the outcomes are Bernoulli random variables, and we have enough information to compute the estimate of ATE as well as the confidence intervals from the group case counts.</p>
+<p>We also compute the Vaccine Efficacy metric, which refers to the following measure according to the CDC:</p>
+<p><span class="math display">\[VE = \frac{Risk for Unvaccinated - Risk for Vaccinated}{Risk for Unvaccinated} \]</span></p>
+<p>It describes the relative reduction in risk caused by vaccination.</p>
+<p>It is staighforward to get the VE estimate by just plugging-in the numbers, but how do we get the approximate variance estimate? I am too lazy to do calculations for the delta method, so I will just use a simulation (a form of approximate bootstrap) to obtain the confidence intervals.</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="vaccine-rct-examples.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;HW&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;HW&quot;</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="vaccine-rct-examples.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np <span class="co"># linear algebra</span></span>
+<span id="cb3-2"><a href="vaccine-rct-examples.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd <span class="co"># data processing, CSV file I/O (e.g. pd.read_csv)</span></span></code></pre></div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="vaccine-rct-examples.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;HW&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;HW&quot;</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="vaccine-rct-examples.html#cb6-1" aria-hidden="true" tabindex="-1"></a>NT <span class="op">=</span> <span class="dv">200745</span> <span class="co">#number of treated</span></span>
+<span id="cb6-2"><a href="vaccine-rct-examples.html#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="vaccine-rct-examples.html#cb6-3" aria-hidden="true" tabindex="-1"></a>NC <span class="op">=</span> <span class="dv">201229</span> <span class="co">#number of controlled</span></span>
+<span id="cb6-4"><a href="vaccine-rct-examples.html#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="vaccine-rct-examples.html#cb6-5" aria-hidden="true" tabindex="-1"></a>YT <span class="op">=</span> <span class="dv">33</span><span class="op">/</span>NT  <span class="co">#average outcome for treated</span></span>
+<span id="cb6-6"><a href="vaccine-rct-examples.html#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="vaccine-rct-examples.html#cb6-7" aria-hidden="true" tabindex="-1"></a>YC <span class="op">=</span><span class="dv">115</span><span class="op">/</span>NC  <span class="co">#average outcome for controlled</span></span>
+<span id="cb6-8"><a href="vaccine-rct-examples.html#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="vaccine-rct-examples.html#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Incidence per 100000 among treated:&quot;</span> <span class="op">+</span> <span class="bu">str</span>(YT<span class="op">*</span><span class="dv">100000</span>))</span></code></pre></div>
+<pre><code>## Incidence per 100000 among treated:16.438765598146905</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="vaccine-rct-examples.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="st">&quot;Incidence per 100000 among controlled:&quot;</span><span class="op">+</span> <span class="bu">str</span>(YC<span class="op">*</span><span class="dv">100000</span>))</span></code></pre></div>
+<pre><code>## Incidence per 100000 among controlled:57.14882049803955</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="vaccine-rct-examples.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;g&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;g&quot;</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="vaccine-rct-examples.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># treatment effect estimate reduction in incidence  per 100000 people</span></span>
+<span id="cb12-2"><a href="vaccine-rct-examples.html#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="vaccine-rct-examples.html#cb12-3" aria-hidden="true" tabindex="-1"></a>delta_hat <span class="op">=</span> <span class="dv">100000</span><span class="op">*</span>(YT<span class="op">-</span>YC)</span>
+<span id="cb12-4"><a href="vaccine-rct-examples.html#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="vaccine-rct-examples.html#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Estimate TE of occurances per 100,000 &quot;</span> <span class="op">+</span> <span class="bu">str</span>(<span class="dv">100000</span><span class="op">*</span>(YT<span class="op">-</span>YC)))</span></code></pre></div>
+<pre><code>## Estimate TE of occurances per 100,000 -40.71005489989265</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="vaccine-rct-examples.html#cb14-1" aria-hidden="true" tabindex="-1"></a>Var_delta_hat <span class="op">=</span>  (<span class="dv">100000</span><span class="op">**</span><span class="dv">2</span>)<span class="op">*</span>(YT<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>YT)<span class="op">/</span>NT <span class="op">+</span>  YC<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>YC)<span class="op">/</span>NC)</span>
+<span id="cb14-2"><a href="vaccine-rct-examples.html#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="vaccine-rct-examples.html#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># standard deviation</span></span>
+<span id="cb14-4"><a href="vaccine-rct-examples.html#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="vaccine-rct-examples.html#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Standard deviation for ATE&quot;</span><span class="op">+</span> <span class="bu">str</span>(Var_delta_hat<span class="op">**</span><span class="fl">.5</span>))</span></code></pre></div>
+<pre><code>## Standard deviation for ATE6.047412320702958</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="vaccine-rct-examples.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;g&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;g&quot;</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="vaccine-rct-examples.html#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here we are using the fact that outcomes are Bernoulli </span></span>
+<span id="cb18-2"><a href="vaccine-rct-examples.html#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="vaccine-rct-examples.html#cb18-3" aria-hidden="true" tabindex="-1"></a>CI_delta <span class="op">=</span> [delta_hat <span class="op">-</span><span class="fl">1.96</span><span class="op">*</span>Var_delta_hat<span class="op">**</span><span class="fl">.5</span>, delta_hat <span class="op">+</span><span class="fl">1.96</span><span class="op">*</span>Var_delta_hat<span class="op">**</span><span class="fl">.5</span>]</span>
+<span id="cb18-4"><a href="vaccine-rct-examples.html#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="vaccine-rct-examples.html#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;95 </span><span class="sc">% c</span><span class="st">onfidence interval is [&quot;</span> <span class="op">+</span> <span class="bu">str</span>(CI_delta[<span class="dv">0</span>]) <span class="op">+</span> <span class="st">&quot;,&quot;</span><span class="op">+</span> </span>
+<span id="cb18-6"><a href="vaccine-rct-examples.html#cb18-6" aria-hidden="true" tabindex="-1"></a>            <span class="bu">str</span>(CI_delta[<span class="dv">1</span>]) <span class="op">+</span> <span class="st">&quot;]&quot;</span>   )</span></code></pre></div>
+<pre><code>## 95 % confidence interval is [-52.56298304847044,-28.85712675131485]</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="vaccine-rct-examples.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;g&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;g&quot;</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="vaccine-rct-examples.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Here we calculate the overall effectiveness of the vaccine and construct confidence intervals for it</span></span>
+<span id="cb22-2"><a href="vaccine-rct-examples.html#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="vaccine-rct-examples.html#cb22-3" aria-hidden="true" tabindex="-1"></a>NV <span class="op">=</span>  <span class="dv">200745</span><span class="op">;</span></span>
+<span id="cb22-4"><a href="vaccine-rct-examples.html#cb22-4" aria-hidden="true" tabindex="-1"></a>NU <span class="op">=</span>  <span class="dv">201229</span><span class="op">;</span></span>
+<span id="cb22-5"><a href="vaccine-rct-examples.html#cb22-5" aria-hidden="true" tabindex="-1"></a>RV <span class="op">=</span> <span class="dv">33</span><span class="op">/</span>NV<span class="op">;</span></span>
+<span id="cb22-6"><a href="vaccine-rct-examples.html#cb22-6" aria-hidden="true" tabindex="-1"></a>RU <span class="op">=</span> <span class="dv">115</span><span class="op">/</span>NU<span class="op">;</span></span>
+<span id="cb22-7"><a href="vaccine-rct-examples.html#cb22-7" aria-hidden="true" tabindex="-1"></a>VE <span class="op">=</span> (RU <span class="op">-</span> RV)<span class="op">/</span>RU<span class="op">;</span></span>
+<span id="cb22-8"><a href="vaccine-rct-examples.html#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Overall VE is &quot;</span><span class="op">+</span> <span class="bu">str</span>(VE) )</span>
+<span id="cb22-9"><a href="vaccine-rct-examples.html#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="vaccine-rct-examples.html#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># this recovers the number in the table.</span></span>
+<span id="cb22-11"><a href="vaccine-rct-examples.html#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="vaccine-rct-examples.html#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># we set up a simulation example.</span></span>
+<span id="cb22-13"><a href="vaccine-rct-examples.html#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="vaccine-rct-examples.html#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co"># calulate variance of risk estimates:</span></span></code></pre></div>
+<pre><code>## Overall VE is 0.7123516206478694</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="vaccine-rct-examples.html#cb24-1" aria-hidden="true" tabindex="-1"></a>Var_RV <span class="op">=</span> RV<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>RV)<span class="op">/</span>NV</span>
+<span id="cb24-2"><a href="vaccine-rct-examples.html#cb24-2" aria-hidden="true" tabindex="-1"></a>Var_RU <span class="op">=</span> RU<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>RU)<span class="op">/</span>NU</span></code></pre></div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="vaccine-rct-examples.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;g&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;g&quot;</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="vaccine-rct-examples.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set-up MC draws:</span></span>
+<span id="cb27-2"><a href="vaccine-rct-examples.html#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="vaccine-rct-examples.html#cb27-3" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> <span class="dv">10000</span></span>
+<span id="cb27-4"><a href="vaccine-rct-examples.html#cb27-4" aria-hidden="true" tabindex="-1"></a>RVs <span class="op">=</span> RV  <span class="op">+</span> np.random.normal(<span class="dv">0</span>, <span class="dv">1</span>, B)<span class="op">*</span>(Var_RV)<span class="op">**</span><span class="fl">.5</span></span>
+<span id="cb27-5"><a href="vaccine-rct-examples.html#cb27-5" aria-hidden="true" tabindex="-1"></a>RUs <span class="op">=</span> RU  <span class="op">+</span> np.random.normal(<span class="dv">0</span>, <span class="dv">1</span>, B)<span class="op">*</span>(Var_RU)<span class="op">**</span><span class="fl">.5</span></span>
+<span id="cb27-6"><a href="vaccine-rct-examples.html#cb27-6" aria-hidden="true" tabindex="-1"></a>VEs<span class="op">=</span> (RUs <span class="op">-</span> RVs)<span class="op">/</span>RUs</span>
+<span id="cb27-7"><a href="vaccine-rct-examples.html#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="vaccine-rct-examples.html#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="vaccine-rct-examples.html#cb27-9" aria-hidden="true" tabindex="-1"></a>CI_VE_L <span class="op">=</span> np.quantile(VEs, <span class="fl">.025</span>)</span>
+<span id="cb27-10"><a href="vaccine-rct-examples.html#cb27-10" aria-hidden="true" tabindex="-1"></a>CI_VE_U <span class="op">=</span> np.quantile(VEs, <span class="fl">.975</span>)</span>
+<span id="cb27-11"><a href="vaccine-rct-examples.html#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="vaccine-rct-examples.html#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;95 </span><span class="sc">% c</span><span class="st">onfidence interval is [&quot;</span> <span class="op">+</span> <span class="bu">str</span>(CI_VE_L), <span class="st">&quot;,&quot;</span>, </span>
+<span id="cb27-13"><a href="vaccine-rct-examples.html#cb27-13" aria-hidden="true" tabindex="-1"></a>            <span class="bu">str</span>(CI_VE_U), <span class="st">&quot;]&quot;</span>   )</span></code></pre></div>
+<pre><code>## 95 % confidence interval is [0.5848112931270684 , 0.81397416093639 ]</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<p><strong>R code</strong></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="vaccine-rct-examples.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">&quot;g&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;g&quot;</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<p><strong>Python code</strong></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="vaccine-rct-examples.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KernelDensity</span>
+<span id="cb31-2"><a href="vaccine-rct-examples.html#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib</span>
+<span id="cb31-3"><a href="vaccine-rct-examples.html#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb31-4"><a href="vaccine-rct-examples.html#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
+<span id="cb31-5"><a href="vaccine-rct-examples.html#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KernelDensity</span>
+<span id="cb31-6"><a href="vaccine-rct-examples.html#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.utils.fixes <span class="im">import</span> parse_version</span>
+<span id="cb31-7"><a href="vaccine-rct-examples.html#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="vaccine-rct-examples.html#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co"># instantiate and fit the KDE model</span></span>
+<span id="cb31-9"><a href="vaccine-rct-examples.html#cb31-9" aria-hidden="true" tabindex="-1"></a>X<span class="op">=</span> VEs[:, np.newaxis]</span>
+<span id="cb31-10"><a href="vaccine-rct-examples.html#cb31-10" aria-hidden="true" tabindex="-1"></a>X_plot <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1000</span>)[:, np.newaxis]</span>
+<span id="cb31-11"><a href="vaccine-rct-examples.html#cb31-11" aria-hidden="true" tabindex="-1"></a>kde <span class="op">=</span> KernelDensity(kernel<span class="op">=</span><span class="st">&#39;gaussian&#39;</span>, bandwidth<span class="op">=</span><span class="fl">0.02</span>).fit(X)</span>
+<span id="cb31-12"><a href="vaccine-rct-examples.html#cb31-12" aria-hidden="true" tabindex="-1"></a>log_dens <span class="op">=</span> kde.score_samples(X_plot)</span>
+<span id="cb31-13"><a href="vaccine-rct-examples.html#cb31-13" aria-hidden="true" tabindex="-1"></a>plt.fill_between(X_plot[:, <span class="dv">0</span>], np.exp(log_dens))</span></code></pre></div>
+<p><img src="bookdownproj_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="pfizerbntx-covid-19-rct" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Pfizer/BNTX Covid-19 RCT</h2>
+<p>Here is a link to the FDA <a href="https://www.fda.gov/media/144245/download">briefing</a> and an interesting <a href="https://garycornell.com/2020/12/09/statistics-in-the-pfizer-data-how-good-is-the-vaccine/?fbclid=IwAR282lS0Vl3tWmicQDDhIJAQCMO8NIsCXyWbUWwTtPuKcnuJ2v0VWXRDQac">discussion</a>, as well as data.</p>
+<p>Pfizer/BNTX was the first vaccine approved for emergency use to reduce the risk of Covid-19 decease. In studies to assess vaccine efficacy, volunteers were randomly assigned to receive either a treatment (2-dose vaccination) or a placebo, without knowing which they recieved. The doctors making the diagnoses did not know now whether a given volunteer received a vaccination or not. The results of the study are given in the following table:</p>
+<div class="figure">
+<img src="https://lh6.googleusercontent.com/oiO6gYom1UZyrOhgpFx2iq8ike979u3805JHiVygP-Efh1Yaz2ttyPcgWKlT1AqHDM4v46th3EPIkOvRLyXA0fNUloPL-mL9eOFmSAzfbNOHyCZSQ0DyzMhcFUtQuZ520R5Qd2lj" alt="" />
+<p class="caption">Figure 1</p>
+</div>
+<p>Here we see both the overall effects and the effects by age group. The confidence intervals for the averal ATE are tight and suggest high effectiveness of the vaccine. The confidence intervals for the age group <span class="math inline">\(65-75\)</span> are much wider. We could group <span class="math inline">\(65-75\)</span> and <span class="math inline">\(&gt;75\)</span> groups to evaluate the effectiveness of the vaccine and also narrow down the width of the confidence band.</p>
+<p>In this case, the reported results are for vaccine effectiveness. We use the same approach as above.</p>
+<p>In the code cell below we calculate the overall effectiveness of the vaccie and construct confidence intervals for it.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="simple-exercise-on-overfitting.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="penalized-linear-regressions-a-simulation-experiment.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/alexanderquispe/ml_book/edit/master/04-Polio-RCT.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/alexanderquispe/ml_book/blob/master/04-Polio-RCT.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
