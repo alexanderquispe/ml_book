@@ -47,3 +47,6 @@ data-analysis-3
 penalized-linear-regressions-a-simulation-experiment
 data-generating-process-approximately-sparse
 data-generating-process-approximately-sparse-small-dense-part
+vaccine-rct-examples
+polio-rct
+pfizerbntx-covid-19-rct

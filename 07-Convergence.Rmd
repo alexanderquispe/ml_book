@@ -29,22 +29,20 @@ The outcome $Y$ is the realized annual growth rate of a country's wealth  (Gross
 ## Data analysis
 We consider the data set GrowthData which is included in the package *hdm*. First, let us load the data set to get familiar with the data.
 
-
-
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r}
 library(hdm)
 library(xtable)
 ```
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python}
 import pandas as pd
@@ -62,7 +60,7 @@ Import data
 
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r}
 growth <- GrowthData
 attach(growth)
@@ -71,12 +69,12 @@ names(growth)
 ```
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python}
 # I downloaded the data that the author used
@@ -93,18 +91,18 @@ list(growth)
 We determine the dimension of our data set.
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r}
 dim(growth)
 ```
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python}
 growth.shape
@@ -120,18 +118,18 @@ To check this hypothesis, we analyze the relation between the output variable $Y
 
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r}
 reg.ols <- lm(Outcome~.-1,data=growth)
 ```
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python}
 # We create the main variables
@@ -148,7 +146,7 @@ We determine the regression coefficient $\beta_1$ of the target regressor *gdpsh
 
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r}
 # output: estimated regression coefficient corresponding to the target regressor
 est_ols <- summary(reg.ols)$coef["gdpsh465",1]
@@ -165,12 +163,12 @@ rownames(results_ols) <-c("OLS")
 ```
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python}
 # output: estimated regression coefficient corresponding to the target regressor
@@ -191,7 +189,7 @@ upper_ci = reg_ols.summary2().tables[1]['0.975]']['gdpsh465']
 
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r}
 table <- matrix(0, 1, 4)
 table[1,1:4]   <- c(est_ols,std_ols,ci_ols[1],ci_ols[2])
@@ -202,12 +200,12 @@ print(tab,type="html") # set type="latex" for printing table in LaTeX
 ```
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python}
 table_1 = np.zeros( (1, 4) )
@@ -243,7 +241,7 @@ In contrast, we can use the partialling-out approach based on lasso regression (
 
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r}
 Y <- growth[, 1, drop = F] # output variable
 W <- as.matrix(growth)[, -c(1, 2,3)] # controls
@@ -251,12 +249,12 @@ D <- growth[, 3, drop = F] # target regressor
 ```
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python}
 Y = growth['Outcome']
@@ -271,7 +269,7 @@ we run the regression using lasso
 
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r, eval=TRUE}
 r.Y <- rlasso(x=W,y=Y)$res # creates the "residual" output variable
 r.D <- rlasso(x=W,y=D)$res # creates the "residual" target regressor
@@ -283,12 +281,12 @@ ci_lasso <- confint(partial.lasso)[2,]
 
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python, eval=TRUE}
 from sklearn import linear_model
@@ -315,7 +313,7 @@ upper_ci_lasso = partial_lasso_fit.summary2().tables[1]['0.975]']['r_D']
 now we export results into a table 
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r, eval=FALSE}
 table <- matrix(0, 1, 4)
 table[1,1:4]   <- c(est_lasso,std_lasso,ci_lasso[1],ci_lasso[2])
@@ -327,12 +325,12 @@ print(tab,type="html") # set type="latex" for printing table in LaTeX
 
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python, eval=FALSE}
 table_2 = np.zeros( (1, 4) )
@@ -368,7 +366,7 @@ Note: Alternatively, one could also use the *rlassoEffect* funtion from the *hdm
 
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r, eval=FALSE}
 lasso.effect = rlassoEffect(x = W, y = Y, d = D, method = "partialling out")
 lasso.effect
@@ -376,12 +374,12 @@ lasso.effect
 
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python, eval=FALSE}
 print("no package in python")
@@ -398,7 +396,7 @@ print("no package in python")
 Finally, let us have a look at the results.
 
 :::::: {.columns}
-::: {.column width="48%" data-latex="{0.48\textwidth}"}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 ```{r, eval=TRUE}
 table <- matrix(0, 2, 4)
 table[1,1:4]   <- c(est_ols,std_ols,ci_ols[1],ci_ols[2])
@@ -412,12 +410,12 @@ table
 
 
 :::
-::: {.column width="4%" data-latex="{0.04\textwidth}"}
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
 \ 
 <!-- an empty Div (with a white space), serving as
 a column separator -->
 :::
-:::::: {.column width="48%" data-latex="{0.48\textwidth}"}
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
 
 ```{python, eval=TRUE}
 table_2 = np.zeros( (1, 4) )
