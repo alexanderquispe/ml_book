@@ -266,10 +266,242 @@ Here is a link to the FDA [briefing](https://www.fda.gov/media/144245/download) 
 
 Pfizer/BNTX was the first vaccine approved for emergency use to reduce the risk of Covid-19 decease. In studies to assess vaccine efficacy, volunteers were randomly assigned to receive either a treatment (2-dose vaccination) or a placebo, without knowing which they recieved. The doctors making the diagnoses did not know now whether a given volunteer received a vaccination or not. The results of the study are given in the following table:
 
-![Figure 1](https://lh6.googleusercontent.com/oiO6gYom1UZyrOhgpFx2iq8ike979u3805JHiVygP-Efh1Yaz2ttyPcgWKlT1AqHDM4v46th3EPIkOvRLyXA0fNUloPL-mL9eOFmSAzfbNOHyCZSQ0DyzMhcFUtQuZ520R5Qd2lj)
+![](https://lh6.googleusercontent.com/oiO6gYom1UZyrOhgpFx2iq8ike979u3805JHiVygP-Efh1Yaz2ttyPcgWKlT1AqHDM4v46th3EPIkOvRLyXA0fNUloPL-mL9eOFmSAzfbNOHyCZSQ0DyzMhcFUtQuZ520R5Qd2lj)
 
 Here we see both the overall effects and the effects by age group. The confidence intervals for the averal ATE are tight and suggest high effectiveness of the vaccine. The confidence intervals for the age group $65-75$ are much wider. We could group $65-75$ and $>75$ groups to evaluate the effectiveness of the vaccine and also narrow down the width of the confidence band.
 
 In this case, the reported results are for vaccine effectiveness. We use the same approach as above.
 
 In the code cell below we calculate the overall effectiveness of the vaccie and construct confidence intervals for it.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+**R code**
+```{r}
+print("g")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+NV =  19965;
+NU =  20172;
+RV = 9/NV;
+RU = 169/NU;
+VE = (RU - RV)/RU;
+
+print("Overall VE is "+ str(VE))
+
+# this recovers the number in the table.
+
+# we set up a simulation example.
+
+# calulate variance of risk estimates:
+Var_RV = RV*(1-RV)/NV
+Var_RU = RU*(1-RU)/NU
+
+```
+
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+**R code**
+```{r}
+print("g")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+# set-up MC draws:
+
+B = 10000
+RVs = RV  + np.random.normal(0, 1, B)*(Var_RV)**.5
+RUs = RU  + np.random.normal(0, 1, B)*(Var_RU)**.5
+VEs= (RUs - RVs)/RUs
+
+
+CI_VE_L = np.quantile(VEs, .025)
+CI_VE_U = np.quantile(VEs, .975)
+
+print("95 % confidence interval is [" + str(CI_VE_L), ",", 
+            str(CI_VE_U), "]"   )
+```
+
+:::
+::::::
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+**R code**
+```{r}
+print("g")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+# instantiate and fit the KDE model
+X= VEs[:, np.newaxis]
+X_plot = np.linspace(0, 1, 1000)[:, np.newaxis]
+kde = KernelDensity(kernel='gaussian', bandwidth=0.02).fit(X)
+log_dens = kde.score_samples(X_plot)
+plt.fill_between(X_plot[:, 0], np.exp(log_dens))
+```
+
+:::
+::::::
+
+In the code cell below we calculate the effectiveness of the vaccine for the two groups that are 65 or older:
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+**R code**
+```{r}
+print("g")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+# Here we calculate the overall effectiveness of the vaccine for the two groups that are 65 or older
+
+NV =  3239+805;
+NU =  3255+812;
+RV = 1/NV;
+RU = (14+5)/NU;
+VE = (RU - RV)/RU;
+
+print("Overall VE is "+ str(VE))
+
+# this recovers the number in the table.
+
+# we set up a simulation example.
+# calulate variance of risk estimates:
+
+
+Var_RV = RV*(1-RV)/NV
+Var_RU = RU*(1-RU)/NU
+
+# set-up MC draws:
+
+B = 10000
+RVs = RV  + np.random.normal(0, 1, B)*(Var_RV)**.5
+RUs = RU  + np.random.normal(0, 1, B)*(Var_RU)**.5
+VEs= (RUs - RVs)/RUs
+
+
+CI_VE_L = np.quantile(VEs, .025)
+CI_VE_U = np.quantile(VEs, .975)
+
+print("95 % confidence interval is [" + str(CI_VE_L), ",", 
+            str(CI_VE_U), "]"   )
+
+
+CI_VE_L = np.quantile(VEs, .05)
+
+
+print("95 % confidence interval is [" + str(CI_VE_L), ",", 
+            str(1), "]"   )
+
+# instantiate and fit the KDE model
+X= VEs[:, np.newaxis]
+X_plot = np.linspace(0, 1, 1000)[:, np.newaxis]
+kde = KernelDensity(kernel='gaussian', bandwidth=0.02).fit(X)
+log_dens = kde.score_samples(X_plot)
+plt.fill_between(X_plot[:, 0], np.exp(log_dens))
+```
+
+:::
+::::::
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+**R code**
+```{r}
+print("g")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+**Python code**
+
+```{python}
+NV =  3239+805;
+NU =  3255+812;
+RV = 1/NV;
+RU = (14+5)/NU;
+VE = (RU - RV)/RU;
+
+print("Overall VE is "+ str(VE))
+
+B = 10000 #number of simulation draw
+
+#numpy.random.binomial(n, p, size=None)
+
+RVs = np.random.binomial(NV, RV, B)
+RUs = np.random.binomial(NU, RU, B)  
+VEs= (RUs - RVs)/RUs
+
+
+CI_VE_L = np.quantile(VEs, .025)
+CI_VE_U = np.quantile(VEs, .975)
+
+print("95 % confidence interval is [" + str(CI_VE_L), ",", 
+            str(CI_VE_U), "]"   )
+
+
+CI_VE_L = np.quantile(VEs, .05)
+print("95 % confidence interval is [" + str(CI_VE_L), ",", 
+            str(1), "]"   )
+# instantiate and fit the KDE model
+X= VEs[:, np.newaxis]
+X_plot = np.linspace(0, 1.1, 1000)[:, np.newaxis]
+kde = KernelDensity(kernel='gaussian', bandwidth=0.02).fit(X)
+log_dens = kde.score_samples(X_plot)
+plt.fill_between(X_plot[:, 0], np.exp(log_dens))
+```
+
+:::
+::::::
