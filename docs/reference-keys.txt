@@ -50,3 +50,6 @@ data-generating-process-approximately-sparse-small-dense-part
 vaccine-rct-examples
 polio-rct
 pfizerbntx-covid-19-rct
+analyzing-rct-with-precision-by-adjusting-for-baseline-covariates
+jonathan-roths-dgp
+analyze-the-rct-data-with-precision-adjustment
