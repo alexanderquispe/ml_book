@@ -396,7 +396,7 @@ a column separator --></p>
 <span id="cb30-8"><a href="vaccine-rct-examples.html#cb30-8" aria-hidden="true" tabindex="-1"></a>CI_VE_U <span class="op">=</span> np.quantile(VEs, <span class="fl">.975</span>)</span>
 <span id="cb30-9"><a href="vaccine-rct-examples.html#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-10"><a href="vaccine-rct-examples.html#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;95 </span><span class="sc">% c</span><span class="st">onfidence interval is [&quot;</span> <span class="op">+</span> <span class="bu">str</span>(CI_VE_L), <span class="st">&quot;,&quot;</span>, <span class="bu">str</span>(CI_VE_U), <span class="st">&quot;]&quot;</span>   )</span></code></pre></div>
-<pre><code>## 95 % confidence interval is [0.5880608986105788 , 0.8168331803480078 ]</code></pre>
+<pre><code>## 95 % confidence interval is [0.5896940533482303 , 0.8168250906712885 ]</code></pre>
 </div>
 </div>
 <div class="columns">
@@ -510,7 +510,7 @@ a column separator --></p>
 <span id="cb42-11"><a href="vaccine-rct-examples.html#cb42-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-12"><a href="vaccine-rct-examples.html#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;95 </span><span class="sc">% c</span><span class="st">onfidence interval is [&quot;</span> <span class="op">+</span> <span class="bu">str</span>(CI_VE_L), <span class="st">&quot;,&quot;</span>, </span>
 <span id="cb42-13"><a href="vaccine-rct-examples.html#cb42-13" aria-hidden="true" tabindex="-1"></a>            <span class="bu">str</span>(CI_VE_U), <span class="st">&quot;]&quot;</span>   )</span></code></pre></div>
-<pre><code>## 95 % confidence interval is [0.9084174250078632 , 0.9812290144744383 ]</code></pre>
+<pre><code>## 95 % confidence interval is [0.9083100367463102 , 0.9819990219842897 ]</code></pre>
 </div>
 </div>
 <div class="columns">
@@ -607,7 +607,7 @@ a column separator --></p>
 <span id="cb55-14"><a href="vaccine-rct-examples.html#cb55-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb55-15"><a href="vaccine-rct-examples.html#cb55-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;95 </span><span class="sc">% c</span><span class="st">onfidence interval is [&quot;</span> <span class="op">+</span> <span class="bu">str</span>(CI_VE_L), <span class="st">&quot;,&quot;</span>, </span>
 <span id="cb55-16"><a href="vaccine-rct-examples.html#cb55-16" aria-hidden="true" tabindex="-1"></a>            <span class="bu">str</span>(CI_VE_U), <span class="st">&quot;]&quot;</span>   )</span></code></pre></div>
-<pre><code>## 95 % confidence interval is [0.8141968317732475 , 1.0541364701930822 ]</code></pre>
+<pre><code>## 95 % confidence interval is [0.8102149267318752 , 1.0554370238531643 ]</code></pre>
 <div class="sourceCode" id="cb57"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb57-1"><a href="vaccine-rct-examples.html#cb57-1" aria-hidden="true" tabindex="-1"></a>CI_VE_L <span class="op">=</span> np.quantile(VEs, <span class="fl">.05</span>)</span>
 <span id="cb57-2"><a href="vaccine-rct-examples.html#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb57-3"><a href="vaccine-rct-examples.html#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -615,7 +615,7 @@ a column separator --></p>
 <span id="cb57-5"><a href="vaccine-rct-examples.html#cb57-5" aria-hidden="true" tabindex="-1"></a>            <span class="bu">str</span>(<span class="dv">1</span>), <span class="st">&quot;]&quot;</span>   )</span>
 <span id="cb57-6"><a href="vaccine-rct-examples.html#cb57-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb57-7"><a href="vaccine-rct-examples.html#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="co"># instantiate and fit the KDE model</span></span></code></pre></div>
-<pre><code>## 95 % confidence interval is [0.8400804786451842 , 1 ]</code></pre>
+<pre><code>## 95 % confidence interval is [0.8396672267199538 , 1 ]</code></pre>
 <div class="sourceCode" id="cb59"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb59-1"><a href="vaccine-rct-examples.html#cb59-1" aria-hidden="true" tabindex="-1"></a>X<span class="op">=</span> VEs[:, np.newaxis]</span>
 <span id="cb59-2"><a href="vaccine-rct-examples.html#cb59-2" aria-hidden="true" tabindex="-1"></a>X_plot <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1000</span>)[:, np.newaxis]</span>
 <span id="cb59-3"><a href="vaccine-rct-examples.html#cb59-3" aria-hidden="true" tabindex="-1"></a>kde <span class="op">=</span> KernelDensity(kernel<span class="op">=</span><span class="st">&#39;gaussian&#39;</span>, bandwidth<span class="op">=</span><span class="fl">0.02</span>).fit(X)</span>
