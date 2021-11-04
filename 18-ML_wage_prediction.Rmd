@@ -1,0 +1,1132 @@
+# Machine Learning for wage prediction
+
+We illustrate how to predict an outcome variable Y in a high-dimensional setting, where the number of covariates $p$ is large in relation to the sample size $n$. So far we have used linear prediction rules, e.g. Lasso regression, for estimation. Now, we also consider nonlinear prediction rules including tree-based methods.
+
+## Data
+Again, we consider data from the U.S. March Supplement of the Current Population Survey (CPS) in 2015. The preproccessed sample consists of $5150$ never-married individuals.
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+load("./data/wage2015_subsample_inference.Rdata")
+dim(data)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Importing relevant libraries
+import pandas as pd
+import numpy as np
+import pyreadr
+import math
+import matplotlib.pyplot as plt
+import random
+rdata_read = pyreadr.read_r("./data/wage2015_subsample_inference.Rdata")
+# Extracting the data frame from rdata_read
+data = rdata_read["data"]
+data.shape
+```
+:::
+::::::
+\newline
+
+The outcomes $Y_i$'s are hourly (log) wages of never-married workers living in the U.S. The raw regressors $Z_i$'s consist of a variety of characteristics, including experience, education and industry and occupation indicators.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+Z <- subset(data, select=-c(lwage,wage)) # regressors
+colnames(Z)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+Z = data.loc[:, 'sex':'ind2']
+Z.columns
+```
+:::
+::::::
+\newline
+
+
+The following figure shows the weekly wage distribution from the US survey data.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+hist(data$wage, xlab= "hourly wage", main = "Empirical wage distribution from the US survey data", 
+     breaks = 35)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+plt.hist(data.wage , bins = np.arange(0, 550, 20) )
+plt.xlabel('hourly wage')
+plt.ylabel('Frequency')
+plt.title( 'Empirical wage distribution from the US survey data' )
+plt.ylim((0, 3000))
+plt.show()
+```
+:::
+::::::
+\newline
+
+Wages show a high degree of skewness. Hence, wages are transformed in almost all studies by the logarithm.
+
+## Analysis
+Due to the skewness of the data, we are considering log wages which leads to the following regression model
+
+$$log(wage) = g(Z) + \epsilon.$$
+
+We will estimate the two sets of prediction rules: Linear and Nonlinear Models.
+In linear models, we estimate the prediction rule of the form
+
+$$\hat g(Z) = \hat \beta'X.$$
+Again, we generate $X$ in two ways:
+ 
+1. Basic Model:   $X$ consists of a set of raw regressors (e.g. gender, experience, education indicators, regional indicators).
+
+
+2. Flexible Model:  $X$ consists of all raw regressors from the basic model plus occupation and industry indicators, transformations (e.g., ${exp}^2$ and ${exp}^3$) and additional two-way interactions.
+
+To evaluate the out-of-sample performance, we split the data first.
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+set.seed(1234)
+training   <- sample(nrow(data), nrow(data)*(3/4), replace = FALSE)
+
+data_train <- data[training,]
+data_test  <- data[-training,]
+
+# Checking dimensions
+dim(data_test)
+dim(data_train)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Setting parameters to split the data 
+nrow   = data.shape[0]
+length = int(nrow*(3/4))
+data   = data.reset_index().drop( 'rownames', axis = 1)
+
+# Splitting the data
+from numpy.random import default_rng
+random.seed(30)
+rng = default_rng()
+training = rng.choice(nrow, size = length, replace=False)
+training_bool = data.index.isin( training )
+
+data_train = data.iloc[training,:]
+data_test  = data[~training_bool]
+
+# Checking dimensions
+data_test.shape
+data_train.shape
+```
+:::
+::::::
+\newline
+
+We construct the two different model matrices $X_{basic}$ and $X_{flex}$ for both the training and the test sample:
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+X_basic <-  "sex + exp1 + exp2+ shs + hsg+ scl + clg + mw + so + we + occ2+ ind2"
+X_flex  <- "sex + exp1 + exp2 + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)"
+
+# Formulas
+formula_basic <- as.formula(paste("lwage", "~", X_basic))
+formula_flex <- as.formula(paste("lwage", "~", X_flex))
+
+# Models
+model_X_basic_train <- model.matrix(formula_basic,data_train)
+model_X_basic_test  <- model.matrix(formula_basic,data_test)
+p_basic <- dim(model_X_basic_train)[2] # regressors
+model_X_flex_train <- model.matrix(formula_flex,data_train)
+model_X_flex_test <- model.matrix(formula_flex,data_test)
+p_flex <- dim(model_X_flex_train)[2] # regressors
+Y_train <- data_train$lwage
+Y_test <- data_test$lwage
+
+# Dimensions
+dim(model_X_basic_train)
+p_basic
+p_flex
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Importing relevant libraries 
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import patsy
+
+# Formulas
+formula_basic =  "lwage ~ sex + exp1 + exp2+ shs + hsg+ scl + clg + mw + so + we + occ2+ ind2"
+formula_flex  = "lwage ~ sex + exp1 + exp2 + shs+hsg+scl+clg+occ2+ind2+mw+so+we + (exp1+exp2+exp3+exp4)*(shs+hsg+scl+clg+occ2+ind2+mw+so+we)"
+
+# Models
+y_basic_train, model_X_basic_train = patsy.dmatrices(formula_basic, data_train, return_type='dataframe')
+y_basic_test , model_X_basic_test   = patsy.dmatrices(formula_basic, data_test, return_type='dataframe')
+p_basic = model_X_basic_train.shape[ 1 ] # regressors
+
+y_flex_train, model_X_flex_train = patsy.dmatrices(formula_flex, data_train, return_type='dataframe')
+y_flex_test , model_X_flex_test  = patsy.dmatrices(formula_flex, data_test,  return_type='dataframe')
+p_flex = model_X_flex_train.shape[ 1 ] # regressors
+Y_train = data_train['lwage']
+Y_test  = data_test['lwage']
+
+# Dimensions
+model_X_basic_train.shape
+print(p_basic)
+print(p_flex)
+```
+:::
+::::::
+\newline
+
+As known from our first lab, the basic model consists of $10$ regressors and the flexible model of $246$ regressors. Let us fit our models to the training sample using the two different model specifications. We are starting by running a simple ols regression.
+
+## OLS
+We fit the basic model to our training data by running an ols regression and compute the mean squared error on the test sample.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# OLS (basic model)
+fit.lm.basic <- lm(formula_basic, data_train)
+
+# Compute out-of-sample performance
+yhat.lm.basic <- predict(fit.lm.basic, newdata=data_test)
+cat("The mean squared error (MSE) using the basic model is equal to" , mean((Y_test-yhat.lm.basic)^2)) # MSE OLS (basic model)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# OLS (basic model)
+lm_basic = sm.OLS( Y_train, model_X_basic_train )
+fit_lm_basic = lm_basic.fit()
+
+# Compute out-of-sample performance
+yhat_lm_basic = fit_lm_basic.predict( model_X_basic_test )
+print( f"The mean squared error (MSE) using the basic model is equal to , {np.mean((Y_test-yhat_lm_basic)**2)} ") # MSE OLS (basic model)    
+```
+:::
+::::::
+\newline
+
+To determine the out-of-sample $MSE$ and the standard error in one step, we can use the function *lm*:
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+MSE.lm.basic <- summary(lm((Y_test-yhat.lm.basic)^2~1))$coef[1:2]
+MSE.lm.basic
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# OLS (basic model)
+resid_basic = (Y_test-yhat_lm_basic)**2
+
+MSE_lm_basic = sm.OLS( resid_basic , np.ones( resid_basic.shape[0] ) ).fit().summary2().tables[1].iloc[0, 0:2]
+MSE_lm_basic
+```
+:::
+::::::
+\newline
+
+We also compute the out-of-sample $R^2$:
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+R2.lm.basic <- 1 - MSE.lm.basic[1]/var(Y_test)
+cat("The R^2 using the basic model is equal to",R2.lm.basic) # MSE OLS (basic model) 
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+R2_lm_basic = 1 - ( MSE_lm_basic[0]/Y_test.var() )
+print( f"The R^2 using the basic model is equal to, {R2_lm_basic}" ) # MSE OLS (basic model) 
+```
+:::
+::::::
+\newline
+
+We repeat the same procedure for the flexible model.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# OLS (flexible model)
+fit.lm.flex <- lm(formula_flex, data_train)
+
+# Compute the out-of-sample performance
+options(warn=-1)
+yhat.lm.flex <- predict(fit.lm.flex, newdata=data_test)
+MSE.lm.flex  <- summary(lm((Y_test-yhat.lm.flex)^2~1))$coef[1:2]
+
+# MSE and R squared
+R2.lm.flex   <- 1 - MSE.lm.flex[1]/var(Y_test)
+cat("The R^2 using the flexible model is equal to",R2.lm.flex) # MSE OLS (flexible model) 
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# OLS (flex model)
+lm_flex = sm.OLS( Y_train, model_X_flex_train )
+fit_lm_flex = lm_flex.fit()
+
+# Compute the out-of-sample performance
+yhat_lm_flex = fit_lm_flex.predict( model_X_flex_test )
+resid_flex = (Y_test-yhat_lm_flex)**2
+
+# MSE and R squared
+MSE_lm_flex = sm.OLS( resid_flex , np.ones( resid_flex.shape[0] ) ).fit().summary2().tables[1].iloc[0, 0:2]
+MSE_lm_flex
+
+R2_lm_flex = 1 - ( MSE_lm_flex[0]/Y_test.var() )
+print( f"The R^2 using the flex model is equal to, {R2_lm_flex}" ) # MSE OLS (flex model) 
+```
+:::
+::::::
+\newline
+
+We observe that ols regression works better for the basic model with smaller $p/n$ ratio. We are proceeding by running lasso regressions and its versions.
+
+## Lasso, Ridge and Elastic Net
+Considering the basic model, we run a lasso/post-lasso regression first and then we compute the measures for the out-of-sample performance. Note that applying the package *hdm* and the function *rlasso* we rely on a theoretical based choice of the penalty level $\lambda$ in the lasso regression.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# lasso and versions
+library(hdm) 
+fit.rlasso      <- rlasso(formula_basic, data_train, post=FALSE)
+fit.rlasso.post <- rlasso(formula_basic, data_train, post=TRUE)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+import warnings
+warnings.filterwarnings("ignore")
+import hdmpy
+fit_rlasso = hdmpy.rlasso( model_X_basic_train.to_numpy() , Y_train.to_numpy().reshape( Y_train.size , 1 ) , post = False )
+
+fit_rlasso_post = hdmpy.rlasso( model_X_basic_train.to_numpy() , Y_train.to_numpy().reshape( Y_train.size , 1 ) , post = True )
+```
+:::
+::::::
+\newline
+
+**Estimating the predictions from rlasso models**
+
+We have to know that the residuals output come from this formula:
+
+<ol>
+  <li><code>x1 = x - np.ones( (x.shape[1] , 1) ) @ x.mean( axis = 0 )</code></li>
+  <li><code>beta = model.est['beta'].loc[ fit_rlasso.est['index'].iloc[:, 0].to_list(), ].to_numpy()</code></li>
+  <li><code>y1 = y - y.mean()</code></li>
+  <li><code>yhat = x1 @ beta + y.mean()</code></li>
+</ol>
+
+So we have to apply those transformations to original test data
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# lasso and versions
+library(hdm) 
+yhat.rlasso   <- predict(fit.rlasso, newdata=data_test)
+yhat.rlasso.post   <- predict(fit.rlasso.post, newdata=data_test)
+
+MSE.lasso <- summary(lm((Y_test-yhat.rlasso)^2~1))$coef[1:2]
+MSE.lasso.post <- summary(lm((Y_test-yhat.rlasso.post)^2~1))$coef[1:2]
+
+R2.lasso <- 1-MSE.lasso[1]/var(Y_test)
+R2.lasso.post <- 1-MSE.lasso.post[1]/var(Y_test)
+cat("The R^2 using the basic model is equal to",R2.lasso,"for lasso and",R2.lasso.post,"for post-lasso") # R^2 lasso/post-lasso (basic model) 
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Getting mean of each variable
+meanx = model_X_basic_test.mean( axis = 0 ).values.\
+                        reshape( model_X_basic_test.shape[ 1 ] , 1 )
+
+# Reducing the mean
+new_x1 = model_X_basic_test.to_numpy() - \
+                    (np.ones( ( model_X_basic_test.shape[ 0 ] , 1 ) ) @ meanx.T)
+
+# Getting the significant variables
+x1_est_rlasso = new_x1[ :, fit_rlasso.est['index'].iloc[:, 0].to_list()]
+
+# Getting the coef. from significant variables
+beta_rlasso = fit_rlasso.est['beta'].loc[ fit_rlasso.est['index'].\
+                                     iloc[:, 0].to_list(), ].to_numpy()
+
+# yhat
+yhat_rlasso = (x1_est_rlasso @ beta_rlasso) + np.mean( Y_test.to_numpy() )
+residuals_rlasso = Y_test.to_numpy().reshape( Y_test.to_numpy().size, 1)  - yhat_rlasso
+
+# Getting mean of each variable
+meanx = model_X_basic_test.mean( axis = 0 ).values.\
+                        reshape( model_X_basic_test.shape[ 1 ] , 1 )
+
+# Reducing the mean
+new_x1 = model_X_basic_test.to_numpy() - \
+                    (np.ones( ( model_X_basic_test.shape[ 0 ] , 1 ) ) @ meanx.T)
+
+# Getting the significant variables
+x1_est_rlasso_post = new_x1[ :, fit_rlasso_post.est['index'].iloc[:, 0].to_list()]
+
+# Getting the coef. from significant variables
+beta_rlasso_post = fit_rlasso_post.est['beta'].loc[ fit_rlasso_post.est['index'].\
+                                     iloc[:, 0].to_list(), ].to_numpy()
+
+# yhat
+yhat_rlasso_post = (x1_est_rlasso_post @ beta_rlasso_post) + np.mean( Y_test.to_numpy() )
+residuals_rlasso_post = Y_test.to_numpy().reshape( Y_test.to_numpy().size, 1)  - yhat_rlasso_post
+
+MSE_lasso = sm.OLS( ( residuals_rlasso )**2 , np.ones( yhat_rlasso.size )  ).fit().summary2().tables[1].round(3)
+MSE_lasso_post = sm.OLS( ( residuals_rlasso_post )**2  , np.ones( yhat_rlasso_post.size )  ).fit().summary2().tables[1].round(3)
+
+R2_lasso = 1 - MSE_lasso.iloc[0, 0]/ np.var( Y_test )
+R2_lasso_post = 1 - MSE_lasso_post.iloc[0, 0]/ np.var( Y_test )
+
+print( f"The R^2 using the basic model is equal to {R2_lasso},for lasso and {R2_lasso_post} for post-lasso") # R^2 lasso/post-lasso (basic model) 
+```
+:::
+::::::
+\newline
+
+
+
+Now, we repeat the same procedure for the flexible model.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# lasso and versions
+fit.rlasso.flex  <- rlasso(formula_flex, data_train, post=FALSE)
+fit.rlasso.post.flex <- rlasso(formula_flex, data_train, post=TRUE)
+yhat.rlasso.flex   <- predict(fit.rlasso.flex, newdata=data_test)
+yhat.rlasso.post.flex   <- predict(fit.rlasso.post.flex, newdata=data_test)
+
+MSE.lasso.flex <- summary(lm((Y_test-yhat.rlasso.flex)^2~1))$coef[1:2]
+MSE.lasso.post.flex <- summary(lm((Y_test-yhat.rlasso.post.flex)^2~1))$coef[1:2]
+
+R2.lasso.flex <- 1-MSE.lasso.flex[1]/var(Y_test)
+R2.lasso.post.flex <- 1-MSE.lasso.post.flex[1]/var(Y_test)
+cat("The R^2 using the flexible model is equal to",R2.lasso.flex,"for lasso and",R2.lasso.post.flex,"for post-lasso") # R^2 lasso/post-lasso (flexible model) 
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+fit_rlasso_flex = hdmpy.rlasso( model_X_flex_train.to_numpy() , Y_train.to_numpy().reshape( Y_train.size , 1 ) , post = False )
+fit_rlasso_post_flex = hdmpy.rlasso( model_X_flex_train.to_numpy() , Y_train.to_numpy().reshape( Y_train.size , 1 ) , post = True )
+
+# Getting mean of each variable
+meanx = model_X_flex_test.mean( axis = 0 ).values.\
+                        reshape( model_X_flex_test.shape[ 1 ] , 1 )
+
+# Reducing the mean
+new_x1 = model_X_flex_test.to_numpy() - \
+                    (np.ones( ( model_X_flex_test.shape[ 0 ] , 1 ) ) @ meanx.T)
+
+# Getting the significant variables
+x1_est_rlasso_flex = new_x1[ :, fit_rlasso_flex.est['index'].iloc[:, 0].to_list()]
+
+# Getting the coef. from significant variables
+beta_rlasso_flex = fit_rlasso_flex.est['beta'].loc[ fit_rlasso_flex.est['index'].\
+                                     iloc[:, 0].to_list(), ].to_numpy()
+
+# yhat
+yhat_rlasso_flex = (x1_est_rlasso_flex @ beta_rlasso_flex) + np.mean( Y_test.to_numpy() )
+residuals_rlasso_flex = Y_test.to_numpy().reshape( Y_test.to_numpy().size, 1)  - yhat_rlasso_flex
+
+# Getting mean of each variable
+meanx = model_X_flex_test.mean( axis = 0 ).values.\
+                        reshape( model_X_flex_test.shape[ 1 ] , 1 )
+
+# Reducing the mean
+new_x1 = model_X_flex_test.to_numpy() - \
+                    (np.ones( ( model_X_flex_test.shape[ 0 ] , 1 ) ) @ meanx.T)
+
+# Getting the significant variables
+x1_est_rlasso_post_flex = new_x1[ :, fit_rlasso_post_flex.est['index'].iloc[:, 0].to_list()]
+
+# Getting the coef. from significant variables
+beta_rlasso_post_flex = fit_rlasso_post_flex.est['beta'].loc[ fit_rlasso_post_flex.est['index'].\
+                                     iloc[:, 0].to_list(), ].to_numpy()
+
+# yhat
+yhat_rlasso_post_flex = (x1_est_rlasso_post_flex @ beta_rlasso_post_flex) + np.mean( Y_test.to_numpy() )
+residuals_rlasso_post_flex = Y_test.to_numpy().reshape( Y_test.to_numpy().size, 1)  - yhat_rlasso_post_flex
+
+MSE_lasso_flex = sm.OLS( ( residuals_rlasso_flex )**2 , np.ones( yhat_rlasso_flex.size )  ).fit().summary2().tables[1].round(3)
+MSE_lasso_post_flex = sm.OLS( ( residuals_rlasso_post_flex )**2  , np.ones( yhat_rlasso_post_flex.size )  ).fit().summary2().tables[1].round(3)
+
+R2_lasso_flex = 1 - MSE_lasso.iloc[0, 0]/ np.var( Y_test )
+R2_lasso_post_flex = 1 - MSE_lasso_post_flex.iloc[0, 0]/ np.var( Y_test )
+
+print( f"The R^2 using the basic model is equal to {R2_lasso_flex},for lasso and {R2_lasso_post_flex} for post-lasso") # R^2 lasso/post-lasso (basic model) 
+```
+:::
+::::::
+\newline
+
+It is worth to notice that lasso regression works better for the more complex model.
+
+In contrast to a theoretical based choice of the tuning parameter $\lambda$ in the lasso regression, we can also use cross-validation to determine the penalty level by applying the package *glmnet* and the function cv.glmnet. In this context, we also run a ridge and a elastic net regression by adjusting the parameter *alpha*.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+library(glmnet)
+fit.lasso.cv   <- cv.glmnet(model_X_basic_train, Y_train, family="gaussian", alpha=1)
+fit.ridge      <- cv.glmnet(model_X_basic_train, Y_train, family="gaussian", alpha=0)
+fit.elnet      <- cv.glmnet(model_X_basic_train, Y_train, family="gaussian", alpha=.5)
+
+yhat.lasso.cv <- predict(fit.lasso.cv, newx = model_X_basic_test)
+yhat.ridge    <- predict(fit.ridge, newx = model_X_basic_test)
+yhat.elnet    <- predict(fit.elnet, newx = model_X_basic_test)
+
+MSE.lasso.cv <- summary(lm((Y_test-yhat.lasso.cv)^2~1))$coef[1:2]
+MSE.ridge    <- summary(lm((Y_test-yhat.ridge)^2~1))$coef[1:2]
+MSE.elnet    <- summary(lm((Y_test-yhat.elnet)^2~1))$coef[1:2]
+
+R2.lasso.cv <- 1-MSE.lasso.cv[1]/var(Y_test)
+R2.ridge    <- 1-MSE.ridge[1]/var(Y_test)
+R2.elnet    <- 1-MSE.elnet[1]/var(Y_test)
+
+# R^2 using cross-validation (basic model) 
+cat("R^2 using cross-validation for lasso, ridge and elastic net in the basic model:",R2.lasso.cv,R2.ridge,R2.elnet)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+from sklearn.linear_model import LassoCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import RidgeCV, ElasticNetCV
+import statsmodels.api as sm
+
+# Reshaping Y variable
+Y_vec = Y_train.to_numpy().reshape( Y_train.to_numpy().size, 1)
+
+# Scalar distribution
+scaler = StandardScaler()
+scaler.fit( Y_vec )
+std_Y = scaler.transform( Y_vec )
+
+# Regressions
+fit_lasso_cv_basic = LassoCV(cv = 10 , random_state = 0 , normalize = True ).fit( model_X_basic_train, std_Y )
+fit_ridge_basic = ElasticNetCV( cv = 10 , normalize = True , random_state = 0 , l1_ratio = 0.0001 ).fit( model_X_basic_train , std_Y )
+fit_elnet_basic = ElasticNetCV( cv = 10 , normalize = True , random_state = 0 , l1_ratio = 0.5, max_iter = 100000 ).fit( model_X_basic_train , std_Y )
+
+# Predictions
+yhat_lasso_cv_basic = scaler.inverse_transform( fit_lasso_cv_basic.predict( model_X_basic_test ) )
+yhat_ridge_basic = scaler.inverse_transform( fit_ridge_basic.predict( model_X_basic_test ) )
+yhat_elnet_basic = scaler.inverse_transform( fit_elnet_basic.predict( model_X_basic_test ) )
+
+MSE_lasso_cv_basic = sm.OLS( ((Y_test - yhat_lasso_cv_basic)**2 ) , np.ones( yhat_lasso_cv_basic.shape )  ).fit().summary2().tables[1].round(3)
+MSE_ridge_basic = sm.OLS( ((Y_test - yhat_ridge_basic)**2 ) , np.ones( yhat_ridge_basic.size )  ).fit().summary2().tables[1].round(3)
+MSE_elnet_basic = sm.OLS( ((Y_test - yhat_elnet_basic)**2 ) , np.ones( yhat_elnet_basic.size )  ).fit().summary2().tables[1].round(3)
+# our coefficient of MSE_elnet are far from r output
+
+R2_lasso_cv_basic = 1- MSE_ridge_basic.iloc[0,0] / np.var( Y_test )
+R2_ridge_basic = 1- MSE_lasso_cv_basic.iloc[0,0] / np.var( Y_test )
+R2_elnet_basic = 1- MSE_elnet_basic.iloc[0,0] / np.var( Y_test )
+
+print( f"R^2 using cross-validation for lasso, ridge and elastic net in the basic model: {R2_lasso_cv_basic},{R2_ridge_basic},{R2_elnet_basic}")
+```
+:::
+::::::
+\newline
+
+Note that the following calculations for the flexible model require significant computation time.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+fit.lasso.cv.flex   <- cv.glmnet(model_X_flex_train, Y_train, family="gaussian", alpha=1)
+fit.ridge.flex   <- cv.glmnet(model_X_flex_train, Y_train, family="gaussian", alpha=0)
+fit.elnet.flex   <- cv.glmnet(model_X_flex_train, Y_train, family="gaussian", alpha=.5)
+
+yhat.lasso.cv.flex    <- predict(fit.lasso.cv.flex , newx = model_X_flex_test)
+yhat.ridge.flex    <- predict(fit.ridge.flex , newx = model_X_flex_test)
+yhat.elnet.flex    <- predict(fit.elnet.flex , newx = model_X_flex_test)
+
+MSE.lasso.cv.flex  <- summary(lm((Y_test-yhat.lasso.cv.flex )^2~1))$coef[1:2]
+MSE.ridge.flex  <- summary(lm((Y_test-yhat.ridge.flex )^2~1))$coef[1:2]
+MSE.elnet.flex  <- summary(lm((Y_test-yhat.elnet.flex )^2~1))$coef[1:2]
+
+R2.lasso.cv.flex  <- 1-MSE.lasso.cv.flex [1]/var(Y_test)
+R2.ridge.flex  <- 1-MSE.ridge.flex [1]/var(Y_test)
+R2.elnet.flex  <- 1-MSE.elnet.flex [1]/var(Y_test)
+
+# R^2 using cross-validation (flexible model) 
+cat("R^2 using cross-validation for lasso, ridge and elastic net in the flexible model:",R2.lasso.cv.flex,R2.ridge.flex,R2.elnet.flex)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Reshaping Y variable
+Y_vec = Y_train.to_numpy().reshape( Y_train.to_numpy().size, 1)
+
+# Scalar distribution
+scaler = StandardScaler()
+scaler.fit( Y_vec )
+std_Y = scaler.transform( Y_vec )
+
+# Regressions
+fit_lasso_cv_flex = LassoCV(cv = 10 , random_state = 0 , normalize = True ).fit( model_X_flex_train, std_Y )
+fit_ridge_flex = ElasticNetCV( cv = 10 , normalize = True , random_state = 0 , l1_ratio = 0.0001 ).fit( model_X_flex_train , std_Y )
+fit_elnet_flex = ElasticNetCV( cv = 10 , normalize = True , random_state = 0 , l1_ratio = 0.5, max_iter = 100000 ).fit( model_X_flex_train , std_Y )
+
+# Predictions
+yhat_lasso_cv_flex = scaler.inverse_transform( fit_lasso_cv_flex.predict( model_X_flex_test ) )
+yhat_ridge_flex = scaler.inverse_transform( fit_ridge_flex.predict( model_X_flex_test ) )
+yhat_elnet_flex = scaler.inverse_transform( fit_elnet_flex.predict( model_X_flex_test ) )
+
+MSE_lasso_cv_flex = sm.OLS( ((Y_test - yhat_lasso_cv_flex)**2 ) , np.ones( yhat_lasso_cv_flex.shape )  ).fit().summary2().tables[1].round(3)
+MSE_ridge_flex = sm.OLS( ((Y_test - yhat_ridge_flex)**2 ) , np.ones( yhat_ridge_flex.size )  ).fit().summary2().tables[1].round(3)
+MSE_elnet_flex = sm.OLS( ((Y_test - yhat_elnet_flex)**2 ) , np.ones( yhat_elnet_flex.size )  ).fit().summary2().tables[1].round(3)
+# our coefficient of MSE_elnet are far from r output
+
+R2_lasso_cv_flex = 1- MSE_ridge_flex.iloc[0,0] / np.var( Y_test )
+R2_ridge_flex = 1- MSE_lasso_cv_flex.iloc[0,0] / np.var( Y_test )
+R2_elnet_flex = 1- MSE_elnet_flex.iloc[0,0] / np.var( Y_test )
+
+print( f"R^2 using cross-validation for lasso, ridge and elastic net in the basic model: {R2_lasso_cv_flex},{R2_ridge_flex},{R2_elnet_flex}")
+```
+:::
+::::::
+\newline
+
+The performance of the lasso regression with cross-validated penalty is quite similar to the performance of lasso using a theoretical based choice of the tuning parameter.
+
+## Non-linear models
+Besides linear regression models, we consider nonlinear regression models to build a predictive model. We are applying regression trees, random forests, boosted trees and neural nets to estimate the regression function $g(X)$. First, we load the relevant libraries
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+library(randomForest)
+library(rpart)
+library(nnet)
+library(gbm)
+library(rpart.plot)
+library(reticulate)
+import("tensorflow")
+import("keras")
+library(keras)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+and we illustrate the application of regression trees.
+
+### Regression Trees
+We fit a regression tree to the training data using the basic model. The variable *cp* controls the complexity of the regression tree, i.e. how deep we build the tree.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# tree
+fit.trees <- rpart(formula_basic, data_train,cp = 0.001)
+prp(fit.trees,leaf.round=1, space=2, yspace=2,split.space=2,shadow.col = "gray",trace = 1) # plotting the tree
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+An important method to improve predictive performance is called "Pruning the Tree". This
+means the process of cutting down the branches of a tree. We apply pruning to the complex tree above to reduce the depth. Initially, we determine the optimal complexity of the regression tree.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+bestcp<- fit.trees$cptable[which.min(fit.trees$cptable[,"xerror"]),"CP"]
+bestcp
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+Now, we can prune the tree and visualize the prediction rule.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+fit.prunedtree <- prune(fit.trees,cp=bestcp)
+prp(fit.prunedtree,leaf.round=1, space=3, yspace=3, split.space=7, shadow.col = "gray",trace = 1,yesno=1)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+E.g., in the pruned tree the predicted hourly log wage for high-school graduates with more than $9.5$ years of experience is $2.8$, and otherwise is $2.6$.
+
+Finally, we calculate the mean-squared error and the $R^2$ on the test sample to evaluate the out-of-sample performance of the pruned tree.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+bestcp<- fit.trees$cptable[which.min(fit.trees$cptable[,"xerror"]),"CP"]
+bestcp
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+Now, we can prune the tree and visualize the prediction rule.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+yhat.pt <- predict(fit.prunedtree,newdata=data_test)
+MSE.pt  <- summary(lm((Y_test-yhat.pt)^2~1))$coef[1:2]
+R2.pt   <- 1-MSE.pt[1]/var(Y_test)
+
+# R^2 of the pruned tree
+cat("R^2 of the pruned tree:",R2.pt)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+## Random Forest and Boosted Trees
+In the next step, we apply the more advanced tree-based methods random forest and boosted trees.
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+bestcp<- fit.trees$cptable[which.min(fit.trees$cptable[,"xerror"]),"CP"]
+bestcp
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+Now, we can prune the tree and visualize the prediction rule.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+## Applying the methods
+# random forest
+fit.rf       <- randomForest(formula_basic, ntree=2000, nodesize=5, data=data_train)
+# for tuning: adjust input "mtry" to change the number of variables randomly sampled as candidates at each split
+
+# boosting
+fit.boost   <- gbm(formula_basic, data=data_train, distribution= "gaussian", bag.fraction = .5, interaction.depth=2, n.trees=1000, shrinkage=.01)
+best.boost  <- gbm.perf(fit.boost, plot.it = FALSE) # cross-validation to determine when to stop
+
+## Evaluating the methods
+yhat.rf       <- predict(fit.rf, newdata=data_test) # prediction
+yhat.boost    <- predict(fit.boost, newdata=data_test, n.trees=best.boost)
+
+MSE.rf        <- summary(lm((Y_test-yhat.rf)^2~1))$coef[1:2]
+MSE.boost     <- summary(lm((Y_test-yhat.boost)^2~1))$coef[1:2]
+R2.rf         <- 1-MSE.rf[1]/var(Y_test)
+R2.boost      <- 1-MSE.boost[1]/var(Y_test)
+
+# printing R^2
+cat("R^2 of the random forest and boosted trees:",R2.rf,R2.boost)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+To conclude, let us have a look at our results.
+
+## Results
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+library(xtable)
+table<- matrix(0, 15, 3)
+table[1,1:2]   <- MSE.lm.basic
+table[2,1:2]   <- MSE.lm.flex
+table[3,1:2]   <- MSE.lasso
+table[4,1:2]   <- MSE.lasso.post
+table[5,1:2]   <- MSE.lasso.flex
+table[6,1:2]   <- MSE.lasso.post.flex
+table[7,1:2]   <- MSE.lasso.cv
+table[8,1:2]   <- MSE.ridge
+table[9,1:2]   <- MSE.elnet
+table[10,1:2]   <- MSE.lasso.cv.flex
+table[11,1:2]  <- MSE.ridge.flex
+table[12,1:2]  <- MSE.elnet.flex
+table[13,1:2]  <- MSE.rf
+table[14,1:2]  <- MSE.boost
+table[15,1:2]  <- MSE.pt
+
+table[1,3]   <- R2.lm.basic
+table[2,3]   <- R2.lm.flex
+table[3,3]   <- R2.lasso
+table[4,3]   <- R2.lasso.post
+table[5,3]   <- R2.lasso.flex
+table[6,3]   <- R2.lasso.post.flex
+table[7,3]   <- R2.lasso.cv
+table[8,3]   <- R2.ridge
+table[9,3]   <- R2.elnet
+table[10,3]   <- R2.lasso.cv.flex
+table[11,3]  <- R2.ridge.flex
+table[12,3]  <- R2.elnet.flex
+table[13,3]  <- R2.rf
+table[14,3]  <- R2.boost
+table[15,3]  <- R2.pt
+
+colnames(table)<- c("MSE", "S.E. for MSE", "R-squared")
+rownames(table)<- c("Least Squares (basic)","Least Squares (flexible)", "Lasso", "Post-Lasso","Lasso (flexible)","Post-Lasso (flexible)", 
+                    "Cross-Validated lasso", "Cross-Validated ridge","Cross-Validated elnet","Cross-Validated lasso (flexible)","Cross-Validated ridge (flexible)","Cross-Validated elnet (flexible)",  
+                    "Random Forest","Boosted Trees", "Pruned Tree")
+tab <- xtable(table, digits =3)
+print(tab,type="latex") # set type="latex" for printing table in LaTeX
+```
+<!-- html table generated in R 4.1.1 by xtable 1.8-4 package -->
+<!-- Thu Nov 04 12:15:36 2021 -->
+<table border=1>
+<tr> <th>  </th> <th> Weight OLS </th> <th> Weight Lasso </th>  </tr>
+  <tr> <td align="right"> Constant </td> <td align="right"> -0.162 </td> <td align="right"> -0.147 </td> </tr>
+  <tr> <td align="right"> Least Squares (basic) </td> <td align="right"> 0.281 </td> <td align="right"> 0.293 </td> </tr>
+  <tr> <td align="right"> Post-Lasso (flexible) </td> <td align="right"> 0.237 </td> <td align="right"> 0.223 </td> </tr>
+  <tr> <td align="right"> Cross-Validated elnet (flexible) </td> <td align="right"> -0.068 </td> <td align="right"> -0.056 </td> </tr>
+  <tr> <td align="right"> Pruned Tree </td> <td align="right"> -0.140 </td> <td align="right"> 0.000 </td> </tr>
+  <tr> <td align="right"> Random Forest </td> <td align="right"> 0.377 </td> <td align="right"> 0.344 </td> </tr>
+  <tr> <td align="right"> Boosted Trees </td> <td align="right"> 0.367 </td> <td align="right"> 0.245 </td> </tr>
+   </table>
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+Above, we displayed the results for a single split of data into the training and testing part. The table shows the test MSE in column 1 as well as the standard error in column 2 and the test $R^2$ in column 3. We see that the prediction rule produced by Elastic Net using the flexible model performs the best here, giving the lowest test MSE. Cross-Validated Lasso and Ridge, perform nearly as well. For any two of these methods, their testing MSEs are within one standard error of each other. Remarkably, OLS on a simple model performs extremely well, almost as well as best tree based method Random Forest. On the other hand, OLS on a flexible model with many regressors performs very poorly giving the highest test MSE. It is worth to notice that the nonlinear models, e.g. Random Forest, are not tuned. Thus, there is a lot of potential to improve the performance of the nonlinear methods we used in the analysis.
+
+## Ensemble learning
+In the final step, we can build a prediction model by combing the strengths of the models we considered so far. This ensemble method is of the form
+	$$ f(x) = \sum_{k=1}^K \alpha_k f_k(x) $$
+where the $f_k$'s denote our prediction rules from the table above and the $\alpha_k$'s are the corresponding weights.
+We focus on the prediction rules based on OLS, Post-Lasso, Elastic Net, Pruned Tree, Random Forest, Boosted Trees, and Neural Network and combine these methods into an ensemble method. The weights can be determined by a simple ols regression:
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+ensemble.ols <- summary(lm(Y_test~ yhat.lm.basic + yhat.rlasso.post.flex + yhat.elnet.flex+ yhat.pt+ yhat.rf + yhat.boost))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+Alternatively, we can determine the weights via lasso regression. 
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+ensemble.lasso <- summary(rlasso(Y_test~ yhat.lm.basic + yhat.rlasso.post.flex + yhat.elnet.flex+ yhat.pt+ yhat.rf + yhat.boost))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+The estimated weights are shown in the following table.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+table <- matrix(0, 7, 2)
+table[1:7,1]   <- ensemble.ols$coef[1:7]
+table[1:7,2]   <- ensemble.lasso$coef[1:7]
+
+
+colnames(table) <- c("Weight OLS", "Weight Lasso")
+rownames(table) <- c("Constant","Least Squares (basic)","Post-Lasso (flexible)", "Cross-Validated elnet (flexible)", "Pruned Tree",
+                    "Random Forest","Boosted Trees")
+tab <- xtable(table, digits =3)
+print(tab,type="latex") # set type="latex" for printing table in LaTeX
+```
+
+<!-- html table generated in R 4.1.1 by xtable 1.8-4 package -->
+<!-- Thu Nov 04 12:16:14 2021 -->
+<table border=1>
+<tr> <th>  </th> <th> Weight OLS </th> <th> Weight Lasso </th>  </tr>
+  <tr> <td align="right"> Constant </td> <td align="right"> -0.162 </td> <td align="right"> -0.147 </td> </tr>
+  <tr> <td align="right"> Least Squares (basic) </td> <td align="right"> 0.281 </td> <td align="right"> 0.293 </td> </tr>
+  <tr> <td align="right"> Post-Lasso (flexible) </td> <td align="right"> 0.237 </td> <td align="right"> 0.223 </td> </tr>
+  <tr> <td align="right"> Cross-Validated elnet (flexible) </td> <td align="right"> -0.068 </td> <td align="right"> -0.056 </td> </tr>
+  <tr> <td align="right"> Pruned Tree </td> <td align="right"> -0.140 </td> <td align="right"> 0.000 </td> </tr>
+  <tr> <td align="right"> Random Forest </td> <td align="right"> 0.377 </td> <td align="right"> 0.344 </td> </tr>
+  <tr> <td align="right"> Boosted Trees </td> <td align="right"> 0.367 </td> <td align="right"> 0.245 </td> </tr>
+   </table>
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# in process
+```
+:::
+::::::
+\newline
+
+Further, the $R^2$ for the test sample gets improved from $30\%$ obtained by OLS to about $31\%$ obtained by the ensemble method. We see that it is very powerful to aggregate prediction rules into an ensemble rule. Nevertheless, it is worth to notice that we should compare the ensemble method and the single rules on an additional validation set to ensure a fair comparison.

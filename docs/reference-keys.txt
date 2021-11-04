@@ -50,3 +50,13 @@ data-generating-process-approximately-sparse-small-dense-part
 vaccine-rct-examples
 polio-rct
 pfizerbntx-covid-19-rct
+machine-learning-for-wage-prediction
+analysis
+ols-1
+lasso-ridge-and-elastic-net
+estimating-the-predictions-from-rlasso-models
+non-linear-models
+regression-trees
+random-forest-and-boosted-trees
+results
+ensemble-learning
