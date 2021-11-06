@@ -1,0 +1,300 @@
+# Deep Neural Networks for Wage Prediction
+
+So far we have considered many machine learning methods such as Lasso and Random Forests for building a predictive model. In this lab, we extend our toolbox by returning to our wage prediction problem and showing how a neural network can be used for prediction.
+
+## Data Preparation
+Again, we consider data from the U.S. March Supplement of the Current Population Survey (CPS) in 2015.
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+load("./data/wage2015_subsample_inference.Rdata")
+Z <- subset(data,select=-c(lwage,wage)) # regressors
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Import relevant packages
+import pandas as pd
+import numpy as np
+import pyreadr
+from sklearn import preprocessing
+import patsy
+
+from numpy import loadtxt
+from keras.models import Sequential
+from keras.layers import Dense
+
+rdata_read = pyreadr.read_r("./data/wage2015_subsample_inference.Rdata")
+data = rdata_read[ 'data' ]
+n = data.shape[0]
+```
+:::
+::::::
+\newline
+
+First, we split the data first and normalize it.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# Splitting the data
+set.seed(1234)
+training <- sample(nrow(data), nrow(data)*(3/4), replace=FALSE)
+data_train <- data[training,1:16]
+data_test <- data[-training,1:16]
+
+# Normalize the data
+mean <- apply(data_train, 2, mean)
+std <- apply(data_train, 2, sd)
+data_train <- scale(data_train, center = mean, scale = std)
+data_test <- scale(data_test, center = mean, scale = std)
+data_train <- as.data.frame(data_train)
+data_test <- as.data.frame(data_test)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Import relevant packages for splitting data
+import random
+import math
+
+# Setting seed to make the results replicable (generating random numbers)
+np.random.seed(0)
+random = np.random.randint(0, data.shape[0], size=math.floor(data.shape[0]))
+data["random"] = random
+data_2 = data.sort_values(by=['random'])
+
+# Creating training and testing sample 
+data_train = data_2[ : math.floor(n*3/4)]    # training sample
+data_test =  data_2[ math.floor(n*3/4) : ]   # testing sample
+
+data_train = data_train.iloc[:, 0:16]
+data_test = data_test.iloc[:, 0:16] 
+
+# Normalizing the data
+scaler = preprocessing.StandardScaler().fit(data_train)
+scaler = preprocessing.StandardScaler().fit(data_test)
+
+data_train_scaled = scaler.transform(data_train)
+data_test_scaled = scaler.transform(data_test)
+
+columns = list(data_train)
+
+data_train_scaled = pd.DataFrame(data_train_scaled, columns = columns)
+data_test_scaled = pd.DataFrame(data_test_scaled, columns = columns)
+```
+:::
+::::::
+\newline
+
+Then, we construct the inputs for our network.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+X_basic <-  "sex + exp1 + shs + hsg+ scl + clg + mw + so + we"
+formula_basic <- as.formula(paste("lwage", "~", X_basic))
+
+model_X_basic_train <- model.matrix(formula_basic,data_train)
+model_X_basic_test  <- model.matrix(formula_basic,data_test)
+
+Y_train <- data_train$lwage
+Y_test  <- data_test$lwage
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+formula_basic = "lwage ~ sex + exp1 + shs + hsg+ scl + clg + mw + so + we"
+Y_train, model_X_basic_train = patsy.dmatrices(formula_basic, data_train_scaled, return_type='dataframe')
+Y_test, model_X_basic_test = patsy.dmatrices(formula_basic, data_test_scaled, return_type='dataframe')
+```
+:::
+::::::
+\newline
+
+## Neural Networks
+
+First, we need to determine the structure of our network. We are using the R package ```keras``` to build a simple sequential neural network with three dense layers and the ReLU activation function.
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r, warning=FALSE}
+library(keras)
+
+build_model <- function() {
+  model <- keras_model_sequential() %>% 
+    layer_dense(units = 20, activation = "relu", # ReLU activation function
+                input_shape = dim(model_X_basic_train)[2])%>% 
+    layer_dense(units = 10, activation = "relu") %>% 
+    layer_dense(units = 1) 
+  
+  model %>% compile(
+    optimizer = optimizer_adam(lr = 0.005), # Adam optimizer
+    loss = "mse", 
+    metrics = c("mae")
+  )
+}
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# define the keras model
+model = Sequential()
+model.add(Dense(20, input_dim = model_X_basic_train.shape[1], activation = 'relu'))
+model.add(Dense(10, activation = 'relu'))
+model.add(Dense(1))
+
+# Importing relevant packages
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+
+# Compiling the keras model
+opt = keras.optimizers.Adam(learning_rate=0.005)
+mse = tf.keras.losses.MeanSquaredError()
+mae = tf.keras.metrics.MeanAbsoluteError(name="mean_absolute_error", dtype=None)
+```
+:::
+::::::
+\newline
+
+Let us have a look at the structure of our network in detail.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+model <- build_model()
+summary(model)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+model.compile(loss=mse, optimizer= opt , metrics=mae)
+model.summary(line_length=None, positions=None, print_fn=None)
+```
+:::
+::::::
+\newline
+
+We have $441$ trainable parameters in total.
+
+Now, let us train the network. Note that this takes substantial computation time. To speed up the computation time, we use GPU as an accelerator. The extent of computational time improvements varies based on a number of factors, including model architecture, batch-size, input pipeline complexity, etc.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# Training the network 
+num_epochs <- 1000
+model %>% fit(model_X_basic_train, Y_train,
+                    epochs = num_epochs, batch_size = 100, verbose = 0)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python, results="hide", warning=FALSE}
+# Fitting the keras model on the dataset
+num_epochs = 1000
+model.fit(model_X_basic_train, Y_train, epochs=150, batch_size=10)
+```
+:::
+::::::
+\newline
+
+After training the neural network, we can evaluate the performance of our model on the test sample.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# Evaluating performance
+model %>% evaluate(model_X_basic_test, Y_test, verbose = 0)
+
+# Calculating the performance measures
+pred.nn <- model %>% predict(model_X_basic_test)
+MSE.nn = summary(lm((Y_test-pred.nn)^2~1))$coef[1:2]
+R2.nn <- 1-MSE.nn[1]/var(Y_test)
+
+# Printing R^2
+cat("R^2 of the neural network:",R2.nn)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+model.metrics_names
+model.evaluate(model_X_basic_test, Y_test, verbose = 0)
+pred_nn = model.predict(model_X_basic_test)
+
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+resid_basic = (Y_test-pred_nn)**2
+MSE_nn_basic = sm.OLS( resid_basic , np.ones( resid_basic.shape[0] ) ).fit().summary2().tables[1].iloc[0, 0:2]
+R2_nn_basic = 1 - ( MSE_nn_basic[0]/Y_test.var() )
+
+print( f"The R^2 using NN is equal to = {R2_nn_basic[0]}" ) # MSE NN (basic model) 
+```
+:::
+::::::
+\newline
