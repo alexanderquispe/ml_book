@@ -1,0 +1,432 @@
+# Causal Identification in DAGs using Backdoor and Swigs, Equivalence Classes, Falsifiability Tests
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# loading package
+library(dagitty)
+library(ggdag)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+
+## Graph Generation and Plotting
+
+The following DAG is due to Judea Pearl
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+#generate a couple of DAGs and plot them
+
+G = dagitty('dag{
+Z1 [pos="-2,-1.5"]
+X1 [pos="-2,0"]
+Z2 [pos="1.5,-1.5"]
+X3 [pos="1.5, 0"]
+Y [outcome,pos="1.5,1.5"]
+D [exposure,pos="-2,1.5"]
+M [mediator, pos="0,1.5"]
+X2 [pos="0,0"]
+Z1 -> X1
+X1 -> D
+Z1 -> X2
+Z2 -> X3
+X3 -> Y
+Z2 -> X2
+D -> Y
+X2 -> Y
+X2 -> D
+M->Y
+D->M
+}')
+
+ggdag(G)+  theme_dag()
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+
+## Report Relatives of X2
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+print(parents(G, "X2"))
+print(children(G, "X2"))
+print(ancestors(G, "X2"))
+print(descendants(G, "X2"))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+## Find Paths Between D and Y
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+paths(G, "D", "Y")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+## List All Testable Implications of the Model
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+print( impliedConditionalIndependencies(G) )
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+## Identification by Backdoor: List minimal adjustment sets to identify causal effecs $D \to Y$
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+print( adjustmentSets( G, "D", "Y" ) )
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+## Identification via SWIG and D-separation
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+SWIG = dagitty('dag{
+Z1 [pos="-2,-1.5"]
+X1 [pos="-2,0"]
+Z2 [pos="1.5,-1.5"]
+X3 [pos="1.5, 0"]
+Yd [outcome,pos="1.5,1.5"]
+D [exposure,pos="-2,1.5"]
+d [pos="-1, 1.5"]
+Md [mediator, pos="0,1.5"]
+X2 [pos="0,0"]
+Z1 -> X1
+X1 -> D
+Z1 -> X2
+Z2 -> X3
+X3 -> Yd
+Z2 -> X2
+X2 -> Yd
+X2 -> D
+X3-> Yd
+Md-> Yd
+d-> Md
+}')
+
+ggdag(SWIG)+  theme_dag()
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+## Deduce Conditional Exogeneity or Ignorability by D-separation
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+print( impliedConditionalIndependencies(SWIG)[5:8] )
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+## Print All Average Effects Identifiable by Conditioning
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+for( n in names(G) ){
+    for( m in children(G,n) ){
+        a <- adjustmentSets( G, n, m )
+        if( length(a) > 0 ){
+            cat("The effect ",n,"->",m,
+                " is identifiable by controlling for:\n",sep="")
+            print( a, prefix=" * " )
+        }
+    }
+}
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+
+## Equivalence Classes
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+P=equivalenceClass(G)
+plot(P)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+Next Consider the elemntary Triangular Model:
+$$
+D \to Y, \quad X \to (D,Y).
+$$
+This model has not testable implications and is Markov-equivalent to any other DAG difined on names $(X, D, Y)$.
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+G3<- dagitty('dag{
+D -> Y
+X -> D
+X -> Y
+}
+')
+
+ggdag(G3)+  theme_dag()
+
+print(impliedConditionalIndependencies(G3))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+P=equivalenceClass(G3)
+plot(P)
+equivalentDAGs(G3,10)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+## Example of Testing DAG Validity
+
+Next we simulate the data from a Linear SEM associated to DAG G, and perform a test of conditional independence restrictions, exploting linearity. 
+
+There are many other options for nonlinear models and discrete categorical variables. Type help(localTests). 
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+set.seed(1)
+x <- simulateSEM(G)
+head(x)
+#cov(x)
+localTests(G, data = x, type = c("cis"))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
+
+Next we replaced $D$ by $\bar D$ generated differently:
+$$
+\bar D= (D + Y)/2
+$$
+So basically $\bar D$ is an average of $D$ and $Y$ generated by $D$.  We then test if the resulting collection of random variables satisifes conditional indepdendence restrictions, exploiting linearity.  We end up rejectiong these restrictions and thefore the validity of this model for the data generated in this way.  This makes sense, because the new data no longer obeys the previous DAG structure.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+x.R = x
+x.R$D = (x$D+ x$Y)/2
+
+localTests(G, data = x.R, type = c("cis"))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
