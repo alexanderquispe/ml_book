@@ -1,0 +1,312 @@
+# A Simple Example of Properties of IV estimator when Instruments are Weak
+
+Simulation Design
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE, fig.height=5, fig.width=15}
+# Simulation Design
+
+library(hdm)
+set.seed(1)
+B= 10000 # trials
+IVEst = rep(0, B)
+n=100
+beta = .25   # .2 weak IV
+#beta = 1   #   1 strong IV
+
+
+U =  rnorm(n)  
+Z = rnorm(n)  #generate instrument
+D = beta*Z + U  #generate endogenougs variable
+Y =  D+ U  # the true causal effect is 1
+
+
+summary(lm(D~Z))  # first stage is very weak here
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+import hdmpy
+import numpy as np
+import random
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import colors
+from statsmodels.sandbox.regression.gmm import IV2SLS
+import numpy as np                                                              
+import seaborn as sns                                                           
+from scipy import stats                                                         
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
+
+# Simulation Design
+
+# Set seed
+np.random.seed(0)
+B = 1000
+IVEst = np.zeros( B )
+n = 100
+beta = .25
+
+mean = 0
+sd = 1
+
+U = np.random.normal( mean , sd, n ).reshape( n, 1 )
+Z = np.random.normal( mean , sd, n ).reshape( n, 1 )
+D = beta*Z + U 
+Y = D + U
+
+mod = sm.OLS(D, sm.add_constant(Z))    # Describe model
+res = mod.fit()
+print(res.summary())
+
+```
+:::
+::::::
+\newline
+
+
+
+
+
+
+
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+summary(tsls(x=NULL, d=D, y=Y, z=Z))  #
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+IV = IV2SLS(Y, D, sm.add_constant(Z))
+IV_res = IV.fit()
+print(IV_res.summary())
+```
+:::
+::::::
+\newline
+
+
+Note that the instrument is weak here (contolled by $\beta$) -- the t-stat is less than 4.
+
+## Run 1000 trials to evaluate distribution of the IV estimator
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+
+# Simulation Design
+
+set.seed(1)
+B= 10000 # trials
+IVEst = rep(0, B)
+
+for(i in 1:B){
+U =  rnorm(n)  
+Z = rnorm(n)  #generate instrument
+D = beta*Z + U  #generate endogenougs variable
+Y =  D+ U  # the true causal effect is 1
+IVEst[i] = coef(tsls(x=NULL, d=D, y=Y, z=Z))[1,1]
+}
+
+
+
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+# Simulation design 
+
+# Set seed
+np.random.seed(0)
+B = 1000 # Trials
+IVEst = np.zeros( B )
+
+for i in range( 0, B ):
+    U = np.random.normal( mean , sd, n ).reshape( n, 1 )
+    Z = np.random.normal( mean , sd, n ).reshape( n, 1 )
+    D = beta*Z + U 
+    Y = D + U
+    
+    IV = IV2SLS(Y, D, sm.add_constant(Z))
+    IV_res = IV.fit()
+    
+    IVEst[ i ] = IV_res.summary2().tables[1]["Coef."][0]
+    
+```
+:::
+::::::
+\newline
+
+
+
+
+
+## Plot the Actual Distribution against the Normal Approximation (based on Strong Instrument Assumption)
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+plot(density(IVEst-1, n=1000, from=-5, to=5),col=4, xlim= c(-5, 5),  
+     xlab= "IV Estimator -True Effect", main="Actual Distribution vs Gaussian")
+
+val=seq(-5, 5, by=.05)
+var = (1/beta^2)*(1/100) # theoretical variance of IV
+sd = sqrt(var)
+lines(val, dnorm(val, sd=sd), col=2, lty=2)
+
+rejection.frequency = sum(( abs(IVEst-1)/sd > 1.96))/B
+
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+val = np.arange(-5,5.5,0.05)
+var = (1/beta**2)*(1/100)   # theoretical variance of IV
+sd = np.sqrt(var)
+
+normal_dist = np.random.normal(0,sd,val.shape[0])
+
+# plotting both distibutions on the same figure
+fig = sns.kdeplot(IVEst-1, shade=True, color="r")
+fig = sns.kdeplot(normal_dist, shade=True, color="b")
+
+plt.title("Actual Distribution vs Gaussian")
+plt.xlabel('IV Estimator -True Effect')
+plt.xlim(-5,5)
+    
+```
+:::
+::::::
+\newline
+
+
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+cat(c("Rejection Frequency is ", 
+      rejection.frequency, " while we expect it to be .05"))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+rejection_frequency = np.sum(( np.abs(IVEst-1)/sd > 1.96))/B
+print( f"Rejection Frequency is {rejection_frequency} ,while we expect it to be .05")
+  
+```
+:::
+::::::
+\newline
+
+
+
+## Some Help Functions
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+help(tsls)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+help(IV2SLS)
+```
+:::
+::::::
+\newline
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+help(density)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+help(sns.kdeplot)
+```
+:::
+::::::
+\newline
