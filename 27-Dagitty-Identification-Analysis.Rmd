@@ -1,0 +1,405 @@
+# Using Dagitty in the Analysis of Impact of 401(k) on Net Financial Wealth
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE, fig.height=5, fig.width=15}
+# install and load package
+# install.packages("dagitty")
+# install.packages("ggdag")
+library(dagitty)
+library(ggdag)
+
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+
+## Graphs for 401(K) Analsyis
+
+
+<span style="font-size:2em; font-weight:bold">  Here we have</span>
+<span style="font-size:2em; font-weight:bold">  * $Y$ -- net financial assets;results. </span>
+<span style="font-size:2em; font-weight:bold">  * $X$ -- worker characteristics (income, family size, other retirement plans; see lecture notes for details); </span>
+<span style="font-size:2em; font-weight:bold">  * $F$ -- latent (unobserved) firm characteristics </span>
+<span style="font-size:2em; font-weight:bold">  * $D$ -- 401(K) eligibility, deterimined by $F$ and $X$ </span>
+
+
+
+## State one graph (where F determines X) and plot it
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+#generate a DAGs and plot them
+
+G1 = dagitty('dag{
+Y [outcome,pos="4, 0"]
+D [exposure,pos="0, 0"]
+X [confounder, pos="2,-2"]
+F [uobserved, pos="0, -1"]
+D -> Y
+X -> D
+F -> X
+F -> D
+X -> Y}')
+
+
+ggdag(G1)+  theme_dag()
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+## List minimal adjustment sets to identify causal effecs $D \to Y$
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+adjustmentSets( G1, "D", "Y",effect="total" ) 
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+## What is the underlying principle? 
+
+Here condition on X blocks backdoor paths from Y to D (Pearl).  Dagitty correctly finds X (and does many more correct decisions, when we consider more elaborate structures. Why do we want to consider more elaborate structures? The very empirical problem requires us to do so!
+
+## Another Graph (wherere $X$ determine $F$):
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+#generate a couple of DAGs and plot them
+
+G2 = dagitty('dag{
+Y [outcome,pos="4, 0"]
+D [exposure,pos="0, 0"]
+X [confounder, pos="2,-2"]
+F [uobserved, pos="0, -1"]
+D -> Y
+X -> D
+X -> F
+F -> D
+X -> Y}')
+
+
+ggdag(G2)+  theme_dag()
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+
+
+
+
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+adjustmentSets( G2, "D", "Y", effect="total" )
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+
+
+
+
+
+
+## One more graph (encompassing previous ones), where (F, X) are jointly determined by latent factors $A$. We can allow in fact the whole triple (D, F, X) to be jointly determined by latent factors $A$.
+
+
+This is much more realistic graph to consider.
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+G3 = dagitty('dag{
+Y [outcome,pos="4, 0"]
+D [exposure,pos="0, 0"]
+X [confounder, pos="2,-2"]
+F [unobserved, pos="0, -1"]
+A [unobserved, pos="-1, -1"]
+D -> Y
+X -> D
+F -> D
+A -> F
+A -> X
+A -> D
+X -> Y}')
+
+adjustmentSets( G3, "D", "Y", effect="total"  ) 
+
+ggdag(G3)+  theme_dag()
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+
+
+## Threat to Idenitification: What if $F$ also directly affects $Y$? (Note that there are no valid adjustment sets in this case)
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+G4 = dagitty('dag{
+Y [outcome,pos="4, 0"]
+D [exposure,pos="0, 0"]
+X [confounder, pos="2,-2"]
+F [unobserved, pos="0, -1"]
+A [unobserved, pos="-1, -1"]
+D -> Y
+X -> D
+F -> D
+A -> F
+A -> X
+A -> D
+F -> Y
+X -> Y}')
+
+
+ggdag(G4)+  theme_dag()
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+adjustmentSets( G4, "D", "Y",effect="total"  )
+
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+Note that no output means that there is no valid adustment set (among observed variables)
+
+<span style="font-size:2em; font-weight:bold">  How can F affect Y directly? Is it reasonable? </span>
+
+## Introduce Match Amount $M$ (very important mediator, why mediator?). $M$ is not observed.  Luckily adjusting for $X$ still works if there is no $F \to M$ arrow.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+G5 = dagitty('dag{
+Y [outcome,pos="4, 0"]
+D [exposure,pos="0, 0"]
+X [confounder, pos="2,-2"]
+F [unobserved, pos="0, -1"]
+A [unobserved, pos="-1, -1"]
+M [unobserved, pos="2, -.5"]
+D -> Y
+X -> D
+F -> D
+A -> F
+A -> X
+A -> D
+D -> M
+M -> Y
+X -> M
+X -> Y}')
+
+print( adjustmentSets( G5, "D", "Y",effect="total"  ) )
+
+ggdag(G5)+  theme_dag()
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+
+## If  there is $F \to M$ arrow, then adjusting for $X$ is not sufficient.
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}" }
+```{r  message=FALSE, warning=FALSE}
+G6 = dagitty('dag{
+Y [outcome,pos="4, 0"]
+D [exposure,pos="0, 0"]
+X [confounder, pos="2,-2"]
+F [unobserved, pos="0, -1"]
+A [unobserved, pos="-1, -1"]
+M [uobserved, pos="2, -.5"]
+D -> Y
+X -> D
+F -> D
+A -> F
+A -> X
+D -> M
+F -> M
+A -> D
+M -> Y
+X -> M
+X -> Y}')
+
+print( adjustmentSets( G6, "D", "Y" ),effect="total"  )
+
+ggdag(G6)+  theme_dag()
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python fig.height=5, fig.width=15}
+
+```
+:::
+::::::
+\newline
+
+## Question:
+ 
+Given the analysis above, do you find the adjustment for workers' characteristics a credible strategy to identify the causal (total effect) of 401 (k) elligibility on net financial wealth?
+
+     * If yes, click an "upvote" button at the top
+     * If no, please click an "upvote" button at the top
