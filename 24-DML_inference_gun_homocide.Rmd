@@ -1,0 +1,1151 @@
+# A Case Study: The Effect of Gun Ownership on Gun-Homicide Rates
+
+We consider the problem of estimating the effect of gun
+ownership on the homicide rate. For this purpose, we estimate the following partially
+linear model
+
+$$
+ Y_{j,t} = \beta D_{j,(t-1)} + g(Z_{j,t}) + \epsilon_{j,t}.
+$$
+## Data
+$Y_{j,t}$ is log homicide rate in county $j$ at time $t$, $D_{j, t-1}$ is log  fraction of suicides committed with a firearm in county $j$ at time $t-1$, which we use as a proxy for gun ownership,  and  $Z_{j,t}$ is a set of demographic and economic characteristics of county $j$ at time $t$. The parameter $\beta$ is the effect of gun ownership on the
+homicide rates, controlling for county-level demographic and economic characteristics. 
+
+The sample covers 195 large United States counties between the years 1980 through 1999, giving us 3900 observations.
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# loading libraries
+library(lfe)
+library(hdm)
+library(glmnet)
+library(sandwich)
+library(randomForest)
+library(xtable)
+
+data <- read.csv("./data/gun_clean.csv") 
+dim(data)[1]
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Import relevant packages
+import pandas as pd
+import numpy as np
+import pyreadr
+import itertools
+from sklearn import preprocessing
+import patsy
+
+from numpy import loadtxt
+from keras.models import Sequential
+from keras.layers import Dense
+
+import hdmpy
+import numpy as np
+import random
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib import colors
+
+from sklearn.linear_model import LassoCV
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import RidgeCV, ElasticNetCV
+from sklearn.linear_model import LinearRegression
+from sklearn import linear_model
+
+from pandas.api.types import is_string_dtype
+from pandas.api.types import is_numeric_dtype
+from pandas.api.types import is_categorical_dtype
+from itertools import compress
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from sklearn.feature_selection import SelectFromModel
+
+data1 = pd.read_csv( r"./data/gun_clean.csv" )
+data1.shape[0]
+```
+:::
+::::::
+\newline
+
+## Preprocessing.
+To account for heterogeneity across counties and time trends in  all variables, we remove from them county-specific and time-specific effects in the following preprocessing.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+#################################  Find Variable Names from Dataset ########################
+
+varlist <- function (df=NULL,type=c("numeric","factor","character"), pattern="", exclude=NULL) {
+  vars <- character(0)
+  if (any(type %in% "numeric")) {
+    vars <- c(vars,names(df)[sapply(df,is.numeric)])
+  }
+  if (any(type %in% "factor")) {
+    vars <- c(vars,names(df)[sapply(df,is.factor)])
+  }  
+  if (any(type %in% "character")) {
+    vars <- c(vars,names(df)[sapply(df,is.character)])
+  }  
+  vars[(!vars %in% exclude) & grepl(vars,pattern=pattern)]
+}
+
+################################# Create Variables ###############################
+
+
+# Dummy Variables for Year and County Fixed Effects
+fixed  <- grep("X_Jfips", names(data), value=TRUE, fixed=TRUE)
+year   <- varlist(data, pattern="X_Tyear")
+
+# Census Control Variables
+census     <- NULL
+census_var <- c("^AGE", "^BN", "^BP", "^BZ", "^ED", "^EL","^HI", "^HS", "^INC", "^LF", "^LN", "^PI", "^PO", "^PP", "^PV", "^SPR", "^VS")
+
+for(i in 1:length(census_var)){
+  
+  census  <- append(census, varlist(data, pattern=census_var[i]))
+  
+}
+
+################################ Variables ##################################
+# Treatment Variable
+d     <- "logfssl"
+
+# Outcome Variable
+y     <- "logghomr"
+
+# Other Control Variables
+X1    <- c("logrobr", "logburg", "burg_missing", "robrate_missing")
+X2    <- c("newblack", "newfhh", "newmove", "newdens", "newmal")
+
+#################################  Partial out Fixed Effects ########################
+
+# New Dataset for Partiled-out Variables
+rdata    <- as.data.frame(data$CountyCode) 
+colnames(rdata) <- "CountyCode"
+
+# Variables to be Partialled-out
+varlist <- c(y, d,X1, X2, census)
+
+
+# Partial out Variables in varlist from year and county fixed effect
+for(i in 1:length(varlist)){
+  form <- as.formula(paste(varlist[i], "~", paste(paste(year,collapse="+"),  paste(fixed,collapse="+"), sep="+")))
+  rdata[, varlist[i]] <- lm(form, data)$residuals
+}
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+import re
+
+#################################  Find Variable Names from Dataset ########################
+
+def varlist( df = None, type_dataframe = [ 'numeric' , 'categorical' , 'string' ],  pattern = "", exclude = None ):
+    varrs = []
+    
+    if ('numeric' in type_dataframe):
+        varrs = varrs + df.columns[ df.apply( is_numeric_dtype , axis = 0 ).to_list() ].tolist()
+    
+    if ('categorical' in type_dataframe):
+        varrs = varrs + df.columns[ df.apply( is_categorical_dtype , axis = 0 ).to_list() ].tolist()
+    
+    if ('string' in type_dataframe):
+        varrs = varrs + df.columns[ df.apply( is_string_dtype , axis = 0 ).to_list() ].tolist()
+    
+    grepl_result = np.array( [ re.search( pattern , variable ) is not None for variable in df.columns.to_list() ] )
+    
+    if exclude is None:
+        result = list(compress( varrs, grepl_result ) )
+    
+    else:
+        varrs_excluded = np.array( [var in exclude for var in varrs ] )
+        and_filter = np.logical_and( ~varrs_excluded ,  grepl_result )
+        result = list(compress( varrs, and_filter ) )
+    
+    return result   
+
+################################# Create Variables ###############################
+
+
+# Dummy Variables for Year and County Fixed Effects
+r = re.compile("X_Jfips")
+fixed = list( filter( r.match, data1.columns.to_list() ) )
+year = varlist(data1, pattern="X_Tyear")
+
+census = []
+census_var = ["^AGE", "^BN", "^BP", "^BZ", "^ED", "^EL","^HI", "^HS", "^INC", "^LF", "^LN", "^PI", "^PO", "^PP", "^PV", "^SPR", "^VS"]
+
+for variable in census_var:
+    r = re.compile( variable )
+    census = census + list( filter( r.match, data1.columns.to_list() ) )
+
+    
+################################ Variables ##################################
+# Treatment Variable
+d = "logfssl"
+
+# Outcome Variable
+y = "logghomr"
+
+# Other Control Variables
+X1 = ["logrobr", "logburg", "burg_missing", "robrate_missing"]
+X2 = ["newblack", "newfhh", "newmove", "newdens", "newmal"]
+
+#################################  Partial out Fixed Effects ########################
+
+rdata = data1[['CountyCode']]
+
+# Variables to be Partialled-out
+varlist2 = [y] + [d] + X1 + X2 + census
+
+# Partial out Variables in varlist from year and county fixed effect
+for var_name in varlist2:
+    form = var_name + " ~ "  + " + ".join( year ) + "+" + " + ".join( fixed )
+    rdata[f'{var_name}'] = smf.ols( formula = form , data = data1 ).fit().resid
+```
+:::
+::::::
+\newline
+
+Now, we can construct the treatment variable, the outcome variable and the matrix $Z$ that includes the control variables.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+# Treatment Variable
+D     <- rdata[which(colnames(rdata) == d)]
+
+# Outcome Variable
+Y     <- rdata[which(colnames(rdata) == y)]
+
+# Construct matrix Z
+Z <- rdata[which(colnames(rdata) %in% c(X1,X2,census))]
+
+dim(Z)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# load dataset
+rdata_read = pyreadr.read_r("./data/gun_clean.RData")
+data = rdata_read[ 'data' ]
+n = data.shape[0]
+
+# We check that our results are equal to R results at 6 decimals
+column_names = data.columns.to_list()
+
+for col in column_names:
+    result = (data[f'{col}'].round(6) == rdata[f'{col}'].round(6)).sum()
+    
+    if result == 3900:
+        print(f'Column {col} are equal at 6 decimals.')
+    else:
+        print(f'\n\nColumn {col} are not equal at 6 decimals.')
+
+# Now, we can construct the treatment variable, the outcome variable and the 
+# matrix Z that includes the control variables.
+
+# Treatment Variable
+D = rdata[ f'{d}']
+
+# Outcome Variable
+Y = rdata[ f'{y}']
+
+# Construct matrix Z
+Z = rdata[ X1 + X2 + census ]
+Z.shape
+```
+:::
+::::::
+\newline
+
+We have in total $195$ control variables. The control variables $Z_{j,t}$ are from the U.S. Census Bureau and  contain demographic and economic characteristics of the counties such as  the age distribution, the income distribution, crime rates, federal spending, home ownership rates, house prices, educational attainment, voting paterns, employment statistics, and migration rates. 
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+clu <- rdata[which(colnames(rdata) == "CountyCode")] #for clustering the standard errors
+data <- data.frame(cbind(Y, D, Z,as.matrix(clu)))
+
+save(data, file = "./data/gun_clean.RData")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+clu = rdata[['CountyCode']]
+data = pd.concat([Y, D, Z, clu], axis=1)
+
+data.to_csv( r"./data/gun_clean2.csv" , index = False )
+```
+:::
+::::::
+\newline
+
+## The effect of gun ownership
+
+### OLS
+
+After preprocessing the data, we first look at simple regression of $Y_{j,t}$ on $D_{j,t-1}$ without controls as a baseline model.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+#baseline_formula <- as.formula(paste(y, "~", d ))
+#baseline.ols <- lm(baseline_formula,data=rdata)
+
+baseline.ols <- felm(logghomr ~ logfssl |0|0| CountyCode,data=data) # ols with clustered standard errors
+est_baseline <- summary(baseline.ols)$coef[2,]
+confint(baseline.ols)[2,]
+est_baseline
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+# OLS clustering at the County level
+model = "logghomr ~ logfssl"
+baseline_ols = smf.ols(model , data=data).fit().get_robustcov_results(cov_type = "cluster", groups= data['CountyCode'])
+baseline_ols_table = baseline_ols.summary2().tables[1]
+print( baseline_ols_table.iloc[ 1 , 4:] )
+baseline_ols_table.iloc[1, :]
+```
+:::
+::::::
+\newline
+
+The point estimate is $0.282$ with the confidence interval ranging from 0.155 to 0.41. This
+suggests that increases in gun ownership rates are related to gun homicide rates - if gun ownership increases by 1% relative to a trend then the predicted gun homicide rate goes up by 0.28%, without controlling for counties' characteristics.
+
+Since our goal is to estimate the effect of gun ownership after controlling for a rich set county characteristics we next include the controls. First, we estimate the model by ols and then by an array of the modern regression methods using the double machine learning approach.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+control_formula <- as.formula(paste("logghomr", "~", paste("logfssl",paste(colnames(Z),collapse="+"),
+                                                          sep="+"),"|0|0| CountyCode"))
+control_formula
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# define the variables
+y = 'logghomr'
+
+data_columns = list(data)
+no_relev_col = ['logfssl', 'CountyCode', 'logghomr']
+
+# This gives us: new_list = ['carrot' , 'lemon']
+z = [col for col in data_columns if col not in no_relev_col]
+
+control_formula = "logghomr" + ' ~ ' + 'logfssl + ' + ' + '.join( Z.columns.to_list() )
+control_formula
+```
+:::
+::::::
+\newline
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+control.ols <- felm(control_formula,data=data)
+est_ols <- summary(control.ols)$coef[2,]
+confint(control.ols)[2,]
+est_ols
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python, warning=FALSE}
+control_ols = smf.ols( control_formula , data=data).fit().get_robustcov_results(cov_type = "cluster", groups= data['CountyCode'])
+control_ols_table = control_ols.summary2().tables[1]
+print( control_ols_table.iloc[ 1 , 4:] )
+control_ols_table.iloc[1, :]
+```
+:::
+::::::
+\newline
+
+Note that, in R, the coefficients of the bellow variables are `Null`. However, in python we got a very high value.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r, warning=FALSE}
+summary(control.ols)$coef
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+control_ols_table.loc[['PPQ110D', 'PPQ120D'], :]
+```
+:::
+::::::
+\newline
+
+After controlling for a rich set of characteristics, the point estimate of gun ownership reduces to $0.19$.
+
+## DML algorithm
+
+Here we perform inference of the predictive coefficient $\beta$ in our partially linear statistical model, 
+
+$$
+Y = D\beta + g(Z) + \epsilon, \quad E (\epsilon | D, Z) = 0,
+$$
+
+using the **double machine learning** approach. 
+
+For $\tilde Y = Y- E(Y|Z)$ and $\tilde D= D- E(D|Z)$, we can write
+$$
+\tilde Y = \alpha \tilde D + \epsilon, \quad E (\epsilon |\tilde D) =0.
+$$
+
+Using cross-fitting, we employ modern regression methods
+to build estimators $\hat \ell(Z)$ and $\hat m(Z)$ of $\ell(Z):=E(Y|Z)$ and $m(Z):=E(D|Z)$ to obtain the estimates of the residualized quantities:
+
+$$
+\tilde Y_i = Y_i  - \hat \ell (Z_i),   \quad \tilde D_i = D_i - \hat m(Z_i), \quad \text{ for each } i = 1,\dots,n.
+$$
+
+Finally, using ordinary least squares of $\tilde Y_i$ on $\tilde D_i$, we obtain the 
+estimate of $\beta$.
+
+The following algorithm comsumes $Y, D, Z$, and a machine learning method for learning the residuals $\tilde Y$ and $\tilde D$, where the residuals are obtained by cross-validation (cross-fitting). Then, it prints the estimated coefficient $\beta$ and the corresponding standard error from the final OLS regression.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+DML2.for.PLM <- function(z, d, y, dreg, yreg, nfold=2, clu) {
+  nobs <- nrow(z) #number of observations
+  foldid <- rep.int(1:nfold,times = ceiling(nobs/nfold))[sample.int(nobs)] #define folds indices
+  I <- split(1:nobs, foldid)  #split observation indices into folds  
+  ytil <- dtil <- rep(NA, nobs)
+  cat("fold: ")
+  for(b in 1:length(I)){
+    dfit <- dreg(z[-I[[b]],], d[-I[[b]]]) #take a fold out
+    yfit <- yreg(z[-I[[b]],], y[-I[[b]]]) # take a foldt out
+    dhat <- predict(dfit, z[I[[b]],], type="response") #predict the left-out fold 
+    yhat <- predict(yfit, z[I[[b]],], type="response") #predict the left-out fold  
+    dtil[I[[b]]] <- (d[I[[b]]] - dhat) #record residual for the left-out fold
+    ytil[I[[b]]] <- (y[I[[b]]] - yhat) #record residial for the left-out fold
+    cat(b," ")
+}
+  #rfit <- lm(ytil ~ dtil)    #estimate the main parameter by regressing one residual on the other
+  data <- data.frame(cbind(ytil, dtil, as.matrix(clu)))
+  rfit <- felm(ytil ~ dtil|0|0|CountyCode,data=data) 
+  coef.est <- coef(rfit)[2]  #extract coefficient
+  #HC <- vcovHC(rfit)
+  se    <- summary(rfit,robust=T)$coefficients[2,2] #record robust standard error by County
+  cat(sprintf("\ncoef (se) = %g (%g)\n", coef.est , se))  #printing output
+  return( list(coef.est =coef.est , se=se, dtil=dtil, ytil=ytil, rfit=rfit) ) #save output and residuals 
+}
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+def DML2_for_PLM(z, d, y, dreg, yreg, nfold, clu):
+    
+    # Num ob observations
+    nobs = z.shape[0]
+    
+    # Define folds indices 
+    list_1 = [*range(0, nfold, 1)]*nobs
+    sample = np.random.choice(nobs,nobs, replace=False).tolist()
+    foldid = [list_1[index] for index in sample]
+
+    # Create split function(similar to R)
+    def split(x, f):
+        count = max(f) + 1
+        return tuple( list(itertools.compress(x, (el == i for el in f))) for i in range(count) ) 
+
+    # Split observation indices into folds 
+    list_2 = [*range(0, nobs, 1)]
+    I = split(list_2, foldid)
+    
+    # Create array to save errors 
+    dtil = np.zeros( len(z) ).reshape( len(z) , 1 )
+    ytil = np.zeros( len(z) ).reshape( len(z) , 1 )
+    
+    # loop to save results
+    for b in range(0,len(I)):
+      # Split data - index to keep are in mask as booleans
+      include_idx = set(I[b])  #Here should go I[b] Set is more efficient, but doesn't reorder your elements if that is desireable
+      mask = np.array([(i in include_idx) for i in range(len(z))])
+
+      # Lasso regression, excluding folds selected 
+      dfit = dreg(z[~mask,], d[~mask,])
+      yfit = yreg(z[~mask,], y[~mask,])
+
+      # predict estimates using the 
+      dhat = dfit.predict( z[mask,] )
+      yhat = yfit.predict( z[mask,] )
+
+        # save errors  
+      dtil[mask] =  d[mask,] - dhat.reshape( len(I[b]) , 1 )
+      ytil[mask] = y[mask,] - yhat.reshape( len(I[b]) , 1 )
+      print(b, " ")
+    
+    # Create dataframe 
+    data_2 = pd.DataFrame(np.concatenate( ( ytil, dtil,clu ), axis = 1), columns = ['ytil','dtil','CountyCode'])
+   
+    # OLS clustering at the County level
+    model = "ytil ~ dtil"
+    baseline_ols = smf.ols(model , data = data_2 ).fit().get_robustcov_results(cov_type = "cluster", groups= data_2['CountyCode'])
+    coef_est = baseline_ols.summary2().tables[1]['Coef.']['dtil']
+    se = baseline_ols.summary2().tables[1]['Std.Err.']['dtil']
+    
+    Final_result = { 'coef_est' : coef_est , 'se' : se , 'dtil' : dtil , 'ytil' : ytil }
+
+    print("Coefficient is {}, SE is equal to {}".format(coef_est, se))
+    
+    return Final_result
+```
+:::
+::::::
+\newline
+
+Now, we apply the Double Machine Learning (DML) approach with different machine learning methods. First, we load the relevant libraries.Let us construct the input matrices.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+y <- as.matrix(Y)
+d <- as.matrix(D)
+z <- as.matrix(Z)
+clu <- rdata[which(colnames(rdata) == "CountyCode")]
+head(data.frame(cbind(y,d,as.matrix(clu))))
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+# Create main variables
+Y = data['logghomr']
+D = data['logfssl']
+Z = data.drop(['logghomr', 'logfssl', 'CountyCode'], axis=1)
+CLU = data['CountyCode']
+
+# as matrix
+y = Y.to_numpy().reshape( len(Y) , 1 )
+d = D.to_numpy().reshape( len(Y) , 1 )
+z = Z.to_numpy()
+clu = clu.to_numpy().reshape( len(Y) , 1 )
+```
+:::
+::::::
+\newline
+
+In the following, we apply the DML approach with the differnt versions of lasso.
+
+## Lasso
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+#DML with Lasso:
+set.seed(123)
+dreg <- function(z,d){ rlasso(z,d, post=FALSE) } #ML method= lasso from hdm 
+yreg <- function(z,y){ rlasso(z,y, post=FALSE) } #ML method = lasso from hdm
+
+DML2.lasso = DML2.for.PLM(z, d, y, dreg, yreg, nfold=10,clu)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python, warning=FALSE}
+def dreg(z,d):
+    alpha=0.00000001
+    result = linear_model.Lasso(alpha = alpha).fit(z, d)
+    return result
+
+def yreg(z,y):
+    alpha=0.00000001
+    result = linear_model.Lasso(alpha = alpha).fit(z, y)
+    return result
+
+DML2_lasso = DML2_for_PLM(z, d, y, dreg, yreg, 10, clu)
+```
+:::
+::::::
+\newline
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+#DML with Post-Lasso:
+dreg <- function(z,d){ rlasso(z,d, post=T) } #ML method= lasso from hdm 
+yreg <- function(z,y){ rlasso(z,y, post=T) } #ML method = lasso from hdm
+
+DML2.post = DML2.for.PLM(z, d, y, dreg, yreg, nfold=10, clu)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python, warning=FALSE}
+class Lasso_post:
+    
+    def __init__(self, alpha ):
+        self.alpha = alpha
+
+        
+    def fit( self, X, Y ):
+        self.X = X
+        self.Y = Y
+        lasso = linear_model.Lasso( alpha = self.alpha ).fit( X , Y )
+        model = SelectFromModel( lasso , prefit = True )
+        X_new = model.transform( X )
+        # Gettin indices from columns which has variance for regression
+        index_X = model.get_support()
+        
+        self.index = index_X
+        new_x = X[ : ,  index_X ]
+        
+        lasso2 = linear_model.Lasso( alpha = self.alpha ).fit( new_x , Y )
+        self.model = lasso2
+        
+        return self
+    
+    def predict( self , X ):
+        
+        dropped_X = X[ : , self.index ]
+        
+        predictions = self.model.predict( dropped_X )
+        
+        return predictions
+
+def dreg(z,d):
+    alpha=0.00000001
+    result = Lasso_post( alpha = alpha ).fit( z , d )
+    return result
+
+def yreg( z , y ):
+    alpha = 0.00000001
+    result = Lasso_post( alpha = alpha ).fit( z , y )
+    return result
+
+DML2_lasso_post = DML2_for_PLM(z, d, y, dreg, yreg, 10, clu)
+```
+We can replicate the above regressions but using `hmdpy` library.
+```{python}
+import hdmpy
+from statsmodels.tools import add_constant
+
+class rlasso_sklearn:
+    
+    def __init__(self, post ):
+        self.post = post
+       
+    def fit( self, X, Y ):
+        
+        self.X = X
+        self.Y = Y
+        
+        # Standarization of X and Y
+        self.rlasso_model = hdmpy.rlasso( X , Y , post = self.post )                
+        return self
+    
+    def predict( self , X_1 ):
+        self.X_1 = X_1
+        beta = self.rlasso_model.est['coefficients'].to_numpy()
+        
+        if beta.sum() == 0:
+            prediction = np.repeat( self.rlasso_model.est['intercept'] , self.X_1.shape[0] )
+        
+        else:
+            prediction = ( add_constant( self.X_1 , has_constant = 'add') @ beta ).flatten()
+                
+        return prediction
+    
+# Post = false
+def dreg(x, d):
+    result = rlasso_sklearn( post = False ).fit( x , d )
+    return result
+
+def yreg(x,y):
+    result = rlasso_sklearn( post = False ).fit( x , y )
+    return result
+
+DML2_lasso_hdmpy = DML2_for_PLM(z, d, y, dreg, yreg, 10, clu)
+
+# Post = True
+def dreg(x, d):
+    result = rlasso_sklearn( post = True ).fit( x , d )
+    return result
+
+def yreg(x,y):
+    result = rlasso_sklearn( post = True ).fit( x , y )
+    return result
+
+DML2_lasso_post_hdmpy = DML2_for_PLM(z, d, y, dreg, yreg, 10, clu)
+```
+We found out that the results are close. However, there are not a big differences between the <code>sklearn</code> and the <code>hdmpy</code> lasso function.
+:::
+::::::
+\newline
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+#DML with cross-validated Lasso:
+dreg <- function(z,d){ cv.glmnet(z,d,family="gaussian", alpha=1) } #ML method = lasso from glmnet 
+yreg <- function(z,y){ cv.glmnet(z,y,family="gaussian", alpha=1) }  #ML method = lasso from glmnet 
+DML2.lasso.cv = DML2.for.PLM(z, d, y, dreg, yreg, nfold=10, clu)
+
+dreg <- function(z,d){ cv.glmnet(z,d,family="gaussian", alpha=0.5) } #ML method = elastic net from glmnet 
+yreg <- function(z,y){ cv.glmnet(z,y,family="gaussian", alpha=0.5) }  #ML method = elastic net from glmnet 
+DML2.elnet = DML2.for.PLM(z, d, y, dreg, yreg, nfold=10, clu)
+
+dreg <- function(z,d){ cv.glmnet(z,d,family="gaussian", alpha=0) } #ML method = ridge from glmnet 
+yreg <- function(z,y){ cv.glmnet(z,y,family="gaussian", alpha=0) }  #ML method = ridge from glmnet 
+DML2.ridge = DML2.for.PLM(z, d, y, dreg, yreg, nfold=10, clu)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python, warning=FALSE}
+class standard_skl_model:
+  
+  def __init__(self, model ):
+        self.model = model
+       
+  def fit( self, X, Y ):
+    
+    # Standarization of X and Y
+    self.scaler_X = StandardScaler()
+    self.scaler_X.fit( X )
+    std_X = self.scaler_X.transform( X )
+                
+    self.model.fit( std_X , Y )
+                
+    return self
+    
+  def predict( self , X ):
+        
+    self.scaler_X = StandardScaler()
+    self.scaler_X.fit( X )
+    std_X = self.scaler_X.transform( X )
+        
+    prediction = self.model.predict( std_X )
+    
+    return prediction
+
+#DML with cross-validated Lasso:
+def dreg(z,d):
+    result = standard_skl_model( LassoCV(cv = 10 , random_state = 0 ) ).fit( z, d )
+    return result
+
+def yreg(z,y):
+    result = standard_skl_model( LassoCV(cv = 10 , random_state = 0  ) ).fit( z, y )
+    return result
+
+DML2_lasso_cv = DML2_for_PLM(z, d, y, dreg, yreg, 2 , clu)
+
+# DML with cross-validated Lasso:
+def dreg(z,d):
+    result = standard_skl_model( ElasticNetCV( cv = 10 , random_state = 0 , l1_ratio = 0.5, max_iter = 100000 ) ).fit( z, d )
+    return result
+
+def yreg(z,y):
+    result = standard_skl_model( ElasticNetCV( cv = 10 , random_state = 0 , l1_ratio = 0.5, max_iter = 100000 ) ).fit( z, y )
+    return result
+
+DML2_elnet = DML2_for_PLM(z, d, y, dreg, yreg, 2 , clu)
+
+#DML with cross-validated Lasso (Ridge)
+def dreg(z,d):
+    result = standard_skl_model( ElasticNetCV( cv = 10 ,  random_state = 0 , l1_ratio = 0.0001 ) ).fit( z, d )
+    return result
+
+def yreg(z,y):
+    result = standard_skl_model( ElasticNetCV( cv = 10 , random_state = 0 , l1_ratio = 0.0001 ) ).fit( z, y )
+    return result
+
+DML2_ridge = DML2_for_PLM(z, d, y, dreg, yreg, 2, clu)
+```
+:::
+::::::
+\newline
+
+Here we also compute DML with OLS used as the ML method
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+dreg <- function(z,d){  glmnet(z,d,family="gaussian", lambda=0) } #ML method = ols from glmnet 
+yreg <- function(z,y){  glmnet(z,y,family="gaussian", lambda=0) }  #ML method = ols from glmnet 
+DML2.ols = DML2.for.PLM(z, d, y, dreg, yreg, nfold=10, clu)
+
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+#DML with cross-validated Lasso:
+def dreg(z,d):
+    result = LinearRegression().fit( z, d )
+    return result
+
+def yreg(z,y):
+    result = LinearRegression().fit( z, y )
+    return result
+
+DML2_ols = DML2_for_PLM(z, d, y, dreg, yreg, 2, clu)
+```
+:::
+::::::
+\newline
+
+Next, we also apply Random Forest for comparison purposes.
+
+### Random Forest
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+#DML with Random Forest:
+dreg <- function(z,d){ randomForest(z, d) } #ML method=Forest 
+yreg <- function(z,y){ randomForest(z, y) } #ML method=Forest
+set.seed(1)
+DML2.RF = DML2.for.PLM(z, d, y, dreg, yreg, nfold=2, clu) # set to 2 due to computation time
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python, warning=FALSE}
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+
+#DML with cross-validated Lasso:
+def dreg(z,d):
+    result = RandomForestRegressor( random_state = 0 , n_estimators = 500 , max_features = 65 , n_jobs = 4 , min_samples_leaf = 5 ).fit( z, d )
+    return result
+
+def yreg(z,y):
+    result = RandomForestRegressor( random_state = 0 , n_estimators = 500 , max_features = 65 , n_jobs = 4 , min_samples_leaf = 5 ).fit( z, y )
+    return result
+
+DML2_RF = DML2_for_PLM(z, d, y, dreg, yreg, 2, clu)   # set to 2 due to computation time
+```
+:::
+::::::
+\newline
+
+We conclude that the gun ownership rates are related to gun homicide rates - if gun ownership increases by 1% relative to a trend then the predicted gun homicide rate goes up by about 0.20% controlling for counties' characteristics.
+
+Finally, let's see which method is actually better. We compute RMSE for predicting D and Y, and see which
+of the methods works better.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+mods<- list(DML2.ols, DML2.lasso, DML2.post, DML2.lasso.cv, DML2.ridge, DML2.elnet, DML2.RF)
+
+RMSE.mdl<- function(mdl) {
+RMSEY <- sqrt(mean(mdl$ytil)^2) 
+RMSED <- sqrt(mean(mdl$dtil)^2) 
+return( list(RMSEY=RMSEY, RMSED=RMSED))
+}
+
+#RMSE.mdl(DML2.lasso)
+
+#DML2.lasso$ytil
+
+Res<- lapply(mods, RMSE.mdl)
+
+
+prRes.Y<- c( Res[[1]]$RMSEY,Res[[2]]$RMSEY, Res[[3]]$RMSEY, Res[[4]]$RMSEY, Res[[5]]$RMSEY,  Res[[6]]$RMSEY, Res[[7]]$RMSEY)
+prRes.D<- c( Res[[1]]$RMSED,Res[[2]]$RMSED, Res[[3]]$RMSED, Res[[4]]$RMSED, Res[[5]]$RMSED, Res[[6]]$RMSED, Res[[7]]$RMSED)
+
+prRes<- rbind(prRes.Y, prRes.D); 
+rownames(prRes)<- c("RMSE D", "RMSE Y");
+colnames(prRes)<- c("OLS", "Lasso", "Post-Lasso", "CV Lasso", "CV Ridge", "CV Elnet", "RF")
+print(prRes,digit=6)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+mods = [DML2_ols, DML2_lasso, DML2_lasso_post , DML2_lasso_cv, DML2_ridge, DML2_elnet, DML2_RF]
+mods_name = ["DML2_ols", "DML2_lasso", "DML2_lasso_post" , "DML2_lasso_cv", 'DML2_ridge', 'DML2_elnet', 'DML2_RF']
+
+def mdl( model , model_name ):
+  RMSEY = np.sqrt( np.mean( model[ 'ytil' ] ) ** 2 ) # I have some doubts about these equations...we have to recheck
+  RMSED = np.sqrt( np.mean( model[ 'dtil' ] ) ** 2 ) # I have some doubts about these equations...we have to recheck
+    
+  result = pd.DataFrame( { model_name : [ RMSEY , RMSED ]} , index = [ 'RMSEY' , 'RMSED' ])
+  return result
+
+RES = [ mdl( model , name ) for model, name in zip( mods , mods_name ) ]
+    
+pr_Res = pd.concat( RES, axis = 1)
+
+pr_Res
+```
+:::
+::::::
+\newline
+
+It looks like the best method for predicting D is Lasso, and the best method for predicting Y is CV Ridge.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+dreg <- function(z,d){ rlasso(z,d, post=T) } #ML method= lasso from hdm 
+yreg <- function(z,y){ cv.glmnet(z,y,family="gaussian", alpha=0) }  #ML method = ridge from glmnet 
+DML2.best= DML2.for.PLM(z, d, y, dreg, yreg, nfold=10, clu)
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python, warning=FALSE}
+#DML with cross-validated Lasso:
+def dreg(z,d):
+    result = standard_skl_model( LassoCV(cv = 10 , random_state = 0 , alphas = [0]) ).fit( z, d )
+    return result
+
+
+def yreg(z,y):
+    result = standard_skl_model( ElasticNetCV( cv = 10 ,  random_state = 0 , l1_ratio = 0.0001 ) ).fit( z, y )
+    return result
+
+DML2_best = DML2_for_PLM(z, d, y , dreg, yreg, 10, clu)
+```
+:::
+::::::
+\newline
+
+Let's organize the results in a table.
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+table <- matrix(0,9,2)
+table[1,1] <- as.numeric(est_baseline[1])
+table[2,1] <- as.numeric(est_ols[1])
+table[3,1]   <- as.numeric(DML2.lasso$coef.est)
+table[4,1]   <- as.numeric(DML2.post$coef.est)
+table[5,1]  <-as.numeric(DML2.lasso.cv$coef.est)
+table[6,1] <-as.numeric(DML2.elnet$coef.est)
+table[7,1] <-as.numeric(DML2.ridge$coef.est)
+table[8,1] <-as.numeric(DML2.RF$coef.est)
+table[9,1] <-as.numeric(DML2.best$coef.est)
+table[1,2] <- as.numeric(est_baseline[2])
+table[2,2] <- as.numeric(est_ols[2])
+table[3,2]   <- as.numeric(DML2.lasso$se)
+table[4,2]   <- as.numeric(DML2.post$se)
+table[5,2]  <-as.numeric(DML2.lasso.cv$se)
+table[6,2] <-as.numeric(DML2.elnet$se)
+table[7,2] <-as.numeric(DML2.ridge$se)
+table[8,2] <-as.numeric(DML2.RF$se)
+table[9,2] <-as.numeric(DML2.best$se)
+
+# Print Results
+colnames(table) <- c("Estimate","Standard Error")
+rownames(table) <- c("Baseline OLS", "Least Squares with controls", "Lasso", "Post-Lasso", "CV Lasso","CV Elnet", "CV Ridge", "Random Forest", 
+                     "Best")
+
+table
+
+print(table, digit=3)
+
+tab <- xtable(table, digits=3)
+print(tab, type="latex")
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+table = np.zeros( ( 9 , 2 ))
+table[ 0 , 0] = baseline_ols_table.iloc[ 1 , 0 ]
+table[ 1 , 0] = control_ols_table.iloc[ 1 , 0 ]
+table[ 2 , 0] = DML2_lasso['coef_est']
+table[ 3 , 0] = DML2_lasso_post['coef_est']
+table[ 4 , 0] = DML2_lasso_cv['coef_est']
+table[ 5 , 0] = DML2_ridge['coef_est']
+table[ 6 , 0] = DML2_elnet['coef_est']
+table[ 7 , 0] = DML2_RF['coef_est']
+table[ 8 , 0] = DML2_best['coef_est']
+table[ 0 , 1] = baseline_ols_table.iloc[ 1 , 1 ]
+table[ 1 , 1] = control_ols_table.iloc[ 1 , 1 ]
+table[ 2 , 1] = DML2_lasso['se']
+table[ 3 , 1] = DML2_lasso_post['se']
+table[ 4 , 1] = DML2_lasso_cv['se']
+table[ 5 , 1] = DML2_ridge['se']
+table[ 6 , 1] = DML2_elnet['se']
+table[ 7 , 1] = DML2_RF['se']
+table[ 8 , 1] = DML2_best['se']
+
+table = pd.DataFrame( table , index = [ "Baseline OLS", "Least Squares with controls", "Lasso", \
+             "Post-Lasso", "CV Lasso","CV Elnet", "CV Ridge", "Random Forest", "Best" ] , \
+            columns = ["Estimate","Standard Error"] )
+table.round( 3 )
+
+table.to_latex()
+```
+:::
+::::::
+\newline
+
+
+
+
+:::::: {.columns}
+::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+```{r}
+
+```
+
+:::
+::: {.column width="1%" data-latex="{0.04\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+:::::: {.column width="49.5%" data-latex="{0.48\textwidth}"}
+
+```{python}
+
+```
+:::
+::::::
+\newline
