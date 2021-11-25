@@ -47,11 +47,12 @@ a column separator -->
 ## Graphs for 401(K) Analsyis
 
 
-<span style="font-size:2em; font-weight:bold">  Here we have</span>
-<span style="font-size:2em; font-weight:bold">  * $Y$ -- net financial assets;results. </span>
-<span style="font-size:2em; font-weight:bold">  * $X$ -- worker characteristics (income, family size, other retirement plans; see lecture notes for details); </span>
-<span style="font-size:2em; font-weight:bold">  * $F$ -- latent (unobserved) firm characteristics </span>
-<span style="font-size:2em; font-weight:bold">  * $D$ -- 401(K) eligibility, deterimined by $F$ and $X$ </span>
+Here we have <br />
+
+* $Y$ -- net financial assets;
+* $X$ -- worker characteristics (income, family size, other retirement plans; see lecture notes for details);
+* $F$ -- latent (unobserved) firm characteristics
+* $D$ -- 401(K) eligibility, deterimined by $F$ and $X$
 
 
 

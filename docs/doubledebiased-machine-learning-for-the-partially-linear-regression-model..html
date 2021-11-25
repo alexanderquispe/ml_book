@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 18 Double/Debiased Machine Learning for the Partially Linear Regression Model. | Machine Learning and Causal Inference</title>
+  <meta name="description" content="Chapter 18 Double/Debiased Machine Learning for the Partially Linear Regression Model. | Machine Learning and Causal Inference" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 18 Double/Debiased Machine Learning for the Partially Linear Regression Model. | Machine Learning and Causal Inference" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 18 Double/Debiased Machine Learning for the Partially Linear Regression Model. | Machine Learning and Causal Inference" />
+  
+  
+  
+
+<meta name="author" content="Alexander Quispe &amp; Anzony Quispe" />
+
+
+<meta name="date" content="2021-11-24" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"/>
+<link rel="next" href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"/>
+<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Machine Learning and Causal Inference</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
+<li class="chapter" data-level="2" data-path="predictive-inference.html"><a href="predictive-inference.html"><i class="fa fa-check"></i><b>2</b> Predictive Inference</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="predictive-inference.html"><a href="predictive-inference.html#data"><i class="fa fa-check"></i><b>2.1</b> Data</a></li>
+<li class="chapter" data-level="2.2" data-path="predictive-inference.html"><a href="predictive-inference.html#data-analysis"><i class="fa fa-check"></i><b>2.2</b> Data Analysis</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="predictive-inference.html"><a href="predictive-inference.html#r-and-python-code"><i class="fa fa-check"></i><b>2.2.1</b> R and Python code</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="predictive-inference.html"><a href="predictive-inference.html#prediction-question"><i class="fa fa-check"></i><b>2.3</b> Prediction Question</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="predictive-inference.html"><a href="predictive-inference.html#basic-model"><i class="fa fa-check"></i><b>2.3.1</b> Basic Model:</a></li>
+<li class="chapter" data-level="2.3.2" data-path="predictive-inference.html"><a href="predictive-inference.html#flexible-model"><i class="fa fa-check"></i><b>2.3.2</b> Flexible Model:</a></li>
+<li class="chapter" data-level="2.3.3" data-path="predictive-inference.html"><a href="predictive-inference.html#lasso-model"><i class="fa fa-check"></i><b>2.3.3</b> Lasso Model:</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="predictive-inference.html"><a href="predictive-inference.html#data-splitting"><i class="fa fa-check"></i><b>2.4</b> Data Splitting</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html"><i class="fa fa-check"></i><b>3</b> Predictive Inference The Gender Wage Gap</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#data-analysis-1"><i class="fa fa-check"></i><b>3.1</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression"><i class="fa fa-check"></i><b>3.1.1</b> OLS Regression</a></li>
+<li class="chapter" data-level="3.1.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression-with-controls"><i class="fa fa-check"></i><b>3.1.2</b> Ols regression with controls</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-ols"><i class="fa fa-check"></i><b>3.2</b> Partialling-Out using ols</a></li>
+<li class="chapter" data-level="3.3" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-lasso"><i class="fa fa-check"></i><b>3.3</b> Partialling-Out using lasso</a></li>
+<li class="chapter" data-level="3.4" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#extra-flexible-model"><i class="fa fa-check"></i><b>3.4</b> “Extra” flexible model</a></li>
+<li class="chapter" data-level="3.5" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#laso-extra-flexible-model"><i class="fa fa-check"></i><b>3.5</b> Laso “Extra” Flexible model</a></li>
+<li class="chapter" data-level="3.6" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#summarize-the-results"><i class="fa fa-check"></i><b>3.6</b> Summarize the results</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html"><i class="fa fa-check"></i><b>4</b> Simple Exercise on Overfitting</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#first-set-pn"><i class="fa fa-check"></i><b>4.1</b> 1. First set p=n</a></li>
+<li class="chapter" data-level="4.2" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#second-set-pn2."><i class="fa fa-check"></i><b>4.2</b> 2. Second, set p=n/2.</a></li>
+<li class="chapter" data-level="4.3" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#third-set-pn-.05"><i class="fa fa-check"></i><b>4.3</b> 3. Third, set p/n =.05</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html"><i class="fa fa-check"></i><b>5</b> Vaccine RCT Examples</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html#polio-rct"><i class="fa fa-check"></i><b>5.1</b> Polio RCT</a></li>
+<li class="chapter" data-level="5.2" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html#pfizerbntx-covid-19-rct"><i class="fa fa-check"></i><b>5.2</b> Pfizer/BNTX Covid-19 RCT</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html"><i class="fa fa-check"></i><b>6</b> Penalized Linear Regressions: A Simulation Experiment</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html#data-generating-process-approximately-sparse"><i class="fa fa-check"></i><b>6.1</b> Data Generating Process: Approximately Sparse</a></li>
+<li class="chapter" data-level="6.2" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html#data-generating-process-approximately-sparse-small-dense-part"><i class="fa fa-check"></i><b>6.2</b> Data Generating Process: Approximately Sparse + Small Dense Part</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="simulation-design.html"><a href="simulation-design.html"><i class="fa fa-check"></i><b>7</b> Simulation Design</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="simulation-design.html"><a href="simulation-design.html#example-1"><i class="fa fa-check"></i><b>7.1</b> Example 1</a></li>
+<li class="chapter" data-level="7.2" data-path="simulation-design.html"><a href="simulation-design.html#example-2"><i class="fa fa-check"></i><b>7.2</b> Example 2</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html"><i class="fa fa-check"></i><b>8</b> Testing the Convergence Hypothesis</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#introduction"><i class="fa fa-check"></i><b>8.1</b> Introduction</a></li>
+<li class="chapter" data-level="8.2" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#data-analysis-2"><i class="fa fa-check"></i><b>8.2</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#ols"><i class="fa fa-check"></i><b>8.2.1</b> OLS</a></li>
+<li class="chapter" data-level="8.2.2" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#lasso"><i class="fa fa-check"></i><b>8.2.2</b> Lasso</a></li>
+<li class="chapter" data-level="8.2.3" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#summary-results"><i class="fa fa-check"></i><b>8.2.3</b> Summary results</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html"><i class="fa fa-check"></i><b>9</b> Machine Learning for wage prediction</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#data-1"><i class="fa fa-check"></i><b>9.1</b> Data</a></li>
+<li class="chapter" data-level="9.2" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#analysis"><i class="fa fa-check"></i><b>9.2</b> Analysis</a></li>
+<li class="chapter" data-level="9.3" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#ols-1"><i class="fa fa-check"></i><b>9.3</b> OLS</a></li>
+<li class="chapter" data-level="9.4" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#lasso-ridge-and-elastic-net"><i class="fa fa-check"></i><b>9.4</b> Lasso, Ridge and Elastic Net</a></li>
+<li class="chapter" data-level="9.5" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#non-linear-models"><i class="fa fa-check"></i><b>9.5</b> Non-linear models</a>
+<ul>
+<li class="chapter" data-level="9.5.1" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#regression-trees"><i class="fa fa-check"></i><b>9.5.1</b> Regression Trees</a></li>
+</ul></li>
+<li class="chapter" data-level="9.6" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#random-forest-and-boosted-trees"><i class="fa fa-check"></i><b>9.6</b> Random Forest and Boosted Trees</a></li>
+<li class="chapter" data-level="9.7" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#results"><i class="fa fa-check"></i><b>9.7</b> Results</a></li>
+<li class="chapter" data-level="9.8" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#ensemble-learning"><i class="fa fa-check"></i><b>9.8</b> Ensemble learning</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="deep-neural-networks-for-wage-prediction.html"><a href="deep-neural-networks-for-wage-prediction.html"><i class="fa fa-check"></i><b>10</b> Deep Neural Networks for Wage Prediction</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="deep-neural-networks-for-wage-prediction.html"><a href="deep-neural-networks-for-wage-prediction.html#data-preparation"><i class="fa fa-check"></i><b>10.1</b> Data Preparation</a></li>
+<li class="chapter" data-level="10.2" data-path="deep-neural-networks-for-wage-prediction.html"><a href="deep-neural-networks-for-wage-prediction.html#neural-networks"><i class="fa fa-check"></i><b>10.2</b> Neural Networks</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html"><i class="fa fa-check"></i><b>11</b> Functional Approximations by Trees and Neural Networks</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html#functional-approximation-by-a-tree"><i class="fa fa-check"></i><b>11.1</b> Functional Approximation by a Tree</a></li>
+<li class="chapter" data-level="11.2" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html#functional-approximation-by-rf"><i class="fa fa-check"></i><b>11.2</b> Functional Approximation by RF</a></li>
+<li class="chapter" data-level="11.3" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html#boosted-trees"><i class="fa fa-check"></i><b>11.3</b> Boosted Trees</a></li>
+<li class="chapter" data-level="11.4" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html#same-example-with-a-neural-network"><i class="fa fa-check"></i><b>11.4</b> Same Example with a Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><i class="fa fa-check"></i><b>12</b> Causal Identification in DAGs using Backdoor and Swigs, Equivalence Classes, Falsifiability Tests</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#graph-generation-and-plotting"><i class="fa fa-check"></i><b>12.1</b> Graph Generation and Plotting</a></li>
+<li class="chapter" data-level="12.2" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#report-relatives-of-x2"><i class="fa fa-check"></i><b>12.2</b> Report Relatives of X2</a></li>
+<li class="chapter" data-level="12.3" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#find-paths-between-d-and-y"><i class="fa fa-check"></i><b>12.3</b> Find Paths Between D and Y</a></li>
+<li class="chapter" data-level="12.4" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#list-all-testable-implications-of-the-model"><i class="fa fa-check"></i><b>12.4</b> List All Testable Implications of the Model</a></li>
+<li class="chapter" data-level="12.5" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#identification-by-backdoor-list-minimal-adjustment-sets-to-identify-causal-effecs-d-to-y"><i class="fa fa-check"></i><b>12.5</b> Identification by Backdoor: List minimal adjustment sets to identify causal effecs <span class="math inline">\(D \to Y\)</span></a></li>
+<li class="chapter" data-level="12.6" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#identification-via-swig-and-d-separation"><i class="fa fa-check"></i><b>12.6</b> Identification via SWIG and D-separation</a></li>
+<li class="chapter" data-level="12.7" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#deduce-conditional-exogeneity-or-ignorability-by-d-separation"><i class="fa fa-check"></i><b>12.7</b> Deduce Conditional Exogeneity or Ignorability by D-separation</a></li>
+<li class="chapter" data-level="12.8" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#print-all-average-effects-identifiable-by-conditioning"><i class="fa fa-check"></i><b>12.8</b> Print All Average Effects Identifiable by Conditioning</a></li>
+<li class="chapter" data-level="12.9" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#equivalence-classes"><i class="fa fa-check"></i><b>12.9</b> Equivalence Classes</a></li>
+<li class="chapter" data-level="12.10" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#example-of-testing-dag-validity"><i class="fa fa-check"></i><b>12.10</b> Example of Testing DAG Validity</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="dosearch-for-causal-identification-in-dags.html"><a href="dosearch-for-causal-identification-in-dags.html"><i class="fa fa-check"></i><b>13</b> Dosearch for Causal Identification in DAGs</a></li>
+<li class="chapter" data-level="14" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><i class="fa fa-check"></i><b>14</b> A Case Study: The Effect of Gun Ownership on Gun-Homicide Rates</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#data-2"><i class="fa fa-check"></i><b>14.1</b> Data</a></li>
+<li class="chapter" data-level="14.2" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#preprocessing."><i class="fa fa-check"></i><b>14.2</b> Preprocessing.</a></li>
+<li class="chapter" data-level="14.3" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#the-effect-of-gun-ownership"><i class="fa fa-check"></i><b>14.3</b> The effect of gun ownership</a>
+<ul>
+<li class="chapter" data-level="14.3.1" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#ols-2"><i class="fa fa-check"></i><b>14.3.1</b> OLS</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#dml-algorithm"><i class="fa fa-check"></i><b>14.4</b> DML algorithm</a></li>
+<li class="chapter" data-level="14.5" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#lasso-1"><i class="fa fa-check"></i><b>14.5</b> Lasso</a>
+<ul>
+<li class="chapter" data-level="14.5.1" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#random-forest"><i class="fa fa-check"></i><b>14.5.1</b> Random Forest</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html"><a href="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html"><i class="fa fa-check"></i><b>15</b> The Effect of Gun Ownership on Gun-Homicide Rates using DML for neural nets</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html"><a href="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html#dml-for-neural-nets"><i class="fa fa-check"></i><b>15.1</b> DML for neural nets</a></li>
+<li class="chapter" data-level="15.2" data-path="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html"><a href="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html#estimating-the-effect-with-dlm-for-neural-nets"><i class="fa fa-check"></i><b>15.2</b> Estimating the effect with DLM for neural nets</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><i class="fa fa-check"></i><b>16</b> Inference on Predictive and Causal Effects in High-Dimensional Nonlinear Models</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#impact-of-401k-on-financial-wealth"><i class="fa fa-check"></i><b>16.1</b> Impact of 401(k) on Financial Wealth</a>
+<ul>
+<li class="chapter" data-level="16.1.1" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#data-3"><i class="fa fa-check"></i><b>16.1.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#double-ml-package"><i class="fa fa-check"></i><b>16.2</b> Double ML package</a></li>
+<li class="chapter" data-level="16.3" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#estimating-the-ate-of-401k-eligibility-on-net-financial-assets"><i class="fa fa-check"></i><b>16.3</b> Estimating the ATE of 401(k) Eligibility on Net Financial Assets</a></li>
+<li class="chapter" data-level="16.4" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#partially-linear-regression-models-plr"><i class="fa fa-check"></i><b>16.4</b> Partially Linear Regression Models (PLR)</a></li>
+<li class="chapter" data-level="16.5" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#interactive-regression-model-irm"><i class="fa fa-check"></i><b>16.5</b> Interactive Regression Model (IRM)</a></li>
+<li class="chapter" data-level="16.6" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#local-average-treatment-effects-of-401k-participation-on-net-financial-assets"><i class="fa fa-check"></i><b>16.6</b> Local Average Treatment Effects of 401(k) Participation on Net Financial Assets</a></li>
+<li class="chapter" data-level="16.7" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#interactive-iv-model-iivm"><i class="fa fa-check"></i><b>16.7</b> Interactive IV Model (IIVM)</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><i class="fa fa-check"></i><b>17</b> Using Dagitty in the Analysis of Impact of 401(k) on Net Financial Wealth</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#graphs-for-401k-analsyis"><i class="fa fa-check"></i><b>17.1</b> Graphs for 401(K) Analsyis</a></li>
+<li class="chapter" data-level="17.2" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#state-one-graph-where-f-determines-x-and-plot-it"><i class="fa fa-check"></i><b>17.2</b> State one graph (where F determines X) and plot it</a></li>
+<li class="chapter" data-level="17.3" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#list-minimal-adjustment-sets-to-identify-causal-effecs-d-to-y"><i class="fa fa-check"></i><b>17.3</b> List minimal adjustment sets to identify causal effecs <span class="math inline">\(D \to Y\)</span></a></li>
+<li class="chapter" data-level="17.4" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#what-is-the-underlying-principle"><i class="fa fa-check"></i><b>17.4</b> What is the underlying principle?</a></li>
+<li class="chapter" data-level="17.5" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#another-graph-wherere-x-determine-f"><i class="fa fa-check"></i><b>17.5</b> Another Graph (wherere <span class="math inline">\(X\)</span> determine <span class="math inline">\(F\)</span>):</a></li>
+<li class="chapter" data-level="17.6" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#one-more-graph-encompassing-previous-ones-where-f-x-are-jointly-determined-by-latent-factors-a.-we-can-allow-in-fact-the-whole-triple-d-f-x-to-be-jointly-determined-by-latent-factors-a."><i class="fa fa-check"></i><b>17.6</b> One more graph (encompassing previous ones), where (F, X) are jointly determined by latent factors <span class="math inline">\(A\)</span>. We can allow in fact the whole triple (D, F, X) to be jointly determined by latent factors <span class="math inline">\(A\)</span>.</a></li>
+<li class="chapter" data-level="17.7" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#threat-to-idenitification-what-if-f-also-directly-affects-y-note-that-there-are-no-valid-adjustment-sets-in-this-case"><i class="fa fa-check"></i><b>17.7</b> Threat to Idenitification: What if <span class="math inline">\(F\)</span> also directly affects <span class="math inline">\(Y\)</span>? (Note that there are no valid adjustment sets in this case)</a></li>
+<li class="chapter" data-level="17.8" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#introduce-match-amount-m-very-important-mediator-why-mediator.-m-is-not-observed.-luckily-adjusting-for-x-still-works-if-there-is-no-f-to-m-arrow."><i class="fa fa-check"></i><b>17.8</b> Introduce Match Amount <span class="math inline">\(M\)</span> (very important mediator, why mediator?). <span class="math inline">\(M\)</span> is not observed. Luckily adjusting for <span class="math inline">\(X\)</span> still works if there is no <span class="math inline">\(F \to M\)</span> arrow.</a></li>
+<li class="chapter" data-level="17.9" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#if-there-is-f-to-m-arrow-then-adjusting-for-x-is-not-sufficient."><i class="fa fa-check"></i><b>17.9</b> If there is <span class="math inline">\(F \to M\)</span> arrow, then adjusting for <span class="math inline">\(X\)</span> is not sufficient.</a></li>
+<li class="chapter" data-level="17.10" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#question"><i class="fa fa-check"></i><b>17.10</b> Question:</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html"><i class="fa fa-check"></i><b>18</b> Double/Debiased Machine Learning for the Partially Linear Regression Model.</a>
+<ul>
+<li class="chapter" data-level="18.1" data-path="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#dml-algorithm-1"><i class="fa fa-check"></i><b>18.1</b> DML algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><i class="fa fa-check"></i><b>19</b> Sensititivy Analysis for Unobserved Confounder with DML and Sensmakr</a>
+<ul>
+<li class="chapter" data-level="19.1" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#here-we-experiment-with-using-package-sensemakr-in-conjunction-with-debiased-ml"><i class="fa fa-check"></i><b>19.1</b> Here we experiment with using package “sensemakr” in conjunction with debiased ML</a></li>
+<li class="chapter" data-level="19.2" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#we-will"><i class="fa fa-check"></i><b>19.2</b> We will</a></li>
+<li class="chapter" data-level="19.3" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#take-out-village-fixed-effects-and-run-basic-linear-analysis"><i class="fa fa-check"></i><b>19.3</b> Take out village fixed effects and run basic linear analysis</a></li>
+<li class="chapter" data-level="19.4" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#we-first-use-lasso-for-partilling-out-controls"><i class="fa fa-check"></i><b>19.4</b> We first use Lasso for Partilling Out Controls</a></li>
+<li class="chapter" data-level="19.5" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#manual-bias-analysis"><i class="fa fa-check"></i><b>19.5</b> Manual Bias Analysis</a></li>
+<li class="chapter" data-level="19.6" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#bias-analysis-with-sensemakr"><i class="fa fa-check"></i><b>19.6</b> Bias Analysis with Sensemakr</a></li>
+<li class="chapter" data-level="19.7" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#next-we-use-random-forest-as-ml-tool-for-partialling-out"><i class="fa fa-check"></i><b>19.7</b> Next We use Random Forest as ML tool for Partialling Out</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html"><i class="fa fa-check"></i><b>20</b> Double/Debiased ML for Partially Linear IV Model</a>
+<ul>
+<li class="chapter" data-level="20.1" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#partially-linear-iv-model"><i class="fa fa-check"></i><b>20.1</b> Partially Linear IV Model</a></li>
+<li class="chapter" data-level="20.2" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#example"><i class="fa fa-check"></i><b>20.2</b> Example</a></li>
+<li class="chapter" data-level="20.3" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#plivm-in-residualized-form"><i class="fa fa-check"></i><b>20.3</b> PLIVM in Residualized Form</a></li>
+<li class="chapter" data-level="20.4" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#dml-for-pliv-model"><i class="fa fa-check"></i><b>20.4</b> DML for PLIV Model</a></li>
+<li class="chapter" data-level="20.5" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#emprical-example-acemoglu-jonsohn-robinson-aer."><i class="fa fa-check"></i><b>20.5</b> Emprical Example: Acemoglu, Jonsohn, Robinson (AER).</a></li>
+<li class="chapter" data-level="20.6" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#examine-if-we-have-weak-instruments"><i class="fa fa-check"></i><b>20.6</b> Examine if we have weak instruments</a></li>
+<li class="chapter" data-level="20.7" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#we-do-have-weak-instruments-because-t-stats-in-regression-tilde-d-sim-tilde-z-are-less-than-4-in-absolute-value"><i class="fa fa-check"></i><b>20.7</b> We do have weak instruments, because t-stats in regression <span class="math inline">\(\tilde D \sim \tilde Z\)</span> are less than 4 in absolute value</a></li>
+</ul></li>
+<li class="chapter" data-level="21" data-path="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><a href="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><i class="fa fa-check"></i><b>21</b> A Simple Example of Properties of IV estimator when Instruments are Weak</a>
+<ul>
+<li class="chapter" data-level="21.1" data-path="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><a href="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html#run-1000-trials-to-evaluate-distribution-of-the-iv-estimator"><i class="fa fa-check"></i><b>21.1</b> Run 1000 trials to evaluate distribution of the IV estimator</a></li>
+<li class="chapter" data-level="21.2" data-path="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><a href="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html#plot-the-actual-distribution-against-the-normal-approximation-based-on-strong-instrument-assumption"><i class="fa fa-check"></i><b>21.2</b> Plot the Actual Distribution against the Normal Approximation (based on Strong Instrument Assumption)</a></li>
+<li class="chapter" data-level="21.3" data-path="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><a href="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html#some-help-functions"><i class="fa fa-check"></i><b>21.3</b> Some Help Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="22" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html"><i class="fa fa-check"></i><b>22</b> HTE I: Binary treatment</a>
+<ul>
+<li class="chapter" data-level="22.1" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#pre-specified-hypotheses"><i class="fa fa-check"></i><b>22.1</b> Pre-specified hypotheses</a></li>
+<li class="chapter" data-level="22.2" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#data-driven-hypotheses"><i class="fa fa-check"></i><b>22.2</b> Data-driven hypotheses</a>
+<ul>
+<li class="chapter" data-level="22.2.1" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#via-causal-trees"><i class="fa fa-check"></i><b>22.2.1</b> Via causal trees</a></li>
+<li class="chapter" data-level="22.2.2" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#via-grf"><i class="fa fa-check"></i><b>22.2.2</b> Via grf</a></li>
+</ul></li>
+<li class="chapter" data-level="22.3" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#further-reading"><i class="fa fa-check"></i><b>22.3</b> Further reading</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Machine Learning and Causal Inference</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="doubledebiased-machine-learning-for-the-partially-linear-regression-model." class="section level1" number="18">
+<h1><span class="header-section-number">Chapter 18</span> Double/Debiased Machine Learning for the Partially Linear Regression Model.</h1>
+<p>This is a simple implementation of Debiased Machine Learning for the Partially Linear Regression Model.</p>
+<p>Reference:</p>
+<p><a href="https://arxiv.org/abs/1608.00060" class="uri">https://arxiv.org/abs/1608.00060</a></p>
+<p><a href="https://www.amazon.com/Business-Data-Science-Combining-Accelerate/dp/1260452778" class="uri">https://www.amazon.com/Business-Data-Science-Combining-Accelerate/dp/1260452778</a></p>
+<p>The code is based on the book.</p>
+<div id="dml-algorithm-1" class="section level2" number="18.1">
+<h2><span class="header-section-number">18.1</span> DML algorithm</h2>
+<p>Here we perform estimation and inference of predictive coefficient <span class="math inline">\(\alpha\)</span> in the partially linear statistical model,
+<span class="math display">\[
+Y = D\alpha + g(X) + U, \quad E (U | D, X) = 0. 
+\]</span>
+For <span class="math inline">\(\tilde Y = Y- E(Y|X)\)</span> and <span class="math inline">\(\tilde D= D- E(D|X)\)</span>, we can write
+<span class="math display">\[
+\tilde Y = \alpha \tilde D + U, \quad E (U |\tilde D) =0.
+\]</span>
+Parameter <span class="math inline">\(\alpha\)</span> is then estimated using cross-fitting approach to obtain the residuals <span class="math inline">\(\tilde D\)</span> and <span class="math inline">\(\tilde Y\)</span>.
+The algorithm comsumes <span class="math inline">\(Y, D, X\)</span>, and machine learning methods for learning the residuals <span class="math inline">\(\tilde Y\)</span> and <span class="math inline">\(\tilde D\)</span>, where
+the residuals are obtained by cross-validation (cross-fitting).</p>
+<p>The statistical parameter <span class="math inline">\(\alpha\)</span> has a causal intertpreation of being the effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span> in the causal DAG <span class="math display">\[ D\to Y, \quad X\to (D,Y)\]</span> or the counterfactual outcome model with conditionally exogenous (conditionally random) assignment of treatment <span class="math inline">\(D\)</span> given <span class="math inline">\(X\)</span>:
+<span class="math display">\[
+Y(d) = d\alpha + g(X) + U(d),\quad  U(d) \text{ indep } D |X, \quad Y = Y(D), \quad U = U(D).
+\]</span></p>
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;hdm&quot;)</span></span>
+<span id="cb1-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;AER&quot;)</span></span>
+<span id="cb1-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(&quot;randomForest&quot;)</span></span>
+<span id="cb1-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(AER)  <span class="co">#applied econometrics library</span></span>
+<span id="cb1-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)  <span class="co">#random Forest library</span></span>
+<span id="cb1-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hdm) <span class="co">#high-dimensional econometrics library</span></span>
+<span id="cb1-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet) <span class="co">#glm net</span></span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import relevant packages</span></span>
+<span id="cb2-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyreadr</span>
+<span id="cb2-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> preprocessing</span>
+<span id="cb2-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> patsy</span>
+<span id="cb2-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> loadtxt</span>
+<span id="cb2-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> keras.models <span class="im">import</span> Sequential</span>
+<span id="cb2-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> keras.layers <span class="im">import</span> Dense</span>
+<span id="cb2-11"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hdmpy</span>
+<span id="cb2-13"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-14"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb2-15"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb2-16"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-17"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-18"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> colors</span>
+<span id="cb2-19"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeRegressor</span>
+<span id="cb2-20"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb2-21"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> GradientBoostingRegressor</span>
+<span id="cb2-22"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LassoCV</span>
+<span id="cb2-23"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb2-24"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> RidgeCV, ElasticNetCV</span>
+<span id="cb2-25"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb2-26"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> linear_model</span>
+<span id="cb2-27"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
+<span id="cb2-28"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandas.api.types <span class="im">import</span> is_string_dtype</span>
+<span id="cb2-29"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandas.api.types <span class="im">import</span> is_numeric_dtype</span>
+<span id="cb2-30"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandas.api.types <span class="im">import</span> is_categorical_dtype</span>
+<span id="cb2-31"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> compress</span>
+<span id="cb2-32"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
+<span id="cb2-33"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb2-34"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_selection <span class="im">import</span> SelectFromModel</span>
+<span id="cb2-35"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> statsmodels.tools <span class="im">import</span> add_constant</span>
+<span id="cb2-36"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> ElasticNet</span>
+<span id="cb2-37"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb2-38"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb2-38" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">&quot;ignore&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-1" aria-hidden="true" tabindex="-1"></a>DML2.for.PLM <span class="ot">&lt;-</span> <span class="cf">function</span>(x, d, y, dreg, yreg, <span class="at">nfold=</span><span class="dv">2</span>) {</span>
+<span id="cb3-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-3" aria-hidden="true" tabindex="-1"></a>    nobs <span class="ot">&lt;-</span> <span class="fu">nrow</span>(x) <span class="co">#number of observations</span></span>
+<span id="cb3-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-5" aria-hidden="true" tabindex="-1"></a>    foldid <span class="ot">&lt;-</span> <span class="fu">rep.int</span>(<span class="dv">1</span><span class="sc">:</span>nfold,<span class="at">times =</span> <span class="fu">ceiling</span>(nobs<span class="sc">/</span>nfold))[<span class="fu">sample.int</span>(nobs)] <span class="co">#define folds indices</span></span>
+<span id="cb3-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-7" aria-hidden="true" tabindex="-1"></a>    I <span class="ot">&lt;-</span> <span class="fu">split</span>(<span class="dv">1</span><span class="sc">:</span>nobs, foldid)  <span class="co">#split observation indices into folds  </span></span>
+<span id="cb3-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-9" aria-hidden="true" tabindex="-1"></a>    ytil <span class="ot">&lt;-</span> dtil <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, nobs)</span>
+<span id="cb3-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-11"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;fold: &quot;</span>)</span>
+<span id="cb3-12"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-13"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(b <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(I)){</span>
+<span id="cb3-14"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-15"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-15" aria-hidden="true" tabindex="-1"></a>        dfit <span class="ot">&lt;-</span> <span class="fu">dreg</span>(x[<span class="sc">-</span>I[[b]],], d[<span class="sc">-</span>I[[b]]]) <span class="co">#take a fold out</span></span>
+<span id="cb3-16"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-17"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-17" aria-hidden="true" tabindex="-1"></a>        yfit <span class="ot">&lt;-</span> <span class="fu">yreg</span>(x[<span class="sc">-</span>I[[b]],], y[<span class="sc">-</span>I[[b]]]) <span class="co"># take a foldt out</span></span>
+<span id="cb3-18"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-19"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-19" aria-hidden="true" tabindex="-1"></a>        dhat <span class="ot">&lt;-</span> <span class="fu">predict</span>(dfit, x[I[[b]],], <span class="at">type=</span><span class="st">&quot;response&quot;</span>) <span class="co">#predict the left-out fold </span></span>
+<span id="cb3-20"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-21"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-21" aria-hidden="true" tabindex="-1"></a>        yhat <span class="ot">&lt;-</span> <span class="fu">predict</span>(yfit, x[I[[b]],], <span class="at">type=</span><span class="st">&quot;response&quot;</span>) <span class="co">#predict the left-out fold </span></span>
+<span id="cb3-22"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-22" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-23"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-23" aria-hidden="true" tabindex="-1"></a>        dtil[I[[b]]] <span class="ot">&lt;-</span> (d[I[[b]]] <span class="sc">-</span> dhat) <span class="co">#record residual for the left-out fold</span></span>
+<span id="cb3-24"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-25"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-25" aria-hidden="true" tabindex="-1"></a>        ytil[I[[b]]] <span class="ot">&lt;-</span> (y[I[[b]]] <span class="sc">-</span> yhat) <span class="co">#record residial for the left-out fold</span></span>
+<span id="cb3-26"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-27"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="fu">cat</span>(b,<span class="st">&quot; &quot;</span>)</span>
+<span id="cb3-28"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-29"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-30"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-31"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-31" aria-hidden="true" tabindex="-1"></a>    rfit <span class="ot">&lt;-</span> <span class="fu">lm</span>(ytil <span class="sc">~</span> dtil)    <span class="co">#estimate the main parameter by regressing one residual on the other</span></span>
+<span id="cb3-32"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-33"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-33" aria-hidden="true" tabindex="-1"></a>    coef.est <span class="ot">&lt;-</span> <span class="fu">coef</span>(rfit)[<span class="dv">2</span>]  <span class="co">#extract coefficient</span></span>
+<span id="cb3-34"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-35"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-35" aria-hidden="true" tabindex="-1"></a>    se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">vcovHC</span>(rfit)[<span class="dv">2</span>,<span class="dv">2</span>]) <span class="co">#record robust standard error</span></span>
+<span id="cb3-36"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-37"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">coef (se) = %g (%g)</span><span class="sc">\n</span><span class="st">&quot;</span>, coef.est , se))  <span class="co">#printing output</span></span>
+<span id="cb3-38"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-39"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>( <span class="fu">list</span>(<span class="at">coef.est =</span>coef.est , <span class="at">se=</span>se, <span class="at">dtil=</span>dtil, <span class="at">ytil=</span>ytil) ) <span class="co">#save output and residuals </span></span>
+<span id="cb3-40"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-41"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb3-41" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> standard_skl_model:</span>
+<span id="cb4-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, model ):</span>
+<span id="cb4-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model <span class="op">=</span> model </span>
+<span id="cb4-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> fit( <span class="va">self</span>, X, Y ):</span>
+<span id="cb4-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Standarization of X and Y</span></span>
+<span id="cb4-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scaler_X <span class="op">=</span> StandardScaler()</span>
+<span id="cb4-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scaler_X.fit( X )</span>
+<span id="cb4-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-8" aria-hidden="true" tabindex="-1"></a>        std_X <span class="op">=</span> <span class="va">self</span>.scaler_X.transform( X )</span>
+<span id="cb4-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.model.fit( std_X , Y )</span>
+<span id="cb4-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span>
+<span id="cb4-11"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> predict( <span class="va">self</span> , X ):</span>
+<span id="cb4-12"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scaler_X <span class="op">=</span> StandardScaler()</span>
+<span id="cb4-13"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scaler_X.fit( X )</span>
+<span id="cb4-14"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-14" aria-hidden="true" tabindex="-1"></a>        std_X <span class="op">=</span> <span class="va">self</span>.scaler_X.transform( X )</span>
+<span id="cb4-15"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-15" aria-hidden="true" tabindex="-1"></a>        prediction <span class="op">=</span> <span class="va">self</span>.model.predict( std_X )</span>
+<span id="cb4-16"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> prediction</span>
+<span id="cb4-17"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-17" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-18"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> rlasso_sklearn:</span>
+<span id="cb4-19"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, post ):</span>
+<span id="cb4-20"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.post <span class="op">=</span> post</span>
+<span id="cb4-21"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> fit( <span class="va">self</span>, X, Y ):</span>
+<span id="cb4-22"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Standarization of X and Y</span></span>
+<span id="cb4-23"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.rlasso_model <span class="op">=</span> hdmpy.rlasso( X , Y , post <span class="op">=</span> <span class="va">self</span>.post )                </span>
+<span id="cb4-24"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span></span>
+<span id="cb4-25"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> predict( <span class="va">self</span> , X ):</span>
+<span id="cb4-26"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-26" aria-hidden="true" tabindex="-1"></a>        beta <span class="op">=</span> <span class="va">self</span>.rlasso_model.est[<span class="st">&#39;coefficients&#39;</span>].to_numpy()</span>
+<span id="cb4-27"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-27" aria-hidden="true" tabindex="-1"></a>        prediction <span class="op">=</span> ( add_constant( X ) <span class="op">@</span> beta ).flatten()</span>
+<span id="cb4-28"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> prediction</span>
+<span id="cb4-29"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-29" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-30"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> DML2_for_PLM(x, d, y, dreg, yreg, nfold <span class="op">=</span> <span class="dv">2</span> ):</span>
+<span id="cb4-31"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-32"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Num ob observations</span></span>
+<span id="cb4-33"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-33" aria-hidden="true" tabindex="-1"></a>    nobs <span class="op">=</span> x.shape[<span class="dv">0</span>]</span>
+<span id="cb4-34"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-35"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Define folds indices </span></span>
+<span id="cb4-36"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-36" aria-hidden="true" tabindex="-1"></a>    list_1 <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(<span class="dv">0</span>, nfold, <span class="dv">1</span>)]<span class="op">*</span>nobs</span>
+<span id="cb4-37"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-37" aria-hidden="true" tabindex="-1"></a>    sample <span class="op">=</span> np.random.choice(nobs,nobs, replace<span class="op">=</span><span class="va">False</span>).tolist()</span>
+<span id="cb4-38"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-38" aria-hidden="true" tabindex="-1"></a>    foldid <span class="op">=</span> [list_1[index] <span class="cf">for</span> index <span class="kw">in</span> sample]</span>
+<span id="cb4-39"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create split function(similar to R)</span></span>
+<span id="cb4-41"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> split(x, f):</span>
+<span id="cb4-42"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-42" aria-hidden="true" tabindex="-1"></a>        count <span class="op">=</span> <span class="bu">max</span>(f) <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb4-43"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">tuple</span>( <span class="bu">list</span>(itertools.compress(x, (el <span class="op">==</span> i <span class="cf">for</span> el <span class="kw">in</span> f))) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(count) ) </span>
+<span id="cb4-44"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Split observation indices into folds </span></span>
+<span id="cb4-46"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-46" aria-hidden="true" tabindex="-1"></a>    list_2 <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(<span class="dv">0</span>, nobs, <span class="dv">1</span>)]</span>
+<span id="cb4-47"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-47" aria-hidden="true" tabindex="-1"></a>    I <span class="op">=</span> split(list_2, foldid)</span>
+<span id="cb4-48"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-49"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create array to save errors </span></span>
+<span id="cb4-50"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-50" aria-hidden="true" tabindex="-1"></a>    dtil <span class="op">=</span> np.zeros( <span class="bu">len</span>(x) ).reshape( <span class="bu">len</span>(x) , <span class="dv">1</span> )</span>
+<span id="cb4-51"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-51" aria-hidden="true" tabindex="-1"></a>    ytil <span class="op">=</span> np.zeros( <span class="bu">len</span>(x) ).reshape( <span class="bu">len</span>(x) , <span class="dv">1</span> )</span>
+<span id="cb4-52"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-52" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-53"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># loop to save results</span></span>
+<span id="cb4-54"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> b <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="bu">len</span>(I)):</span>
+<span id="cb4-55"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-55" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-56"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-56" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Split data - index to keep are in mask as booleans</span></span>
+<span id="cb4-57"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-57" aria-hidden="true" tabindex="-1"></a>        include_idx <span class="op">=</span> <span class="bu">set</span>(I[b])  <span class="co">#Here should go I[b] Set is more efficient, but doesn&#39;t reorder your elements if that is desireable</span></span>
+<span id="cb4-58"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-58" aria-hidden="true" tabindex="-1"></a>        mask <span class="op">=</span> np.array([(i <span class="kw">in</span> include_idx) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(x))])</span>
+<span id="cb4-59"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-60"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-60" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Lasso regression, excluding folds selected </span></span>
+<span id="cb4-61"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-61" aria-hidden="true" tabindex="-1"></a>        dfit <span class="op">=</span> dreg(x[<span class="op">~</span>mask,], d[<span class="op">~</span>mask,])</span>
+<span id="cb4-62"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-62" aria-hidden="true" tabindex="-1"></a>        yfit <span class="op">=</span> yreg(x[<span class="op">~</span>mask,], y[<span class="op">~</span>mask,])</span>
+<span id="cb4-63"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-64" aria-hidden="true" tabindex="-1"></a>        <span class="co"># predict estimates using the </span></span>
+<span id="cb4-65"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-65" aria-hidden="true" tabindex="-1"></a>        dhat <span class="op">=</span> dfit.predict( x[mask,] )</span>
+<span id="cb4-66"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-66" aria-hidden="true" tabindex="-1"></a>        yhat <span class="op">=</span> yfit.predict( x[mask,] )</span>
+<span id="cb4-67"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-68"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-68" aria-hidden="true" tabindex="-1"></a>        <span class="co"># save errors  </span></span>
+<span id="cb4-69"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-69" aria-hidden="true" tabindex="-1"></a>        dtil[mask] <span class="op">=</span>  d[mask,] <span class="op">-</span> dhat.reshape( <span class="bu">len</span>(I[b]) , <span class="dv">1</span> )</span>
+<span id="cb4-70"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-70" aria-hidden="true" tabindex="-1"></a>        ytil[mask] <span class="op">=</span> y[mask,] <span class="op">-</span> yhat.reshape( <span class="bu">len</span>(I[b]) , <span class="dv">1</span> )</span>
+<span id="cb4-71"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-71" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(b, <span class="st">&quot; &quot;</span>)</span>
+<span id="cb4-72"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-72" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-73"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-73" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create dataframe </span></span>
+<span id="cb4-74"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-74" aria-hidden="true" tabindex="-1"></a>    data_2 <span class="op">=</span> pd.DataFrame(np.concatenate( ( ytil, dtil ), axis <span class="op">=</span> <span class="dv">1</span>), columns <span class="op">=</span> [<span class="st">&#39;ytil&#39;</span>,<span class="st">&#39;dtil&#39;</span> ])</span>
+<span id="cb4-75"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-75" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb4-76"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-76" aria-hidden="true" tabindex="-1"></a>    <span class="co"># OLS clustering at the County level</span></span>
+<span id="cb4-77"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-77" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> <span class="st">&quot;ytil ~ dtil&quot;</span></span>
+<span id="cb4-78"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-78" aria-hidden="true" tabindex="-1"></a>    baseline_ols <span class="op">=</span> smf.ols( model , data <span class="op">=</span> data_2 ).fit().get_robustcov_results(cov_type <span class="op">=</span> <span class="st">&quot;HC3&quot;</span>)</span>
+<span id="cb4-79"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-79" aria-hidden="true" tabindex="-1"></a>    coef_est <span class="op">=</span> baseline_ols.summary2().tables[ <span class="dv">1</span> ][ <span class="st">&#39;Coef.&#39;</span> ][ <span class="st">&#39;dtil&#39;</span> ]</span>
+<span id="cb4-80"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-80" aria-hidden="true" tabindex="-1"></a>    se <span class="op">=</span> baseline_ols.summary2().tables[ <span class="dv">1</span> ][ <span class="st">&#39;Std.Err.&#39;</span> ][ <span class="st">&#39;dtil&#39;</span> ]</span>
+<span id="cb4-81"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-81" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-82"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-82" aria-hidden="true" tabindex="-1"></a>    Final_result <span class="op">=</span> { <span class="st">&#39;coef_est&#39;</span> : coef_est , <span class="st">&#39;se&#39;</span> : se , <span class="st">&#39;dtil&#39;</span> : dtil , <span class="st">&#39;ytil&#39;</span> : ytil }</span>
+<span id="cb4-83"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-84"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-84" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>( <span class="ss">f&quot;</span><span class="ch">\n</span><span class="ss"> Coefficient (se) = </span><span class="sc">{</span>coef_est<span class="sc">}</span><span class="ss"> (</span><span class="sc">{se}</span><span class="ss">)&quot;</span> )</span>
+<span id="cb4-85"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-85" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-86"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-86" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Final_result</span>
+<span id="cb4-87"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb4-87" aria-hidden="true" tabindex="-1"></a>    </span></code></pre></div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(GrowthData)                     <span class="co"># Barro-Lee growth data</span></span>
+<span id="cb5-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb5-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">=</span> <span class="fu">as.matrix</span>(GrowthData[,<span class="dv">1</span>])         <span class="co"># outcome: growth rate</span></span>
+<span id="cb5-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb5-3" aria-hidden="true" tabindex="-1"></a>d<span class="ot">=</span> <span class="fu">as.matrix</span>(GrowthData[,<span class="dv">3</span>])         <span class="co"># treatment: initial wealth</span></span>
+<span id="cb5-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb5-4" aria-hidden="true" tabindex="-1"></a>x<span class="ot">=</span> <span class="fu">as.matrix</span>(GrowthData[,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)]) <span class="co"># controls: country characteristics</span></span>
+<span id="cb5-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st"> length of y is %g </span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">length</span>(y) ))</span></code></pre></div>
+<pre><code>## 
+##  length of y is 90</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load GrowthData</span></span>
+<span id="cb7-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-2" aria-hidden="true" tabindex="-1"></a>rdata_read <span class="op">=</span> pyreadr.read_r(<span class="st">&quot;./data/GrowthData.RData&quot;</span>)</span>
+<span id="cb7-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-3" aria-hidden="true" tabindex="-1"></a>GrowthData <span class="op">=</span> rdata_read[ <span class="st">&#39;GrowthData&#39;</span> ]</span>
+<span id="cb7-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-4" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> GrowthData.shape[<span class="dv">0</span>]</span>
+<span id="cb7-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> GrowthData.iloc[ : , <span class="dv">0</span> ].to_numpy().reshape( GrowthData.shape[<span class="dv">0</span>] , <span class="dv">1</span> )</span>
+<span id="cb7-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-7" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> GrowthData.iloc[ : , <span class="dv">2</span>].to_numpy().reshape( GrowthData.shape[<span class="dv">0</span>] , <span class="dv">1</span> )</span>
+<span id="cb7-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-8" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> GrowthData.iloc[ : , <span class="dv">3</span>:].to_numpy()</span>
+<span id="cb7-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&#39;</span><span class="ch">\n</span><span class="ss"> length of y is </span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{y.</span>size<span class="sc">}</span><span class="ss">&#39;</span> )</span></code></pre></div>
+<pre><code>## 
+##  length of y is 
+##  90</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st"> num features x is %g </span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">dim</span>(x)[<span class="dv">2</span>] ))</span></code></pre></div>
+<pre><code>## 
+##  num features x is 60</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb11"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb11-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&#39;</span><span class="ch">\n</span><span class="ss"> num features x is </span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{x.</span>shape[ <span class="dv">1</span> ]<span class="sc">}</span><span class="ss">&#39;</span> )</span></code></pre></div>
+<pre><code>## 
+##  num features x is 
+##  60</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb13-1" aria-hidden="true" tabindex="-1"></a>lres<span class="ot">=</span><span class="fu">summary</span>(<span class="fu">lm</span>(y<span class="sc">~</span>d <span class="sc">+</span>x))<span class="sc">$</span>coef[<span class="dv">2</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb13-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st"> Naive OLS that uses all features w/o cross-fitting </span><span class="sc">\n</span><span class="st">&quot;</span>))</span></code></pre></div>
+<pre><code>## 
+##  Naive OLS that uses all features w/o cross-fitting</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb15-1" aria-hidden="true" tabindex="-1"></a>lres <span class="op">=</span> sm.OLS( y , add_constant(np.concatenate( ( d , x ) , axis <span class="op">=</span> <span class="dv">1</span> ) )  ).fit().summary2().tables[ <span class="dv">1</span> ].iloc[ <span class="dv">1</span>, <span class="dv">0</span>:<span class="dv">2</span> ]</span>
+<span id="cb15-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="st">&quot;</span><span class="ch">\n</span><span class="st"> Naive OLS that uses all features w/o cross-fitting </span><span class="ch">\n</span><span class="st">&quot;</span> )</span></code></pre></div>
+<pre><code>## 
+##  Naive OLS that uses all features w/o cross-fitting</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">coef (se) = %g (%g)</span><span class="sc">\n</span><span class="st">&quot;</span>, lres[<span class="dv">1</span>] , lres[<span class="dv">2</span>]))</span></code></pre></div>
+<pre><code>## 
+## coef (se) = -0.00937799 (0.0298877)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="ss">f&#39;</span><span class="ch">\n</span><span class="ss"> coef (se) = </span><span class="sc">{</span>lres[ <span class="dv">0</span> ]<span class="sc">}</span><span class="ss"> (</span><span class="sc">{</span>lres[ <span class="dv">1</span> ]<span class="sc">}</span><span class="ss">)&#39;</span> )</span></code></pre></div>
+<pre><code>## 
+##  coef (se) = -0.009377988732377857 (0.02988772637232471)</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st"> DML with OLS w/o feature selection </span><span class="sc">\n</span><span class="st">&quot;</span>))</span></code></pre></div>
+<pre><code>## 
+##  DML with OLS w/o feature selection</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="st">&quot;</span><span class="ch">\n</span><span class="st"> DML with OLS w/o feature selection </span><span class="ch">\n</span><span class="st">&quot;</span> )</span></code></pre></div>
+<pre><code>## 
+##  DML with OLS w/o feature selection</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DML with OLS</span></span>
+<span id="cb25-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb25-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb25-3" aria-hidden="true" tabindex="-1"></a>dreg <span class="ot">&lt;-</span> <span class="cf">function</span>(x,d){ <span class="fu">glmnet</span>(x, d, <span class="at">lambda =</span> <span class="dv">0</span>) } <span class="co">#ML method= OLS using glmnet; using lm gives bugs</span></span>
+<span id="cb25-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb25-4" aria-hidden="true" tabindex="-1"></a>yreg <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y){ <span class="fu">glmnet</span>(x, y, <span class="at">lambda =</span> <span class="dv">0</span>) } <span class="co">#ML method = OLS</span></span>
+<span id="cb25-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb25-6" aria-hidden="true" tabindex="-1"></a>DML2.OLS <span class="ot">=</span> <span class="fu">DML2.for.PLM</span>(x, d, y, dreg, yreg, <span class="at">nfold=</span><span class="dv">10</span>)</span></code></pre></div>
+<pre><code>## fold: 1  2  3  4  5  6  7  8  9  10  
+## coef (se) = 0.01013 (0.0167061)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DML with OLS</span></span>
+<span id="cb27-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dreg(x,d):</span>
+<span id="cb27-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-3" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> standard_skl_model( linear_model.Lasso( alpha <span class="op">=</span> <span class="dv">0</span> , random_state <span class="op">=</span> <span class="dv">0</span> )).fit( x, d )</span>
+<span id="cb27-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb27-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> yreg(x,y):</span>
+<span id="cb27-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-7" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> standard_skl_model( linear_model.Lasso( alpha <span class="op">=</span> <span class="dv">0</span> ,  random_state <span class="op">=</span> <span class="dv">0</span> ) ).fit( x, y )</span>
+<span id="cb27-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb27-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb27-10" aria-hidden="true" tabindex="-1"></a>DML2_ols <span class="op">=</span> DML2_for_PLM(x, d, y, dreg, yreg, <span class="dv">10</span> )</span></code></pre></div>
+<pre><code>## 0  
+## 1  
+## 2  
+## 3  
+## 4  
+## 5  
+## 6  
+## 7  
+## 8  
+## 9  
+## 
+##  Coefficient (se) = -0.005431864263545796 (0.011458472710862365)</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st"> DML with Lasso </span><span class="sc">\n</span><span class="st">&quot;</span>))</span></code></pre></div>
+<pre><code>## 
+##  DML with Lasso</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb31"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="st">&quot;</span><span class="ch">\n</span><span class="st"> DML with Lasso </span><span class="ch">\n</span><span class="st">&quot;</span> )</span></code></pre></div>
+<pre><code>## 
+##  DML with Lasso</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DML with Lasso:</span></span>
+<span id="cb33-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb33-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb33-3" aria-hidden="true" tabindex="-1"></a>dreg <span class="ot">&lt;-</span> <span class="cf">function</span>(x,d){ <span class="fu">rlasso</span>(x,d, <span class="at">post=</span><span class="cn">FALSE</span>) } <span class="co">#ML method= lasso from hdm </span></span>
+<span id="cb33-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb33-4" aria-hidden="true" tabindex="-1"></a>yreg <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y){ <span class="fu">rlasso</span>(x,y, <span class="at">post=</span><span class="cn">FALSE</span>) } <span class="co">#ML method = lasso from hdm</span></span>
+<span id="cb33-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb33-5" aria-hidden="true" tabindex="-1"></a>DML2.lasso <span class="ot">=</span> <span class="fu">DML2.for.PLM</span>(x, d, y, dreg, yreg, <span class="at">nfold=</span><span class="dv">10</span>)</span></code></pre></div>
+<pre><code>## fold: 1  2  3  4  5  6  7  8  9  10  
+## coef (se) = -0.0352021 (0.0161357)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb35"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DML with LASSO</span></span>
+<span id="cb35-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dreg(x,d):</span>
+<span id="cb35-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-4" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> rlasso_sklearn( post <span class="op">=</span> <span class="va">False</span> ).fit( x , d )</span>
+<span id="cb35-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb35-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> yreg(x,y):</span>
+<span id="cb35-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-8" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> rlasso_sklearn( post <span class="op">=</span> <span class="va">False</span> ).fit( x , y )</span>
+<span id="cb35-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb35-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-11"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb35-11" aria-hidden="true" tabindex="-1"></a>DML2_lasso <span class="op">=</span> DML2_for_PLM( x , d , y , dreg , yreg , <span class="dv">10</span> )</span></code></pre></div>
+<pre><code>## 0  
+## 1  
+## 2  
+## 3  
+## 4  
+## 5  
+## 6  
+## 7  
+## 8  
+## 9  
+## 
+##  Coefficient (se) = -0.040998025492277684 (0.01706393234389699)</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st"> DML with Random Forest </span><span class="sc">\n</span><span class="st">&quot;</span>))</span></code></pre></div>
+<pre><code>## 
+##  DML with Random Forest</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="st">&quot;</span><span class="ch">\n</span><span class="st"> DML with Random Forest </span><span class="ch">\n</span><span class="st">&quot;</span> )</span></code></pre></div>
+<pre><code>## 
+##  DML with Random Forest</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DML with Random Forest:</span></span>
+<span id="cb41-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb41-2" aria-hidden="true" tabindex="-1"></a>dreg <span class="ot">&lt;-</span> <span class="cf">function</span>(x,d){ <span class="fu">randomForest</span>(x, d) } <span class="co">#ML method=Forest </span></span>
+<span id="cb41-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb41-3" aria-hidden="true" tabindex="-1"></a>yreg <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y){ <span class="fu">randomForest</span>(x, y) } <span class="co">#ML method=Forest</span></span>
+<span id="cb41-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb41-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb41-5" aria-hidden="true" tabindex="-1"></a>DML2.RF <span class="ot">=</span> <span class="fu">DML2.for.PLM</span>(x, d, y, dreg, yreg, <span class="at">nfold=</span><span class="dv">10</span>)</span></code></pre></div>
+<pre><code>## fold: 1  2  3  4  5  6  7  8  9  10  
+## coef (se) = -0.0365831 (0.0151539)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DML with Random Forest:</span></span>
+<span id="cb43-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dreg( x , d ):</span>
+<span id="cb43-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-3" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> RandomForestRegressor( random_state <span class="op">=</span> <span class="dv">0</span> , n_estimators <span class="op">=</span> <span class="dv">500</span> , max_features <span class="op">=</span> <span class="dv">20</span> , n_jobs <span class="op">=</span> <span class="dv">4</span> , min_samples_leaf <span class="op">=</span> <span class="dv">5</span> ).fit( x, d )</span>
+<span id="cb43-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb43-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> yreg( x , y ):</span>
+<span id="cb43-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-7" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> RandomForestRegressor( random_state <span class="op">=</span> <span class="dv">0</span> , n_estimators <span class="op">=</span> <span class="dv">500</span> , max_features <span class="op">=</span> <span class="dv">20</span> , n_jobs <span class="op">=</span> <span class="dv">4</span> , min_samples_leaf <span class="op">=</span> <span class="dv">5</span> ).fit( x, y )</span>
+<span id="cb43-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb43-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb43-10" aria-hidden="true" tabindex="-1"></a>DML2_RF <span class="op">=</span> DML2_for_PLM( x , d , y , dreg , yreg , <span class="dv">2</span> )   <span class="co"># set to 2 due to computation time</span></span></code></pre></div>
+<pre><code>## 0  
+## 1  
+## 
+##  Coefficient (se) = -0.03019599714145048 (0.013698557551547192)</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st"> DML with Lasso/Random Forest </span><span class="sc">\n</span><span class="st">&quot;</span>))</span></code></pre></div>
+<pre><code>## 
+##  DML with Lasso/Random Forest</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb47"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>( <span class="st">&quot;</span><span class="ch">\n</span><span class="st"> DML with Lasso/Random Forest </span><span class="ch">\n</span><span class="st">&quot;</span> )</span></code></pre></div>
+<pre><code>## 
+##  DML with Lasso/Random Forest</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DML MIX:</span></span>
+<span id="cb49-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb49-2" aria-hidden="true" tabindex="-1"></a>dreg <span class="ot">&lt;-</span> <span class="cf">function</span>(x,d){ <span class="fu">rlasso</span>(x,d, <span class="at">post=</span><span class="cn">FALSE</span>) } <span class="co">#ML method=Forest </span></span>
+<span id="cb49-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb49-3" aria-hidden="true" tabindex="-1"></a>yreg <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y){ <span class="fu">randomForest</span>(x, y) } <span class="co">#ML method=Forest</span></span>
+<span id="cb49-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb49-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb49-5" aria-hidden="true" tabindex="-1"></a>DML2.RF <span class="ot">=</span> <span class="fu">DML2.for.PLM</span>(x, d, y, dreg, yreg, <span class="at">nfold=</span><span class="dv">10</span>)</span></code></pre></div>
+<pre><code>## fold: 1  2  3  4  5  6  7  8  9  10  
+## coef (se) = -0.0375019 (0.0135088)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb51"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb51-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DML MIX:</span></span>
+<span id="cb51-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dreg( x , d ):</span>
+<span id="cb51-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-3" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> rlasso_sklearn( post <span class="op">=</span> <span class="va">False</span> ).fit( x , d )</span>
+<span id="cb51-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb51-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> yreg( x , y ):</span>
+<span id="cb51-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-7" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> RandomForestRegressor( random_state <span class="op">=</span> <span class="dv">0</span> , n_estimators <span class="op">=</span> <span class="dv">500</span> , max_features <span class="op">=</span> <span class="dv">20</span> , n_jobs <span class="op">=</span> <span class="dv">4</span> , min_samples_leaf <span class="op">=</span> <span class="dv">5</span> ).fit( x, y )</span>
+<span id="cb51-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb51-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb51-10" aria-hidden="true" tabindex="-1"></a>DML2_RF <span class="op">=</span> DML2_for_PLM( x , d , y , dreg , yreg , <span class="dv">2</span> )   <span class="co"># set to 2 due to computation time</span></span></code></pre></div>
+<pre><code>## 0  
+## 1  
+## 
+##  Coefficient (se) = -0.043979438435625365 (0.014275559775082948)</code></pre>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-1" aria-hidden="true" tabindex="-1"></a>prRes.D<span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="fu">mean</span>((DML2.OLS<span class="sc">$</span>dtil)<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb53-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mean</span>((DML2.lasso<span class="sc">$</span>dtil)<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb53-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mean</span>((DML2.RF<span class="sc">$</span>dtil)<span class="sc">^</span><span class="dv">2</span>));</span>
+<span id="cb53-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-5" aria-hidden="true" tabindex="-1"></a>prRes.Y<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">mean</span>((DML2.OLS<span class="sc">$</span>ytil)<span class="sc">^</span><span class="dv">2</span>), </span>
+<span id="cb53-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mean</span>((DML2.lasso<span class="sc">$</span>ytil)<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb53-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mean</span>((DML2.RF<span class="sc">$</span>ytil)<span class="sc">^</span><span class="dv">2</span>));</span>
+<span id="cb53-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-9" aria-hidden="true" tabindex="-1"></a>prRes<span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">sqrt</span>(prRes.D), <span class="fu">sqrt</span>(prRes.Y)); </span>
+<span id="cb53-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-11"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-11" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(prRes)<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RMSE D&quot;</span>, <span class="st">&quot;RMSE Y&quot;</span>);</span>
+<span id="cb53-12"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-13"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(prRes)<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;OLS&quot;</span>, <span class="st">&quot;Lasso&quot;</span>, <span class="st">&quot;RF&quot;</span>)</span>
+<span id="cb53-14"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-15"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-16"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb53-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(prRes,<span class="at">digit=</span><span class="dv">2</span>)</span></code></pre></div>
+<pre><code>##          OLS Lasso    RF
+## RMSE D 0.467 0.372 0.372
+## RMSE Y 0.054 0.052 0.046</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb55"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb55-1"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-1" aria-hidden="true" tabindex="-1"></a>mods <span class="op">=</span> [ DML2_ols, DML2_lasso, DML2_RF ]</span>
+<span id="cb55-2"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-2" aria-hidden="true" tabindex="-1"></a>mods_name <span class="op">=</span> [<span class="st">&quot;OLS&quot;</span>, <span class="st">&quot;Lasso&quot;</span>, <span class="st">&#39;RF&#39;</span>]</span>
+<span id="cb55-3"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-4"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mdl( model , model_name ):</span>
+<span id="cb55-5"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb55-6"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-6" aria-hidden="true" tabindex="-1"></a>    RMSEY <span class="op">=</span> np.sqrt( np.mean( model[ <span class="st">&#39;ytil&#39;</span> ] ) <span class="op">**</span> <span class="dv">2</span> ) <span class="co"># I have some doubts about these equations...we have to recheck</span></span>
+<span id="cb55-7"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-7" aria-hidden="true" tabindex="-1"></a>    RMSED <span class="op">=</span> np.sqrt( np.mean( model[ <span class="st">&#39;dtil&#39;</span> ] ) <span class="op">**</span> <span class="dv">2</span> ) <span class="co"># I have some doubts about these equations...we have to recheck</span></span>
+<span id="cb55-8"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb55-9"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-9" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> pd.DataFrame( { model_name : [ RMSEY , RMSED ]} , index <span class="op">=</span> [ <span class="st">&#39;RMSEY&#39;</span> , <span class="st">&#39;RMSED&#39;</span> ])</span>
+<span id="cb55-10"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb55-11"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-12"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-12" aria-hidden="true" tabindex="-1"></a>RES <span class="op">=</span> [ mdl( model , name ) <span class="cf">for</span> model, name <span class="kw">in</span> <span class="bu">zip</span>( mods , mods_name ) ]</span>
+<span id="cb55-13"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-14"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-14" aria-hidden="true" tabindex="-1"></a>pr_Res <span class="op">=</span> pd.concat( RES, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb55-15"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-16"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#cb55-16" aria-hidden="true" tabindex="-1"></a>pr_Res.<span class="bu">round</span>( <span class="dv">7</span> )</span></code></pre></div>
+<pre><code>##        OLS     Lasso        RF
+## RMSEY  0.0  0.000284  0.000348
+## RMSED  0.0  0.003598  0.013163</code></pre>
+</div>
+</div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/alexanderquispe/ml_book/edit/master/28-DML-for-partially-linear-model.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/alexanderquispe/ml_book/blob/master/28-DML-for-partially-linear-model.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

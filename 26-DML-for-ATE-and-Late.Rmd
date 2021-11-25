@@ -57,7 +57,7 @@ warnings.filterwarnings("ignore")
 
 rdata_read = pyreadr.read_r("./data/pension.Rdata")
 # Extracting the data frame from rdata_read
-data = rdata_read[ 'data' ]
+data = rdata_read[ 'pension' ]
 pension = data.copy()
 data.shape
 

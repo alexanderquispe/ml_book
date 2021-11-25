@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 13 Dosearch for Causal Identification in DAGs | Machine Learning and Causal Inference</title>
+  <meta name="description" content="Chapter 13 Dosearch for Causal Identification in DAGs | Machine Learning and Causal Inference" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 13 Dosearch for Causal Identification in DAGs | Machine Learning and Causal Inference" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 13 Dosearch for Causal Identification in DAGs | Machine Learning and Causal Inference" />
+  
+  
+  
+
+<meta name="author" content="Alexander Quispe &amp; Anzony Quispe" />
+
+
+<meta name="date" content="2021-11-24" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"/>
+<link rel="next" href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"/>
+<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Machine Learning and Causal Inference</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Preface</a></li>
+<li class="chapter" data-level="2" data-path="predictive-inference.html"><a href="predictive-inference.html"><i class="fa fa-check"></i><b>2</b> Predictive Inference</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="predictive-inference.html"><a href="predictive-inference.html#data"><i class="fa fa-check"></i><b>2.1</b> Data</a></li>
+<li class="chapter" data-level="2.2" data-path="predictive-inference.html"><a href="predictive-inference.html#data-analysis"><i class="fa fa-check"></i><b>2.2</b> Data Analysis</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="predictive-inference.html"><a href="predictive-inference.html#r-and-python-code"><i class="fa fa-check"></i><b>2.2.1</b> R and Python code</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="predictive-inference.html"><a href="predictive-inference.html#prediction-question"><i class="fa fa-check"></i><b>2.3</b> Prediction Question</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="predictive-inference.html"><a href="predictive-inference.html#basic-model"><i class="fa fa-check"></i><b>2.3.1</b> Basic Model:</a></li>
+<li class="chapter" data-level="2.3.2" data-path="predictive-inference.html"><a href="predictive-inference.html#flexible-model"><i class="fa fa-check"></i><b>2.3.2</b> Flexible Model:</a></li>
+<li class="chapter" data-level="2.3.3" data-path="predictive-inference.html"><a href="predictive-inference.html#lasso-model"><i class="fa fa-check"></i><b>2.3.3</b> Lasso Model:</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="predictive-inference.html"><a href="predictive-inference.html#data-splitting"><i class="fa fa-check"></i><b>2.4</b> Data Splitting</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html"><i class="fa fa-check"></i><b>3</b> Predictive Inference The Gender Wage Gap</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#data-analysis-1"><i class="fa fa-check"></i><b>3.1</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression"><i class="fa fa-check"></i><b>3.1.1</b> OLS Regression</a></li>
+<li class="chapter" data-level="3.1.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#ols-regression-with-controls"><i class="fa fa-check"></i><b>3.1.2</b> Ols regression with controls</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-ols"><i class="fa fa-check"></i><b>3.2</b> Partialling-Out using ols</a></li>
+<li class="chapter" data-level="3.3" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#partialling-out-using-lasso"><i class="fa fa-check"></i><b>3.3</b> Partialling-Out using lasso</a></li>
+<li class="chapter" data-level="3.4" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#extra-flexible-model"><i class="fa fa-check"></i><b>3.4</b> “Extra” flexible model</a></li>
+<li class="chapter" data-level="3.5" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#laso-extra-flexible-model"><i class="fa fa-check"></i><b>3.5</b> Laso “Extra” Flexible model</a></li>
+<li class="chapter" data-level="3.6" data-path="predictive-inference-the-gender-wage-gap.html"><a href="predictive-inference-the-gender-wage-gap.html#summarize-the-results"><i class="fa fa-check"></i><b>3.6</b> Summarize the results</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html"><i class="fa fa-check"></i><b>4</b> Simple Exercise on Overfitting</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#first-set-pn"><i class="fa fa-check"></i><b>4.1</b> 1. First set p=n</a></li>
+<li class="chapter" data-level="4.2" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#second-set-pn2."><i class="fa fa-check"></i><b>4.2</b> 2. Second, set p=n/2.</a></li>
+<li class="chapter" data-level="4.3" data-path="simple-exercise-on-overfitting.html"><a href="simple-exercise-on-overfitting.html#third-set-pn-.05"><i class="fa fa-check"></i><b>4.3</b> 3. Third, set p/n =.05</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html"><i class="fa fa-check"></i><b>5</b> Vaccine RCT Examples</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html#polio-rct"><i class="fa fa-check"></i><b>5.1</b> Polio RCT</a></li>
+<li class="chapter" data-level="5.2" data-path="vaccine-rct-examples.html"><a href="vaccine-rct-examples.html#pfizerbntx-covid-19-rct"><i class="fa fa-check"></i><b>5.2</b> Pfizer/BNTX Covid-19 RCT</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html"><i class="fa fa-check"></i><b>6</b> Penalized Linear Regressions: A Simulation Experiment</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html#data-generating-process-approximately-sparse"><i class="fa fa-check"></i><b>6.1</b> Data Generating Process: Approximately Sparse</a></li>
+<li class="chapter" data-level="6.2" data-path="penalized-linear-regressions-a-simulation-experiment.html"><a href="penalized-linear-regressions-a-simulation-experiment.html#data-generating-process-approximately-sparse-small-dense-part"><i class="fa fa-check"></i><b>6.2</b> Data Generating Process: Approximately Sparse + Small Dense Part</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="simulation-design.html"><a href="simulation-design.html"><i class="fa fa-check"></i><b>7</b> Simulation Design</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="simulation-design.html"><a href="simulation-design.html#example-1"><i class="fa fa-check"></i><b>7.1</b> Example 1</a></li>
+<li class="chapter" data-level="7.2" data-path="simulation-design.html"><a href="simulation-design.html#example-2"><i class="fa fa-check"></i><b>7.2</b> Example 2</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html"><i class="fa fa-check"></i><b>8</b> Testing the Convergence Hypothesis</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#introduction"><i class="fa fa-check"></i><b>8.1</b> Introduction</a></li>
+<li class="chapter" data-level="8.2" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#data-analysis-2"><i class="fa fa-check"></i><b>8.2</b> Data analysis</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#ols"><i class="fa fa-check"></i><b>8.2.1</b> OLS</a></li>
+<li class="chapter" data-level="8.2.2" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#lasso"><i class="fa fa-check"></i><b>8.2.2</b> Lasso</a></li>
+<li class="chapter" data-level="8.2.3" data-path="testing-the-convergence-hypothesis.html"><a href="testing-the-convergence-hypothesis.html#summary-results"><i class="fa fa-check"></i><b>8.2.3</b> Summary results</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html"><i class="fa fa-check"></i><b>9</b> Machine Learning for wage prediction</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#data-1"><i class="fa fa-check"></i><b>9.1</b> Data</a></li>
+<li class="chapter" data-level="9.2" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#analysis"><i class="fa fa-check"></i><b>9.2</b> Analysis</a></li>
+<li class="chapter" data-level="9.3" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#ols-1"><i class="fa fa-check"></i><b>9.3</b> OLS</a></li>
+<li class="chapter" data-level="9.4" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#lasso-ridge-and-elastic-net"><i class="fa fa-check"></i><b>9.4</b> Lasso, Ridge and Elastic Net</a></li>
+<li class="chapter" data-level="9.5" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#non-linear-models"><i class="fa fa-check"></i><b>9.5</b> Non-linear models</a>
+<ul>
+<li class="chapter" data-level="9.5.1" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#regression-trees"><i class="fa fa-check"></i><b>9.5.1</b> Regression Trees</a></li>
+</ul></li>
+<li class="chapter" data-level="9.6" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#random-forest-and-boosted-trees"><i class="fa fa-check"></i><b>9.6</b> Random Forest and Boosted Trees</a></li>
+<li class="chapter" data-level="9.7" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#results"><i class="fa fa-check"></i><b>9.7</b> Results</a></li>
+<li class="chapter" data-level="9.8" data-path="machine-learning-for-wage-prediction.html"><a href="machine-learning-for-wage-prediction.html#ensemble-learning"><i class="fa fa-check"></i><b>9.8</b> Ensemble learning</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="deep-neural-networks-for-wage-prediction.html"><a href="deep-neural-networks-for-wage-prediction.html"><i class="fa fa-check"></i><b>10</b> Deep Neural Networks for Wage Prediction</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="deep-neural-networks-for-wage-prediction.html"><a href="deep-neural-networks-for-wage-prediction.html#data-preparation"><i class="fa fa-check"></i><b>10.1</b> Data Preparation</a></li>
+<li class="chapter" data-level="10.2" data-path="deep-neural-networks-for-wage-prediction.html"><a href="deep-neural-networks-for-wage-prediction.html#neural-networks"><i class="fa fa-check"></i><b>10.2</b> Neural Networks</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html"><i class="fa fa-check"></i><b>11</b> Functional Approximations by Trees and Neural Networks</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html#functional-approximation-by-a-tree"><i class="fa fa-check"></i><b>11.1</b> Functional Approximation by a Tree</a></li>
+<li class="chapter" data-level="11.2" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html#functional-approximation-by-rf"><i class="fa fa-check"></i><b>11.2</b> Functional Approximation by RF</a></li>
+<li class="chapter" data-level="11.3" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html#boosted-trees"><i class="fa fa-check"></i><b>11.3</b> Boosted Trees</a></li>
+<li class="chapter" data-level="11.4" data-path="functional-approximations-by-trees-and-neural-networks.html"><a href="functional-approximations-by-trees-and-neural-networks.html#same-example-with-a-neural-network"><i class="fa fa-check"></i><b>11.4</b> Same Example with a Neural Network</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><i class="fa fa-check"></i><b>12</b> Causal Identification in DAGs using Backdoor and Swigs, Equivalence Classes, Falsifiability Tests</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#graph-generation-and-plotting"><i class="fa fa-check"></i><b>12.1</b> Graph Generation and Plotting</a></li>
+<li class="chapter" data-level="12.2" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#report-relatives-of-x2"><i class="fa fa-check"></i><b>12.2</b> Report Relatives of X2</a></li>
+<li class="chapter" data-level="12.3" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#find-paths-between-d-and-y"><i class="fa fa-check"></i><b>12.3</b> Find Paths Between D and Y</a></li>
+<li class="chapter" data-level="12.4" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#list-all-testable-implications-of-the-model"><i class="fa fa-check"></i><b>12.4</b> List All Testable Implications of the Model</a></li>
+<li class="chapter" data-level="12.5" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#identification-by-backdoor-list-minimal-adjustment-sets-to-identify-causal-effecs-d-to-y"><i class="fa fa-check"></i><b>12.5</b> Identification by Backdoor: List minimal adjustment sets to identify causal effecs <span class="math inline">\(D \to Y\)</span></a></li>
+<li class="chapter" data-level="12.6" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#identification-via-swig-and-d-separation"><i class="fa fa-check"></i><b>12.6</b> Identification via SWIG and D-separation</a></li>
+<li class="chapter" data-level="12.7" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#deduce-conditional-exogeneity-or-ignorability-by-d-separation"><i class="fa fa-check"></i><b>12.7</b> Deduce Conditional Exogeneity or Ignorability by D-separation</a></li>
+<li class="chapter" data-level="12.8" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#print-all-average-effects-identifiable-by-conditioning"><i class="fa fa-check"></i><b>12.8</b> Print All Average Effects Identifiable by Conditioning</a></li>
+<li class="chapter" data-level="12.9" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#equivalence-classes"><i class="fa fa-check"></i><b>12.9</b> Equivalence Classes</a></li>
+<li class="chapter" data-level="12.10" data-path="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html"><a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html#example-of-testing-dag-validity"><i class="fa fa-check"></i><b>12.10</b> Example of Testing DAG Validity</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="dosearch-for-causal-identification-in-dags.html"><a href="dosearch-for-causal-identification-in-dags.html"><i class="fa fa-check"></i><b>13</b> Dosearch for Causal Identification in DAGs</a></li>
+<li class="chapter" data-level="14" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><i class="fa fa-check"></i><b>14</b> A Case Study: The Effect of Gun Ownership on Gun-Homicide Rates</a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#data-2"><i class="fa fa-check"></i><b>14.1</b> Data</a></li>
+<li class="chapter" data-level="14.2" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#preprocessing."><i class="fa fa-check"></i><b>14.2</b> Preprocessing.</a></li>
+<li class="chapter" data-level="14.3" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#the-effect-of-gun-ownership"><i class="fa fa-check"></i><b>14.3</b> The effect of gun ownership</a>
+<ul>
+<li class="chapter" data-level="14.3.1" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#ols-2"><i class="fa fa-check"></i><b>14.3.1</b> OLS</a></li>
+</ul></li>
+<li class="chapter" data-level="14.4" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#dml-algorithm"><i class="fa fa-check"></i><b>14.4</b> DML algorithm</a></li>
+<li class="chapter" data-level="14.5" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#lasso-1"><i class="fa fa-check"></i><b>14.5</b> Lasso</a>
+<ul>
+<li class="chapter" data-level="14.5.1" data-path="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html"><a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html#random-forest"><i class="fa fa-check"></i><b>14.5.1</b> Random Forest</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html"><a href="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html"><i class="fa fa-check"></i><b>15</b> The Effect of Gun Ownership on Gun-Homicide Rates using DML for neural nets</a>
+<ul>
+<li class="chapter" data-level="15.1" data-path="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html"><a href="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html#dml-for-neural-nets"><i class="fa fa-check"></i><b>15.1</b> DML for neural nets</a></li>
+<li class="chapter" data-level="15.2" data-path="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html"><a href="the-effect-of-gun-ownership-on-gun-homicide-rates-using-dml-for-neural-nets.html#estimating-the-effect-with-dlm-for-neural-nets"><i class="fa fa-check"></i><b>15.2</b> Estimating the effect with DLM for neural nets</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><i class="fa fa-check"></i><b>16</b> Inference on Predictive and Causal Effects in High-Dimensional Nonlinear Models</a>
+<ul>
+<li class="chapter" data-level="16.1" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#impact-of-401k-on-financial-wealth"><i class="fa fa-check"></i><b>16.1</b> Impact of 401(k) on Financial Wealth</a>
+<ul>
+<li class="chapter" data-level="16.1.1" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#data-3"><i class="fa fa-check"></i><b>16.1.1</b> Data</a></li>
+</ul></li>
+<li class="chapter" data-level="16.2" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#double-ml-package"><i class="fa fa-check"></i><b>16.2</b> Double ML package</a></li>
+<li class="chapter" data-level="16.3" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#estimating-the-ate-of-401k-eligibility-on-net-financial-assets"><i class="fa fa-check"></i><b>16.3</b> Estimating the ATE of 401(k) Eligibility on Net Financial Assets</a></li>
+<li class="chapter" data-level="16.4" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#partially-linear-regression-models-plr"><i class="fa fa-check"></i><b>16.4</b> Partially Linear Regression Models (PLR)</a></li>
+<li class="chapter" data-level="16.5" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#interactive-regression-model-irm"><i class="fa fa-check"></i><b>16.5</b> Interactive Regression Model (IRM)</a></li>
+<li class="chapter" data-level="16.6" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#local-average-treatment-effects-of-401k-participation-on-net-financial-assets"><i class="fa fa-check"></i><b>16.6</b> Local Average Treatment Effects of 401(k) Participation on Net Financial Assets</a></li>
+<li class="chapter" data-level="16.7" data-path="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html"><a href="inference-on-predictive-and-causal-effects-in-high-dimensional-nonlinear-models.html#interactive-iv-model-iivm"><i class="fa fa-check"></i><b>16.7</b> Interactive IV Model (IIVM)</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><i class="fa fa-check"></i><b>17</b> Using Dagitty in the Analysis of Impact of 401(k) on Net Financial Wealth</a>
+<ul>
+<li class="chapter" data-level="17.1" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#graphs-for-401k-analsyis"><i class="fa fa-check"></i><b>17.1</b> Graphs for 401(K) Analsyis</a></li>
+<li class="chapter" data-level="17.2" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#state-one-graph-where-f-determines-x-and-plot-it"><i class="fa fa-check"></i><b>17.2</b> State one graph (where F determines X) and plot it</a></li>
+<li class="chapter" data-level="17.3" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#list-minimal-adjustment-sets-to-identify-causal-effecs-d-to-y"><i class="fa fa-check"></i><b>17.3</b> List minimal adjustment sets to identify causal effecs <span class="math inline">\(D \to Y\)</span></a></li>
+<li class="chapter" data-level="17.4" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#what-is-the-underlying-principle"><i class="fa fa-check"></i><b>17.4</b> What is the underlying principle?</a></li>
+<li class="chapter" data-level="17.5" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#another-graph-wherere-x-determine-f"><i class="fa fa-check"></i><b>17.5</b> Another Graph (wherere <span class="math inline">\(X\)</span> determine <span class="math inline">\(F\)</span>):</a></li>
+<li class="chapter" data-level="17.6" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#one-more-graph-encompassing-previous-ones-where-f-x-are-jointly-determined-by-latent-factors-a.-we-can-allow-in-fact-the-whole-triple-d-f-x-to-be-jointly-determined-by-latent-factors-a."><i class="fa fa-check"></i><b>17.6</b> One more graph (encompassing previous ones), where (F, X) are jointly determined by latent factors <span class="math inline">\(A\)</span>. We can allow in fact the whole triple (D, F, X) to be jointly determined by latent factors <span class="math inline">\(A\)</span>.</a></li>
+<li class="chapter" data-level="17.7" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#threat-to-idenitification-what-if-f-also-directly-affects-y-note-that-there-are-no-valid-adjustment-sets-in-this-case"><i class="fa fa-check"></i><b>17.7</b> Threat to Idenitification: What if <span class="math inline">\(F\)</span> also directly affects <span class="math inline">\(Y\)</span>? (Note that there are no valid adjustment sets in this case)</a></li>
+<li class="chapter" data-level="17.8" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#introduce-match-amount-m-very-important-mediator-why-mediator.-m-is-not-observed.-luckily-adjusting-for-x-still-works-if-there-is-no-f-to-m-arrow."><i class="fa fa-check"></i><b>17.8</b> Introduce Match Amount <span class="math inline">\(M\)</span> (very important mediator, why mediator?). <span class="math inline">\(M\)</span> is not observed. Luckily adjusting for <span class="math inline">\(X\)</span> still works if there is no <span class="math inline">\(F \to M\)</span> arrow.</a></li>
+<li class="chapter" data-level="17.9" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#if-there-is-f-to-m-arrow-then-adjusting-for-x-is-not-sufficient."><i class="fa fa-check"></i><b>17.9</b> If there is <span class="math inline">\(F \to M\)</span> arrow, then adjusting for <span class="math inline">\(X\)</span> is not sufficient.</a></li>
+<li class="chapter" data-level="17.10" data-path="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html"><a href="using-dagitty-in-the-analysis-of-impact-of-401k-on-net-financial-wealth.html#question"><i class="fa fa-check"></i><b>17.10</b> Question:</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html"><i class="fa fa-check"></i><b>18</b> Double/Debiased Machine Learning for the Partially Linear Regression Model.</a>
+<ul>
+<li class="chapter" data-level="18.1" data-path="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html"><a href="doubledebiased-machine-learning-for-the-partially-linear-regression-model..html#dml-algorithm-1"><i class="fa fa-check"></i><b>18.1</b> DML algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="19" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><i class="fa fa-check"></i><b>19</b> Sensititivy Analysis for Unobserved Confounder with DML and Sensmakr</a>
+<ul>
+<li class="chapter" data-level="19.1" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#here-we-experiment-with-using-package-sensemakr-in-conjunction-with-debiased-ml"><i class="fa fa-check"></i><b>19.1</b> Here we experiment with using package “sensemakr” in conjunction with debiased ML</a></li>
+<li class="chapter" data-level="19.2" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#we-will"><i class="fa fa-check"></i><b>19.2</b> We will</a></li>
+<li class="chapter" data-level="19.3" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#take-out-village-fixed-effects-and-run-basic-linear-analysis"><i class="fa fa-check"></i><b>19.3</b> Take out village fixed effects and run basic linear analysis</a></li>
+<li class="chapter" data-level="19.4" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#we-first-use-lasso-for-partilling-out-controls"><i class="fa fa-check"></i><b>19.4</b> We first use Lasso for Partilling Out Controls</a></li>
+<li class="chapter" data-level="19.5" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#manual-bias-analysis"><i class="fa fa-check"></i><b>19.5</b> Manual Bias Analysis</a></li>
+<li class="chapter" data-level="19.6" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#bias-analysis-with-sensemakr"><i class="fa fa-check"></i><b>19.6</b> Bias Analysis with Sensemakr</a></li>
+<li class="chapter" data-level="19.7" data-path="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html"><a href="sensititivy-analysis-for-unobserved-confounder-with-dml-and-sensmakr.html#next-we-use-random-forest-as-ml-tool-for-partialling-out"><i class="fa fa-check"></i><b>19.7</b> Next We use Random Forest as ML tool for Partialling Out</a></li>
+</ul></li>
+<li class="chapter" data-level="20" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html"><i class="fa fa-check"></i><b>20</b> Double/Debiased ML for Partially Linear IV Model</a>
+<ul>
+<li class="chapter" data-level="20.1" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#partially-linear-iv-model"><i class="fa fa-check"></i><b>20.1</b> Partially Linear IV Model</a></li>
+<li class="chapter" data-level="20.2" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#example"><i class="fa fa-check"></i><b>20.2</b> Example</a></li>
+<li class="chapter" data-level="20.3" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#plivm-in-residualized-form"><i class="fa fa-check"></i><b>20.3</b> PLIVM in Residualized Form</a></li>
+<li class="chapter" data-level="20.4" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#dml-for-pliv-model"><i class="fa fa-check"></i><b>20.4</b> DML for PLIV Model</a></li>
+<li class="chapter" data-level="20.5" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#emprical-example-acemoglu-jonsohn-robinson-aer."><i class="fa fa-check"></i><b>20.5</b> Emprical Example: Acemoglu, Jonsohn, Robinson (AER).</a></li>
+<li class="chapter" data-level="20.6" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#examine-if-we-have-weak-instruments"><i class="fa fa-check"></i><b>20.6</b> Examine if we have weak instruments</a></li>
+<li class="chapter" data-level="20.7" data-path="doubledebiased-ml-for-partially-linear-iv-model.html"><a href="doubledebiased-ml-for-partially-linear-iv-model.html#we-do-have-weak-instruments-because-t-stats-in-regression-tilde-d-sim-tilde-z-are-less-than-4-in-absolute-value"><i class="fa fa-check"></i><b>20.7</b> We do have weak instruments, because t-stats in regression <span class="math inline">\(\tilde D \sim \tilde Z\)</span> are less than 4 in absolute value</a></li>
+</ul></li>
+<li class="chapter" data-level="21" data-path="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><a href="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><i class="fa fa-check"></i><b>21</b> A Simple Example of Properties of IV estimator when Instruments are Weak</a>
+<ul>
+<li class="chapter" data-level="21.1" data-path="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><a href="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html#run-1000-trials-to-evaluate-distribution-of-the-iv-estimator"><i class="fa fa-check"></i><b>21.1</b> Run 1000 trials to evaluate distribution of the IV estimator</a></li>
+<li class="chapter" data-level="21.2" data-path="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><a href="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html#plot-the-actual-distribution-against-the-normal-approximation-based-on-strong-instrument-assumption"><i class="fa fa-check"></i><b>21.2</b> Plot the Actual Distribution against the Normal Approximation (based on Strong Instrument Assumption)</a></li>
+<li class="chapter" data-level="21.3" data-path="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html"><a href="a-simple-example-of-properties-of-iv-estimator-when-instruments-are-weak.html#some-help-functions"><i class="fa fa-check"></i><b>21.3</b> Some Help Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="22" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html"><i class="fa fa-check"></i><b>22</b> HTE I: Binary treatment</a>
+<ul>
+<li class="chapter" data-level="22.1" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#pre-specified-hypotheses"><i class="fa fa-check"></i><b>22.1</b> Pre-specified hypotheses</a></li>
+<li class="chapter" data-level="22.2" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#data-driven-hypotheses"><i class="fa fa-check"></i><b>22.2</b> Data-driven hypotheses</a>
+<ul>
+<li class="chapter" data-level="22.2.1" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#via-causal-trees"><i class="fa fa-check"></i><b>22.2.1</b> Via causal trees</a></li>
+<li class="chapter" data-level="22.2.2" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#via-grf"><i class="fa fa-check"></i><b>22.2.2</b> Via grf</a></li>
+</ul></li>
+<li class="chapter" data-level="22.3" data-path="hte-i-binary-treatment.html"><a href="hte-i-binary-treatment.html#further-reading"><i class="fa fa-check"></i><b>22.3</b> Further reading</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Machine Learning and Causal Inference</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="dosearch-for-causal-identification-in-dags" class="section level1" number="13">
+<h1><span class="header-section-number">Chapter 13</span> Dosearch for Causal Identification in DAGs</h1>
+<p>This a simple notebook for teaching that illustrates capabilites of the <code>dosearch</code> package, which is a great tool.</p>
+<p>NB. In my experience, the commands are sensitive to syntax ( e.g. spacing when <span class="math inline">\(\to\)</span> are used), so be careful when changing to other examples.</p>
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="dosearch-for-causal-identification-in-dags.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dosearch)</span></code></pre></div>
+<pre><code>## Warning: package &#39;dosearch&#39; was built under R version 4.0.5</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+
+</div>
+</div>
+<p>We start with the simplest graph, with the simplest example
+where <span class="math inline">\(D\)</span> is policy, <span class="math inline">\(Y\)</span> is outcomes, <span class="math inline">\(X\)</span> is a confounder:
+<span class="math display">\[
+D\to Y, \quad X \to (D,Y)
+\]</span>
+Now suppose we want conditional average policy effect.</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="dosearch-for-causal-identification-in-dags.html#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="st">&quot;p(y,d,x)&quot;</span>  <span class="co">#data structure</span></span>
+<span id="cb3-2"><a href="dosearch-for-causal-identification-in-dags.html#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="dosearch-for-causal-identification-in-dags.html#cb3-3" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">&quot;p(y | do(d),x)&quot;</span> <span class="co">#query -- target parameter</span></span>
+<span id="cb3-4"><a href="dosearch-for-causal-identification-in-dags.html#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="dosearch-for-causal-identification-in-dags.html#cb3-5" aria-hidden="true" tabindex="-1"></a>graph <span class="ot">&lt;-</span> <span class="st">&quot;x -&gt; y</span></span>
+<span id="cb3-6"><a href="dosearch-for-causal-identification-in-dags.html#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">  x -&gt; d </span></span>
+<span id="cb3-7"><a href="dosearch-for-causal-identification-in-dags.html#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">  d -&gt; y&quot;</span></span>
+<span id="cb3-8"><a href="dosearch-for-causal-identification-in-dags.html#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="dosearch-for-causal-identification-in-dags.html#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dosearch</span>(data, query, graph)</span></code></pre></div>
+<pre><code>## p(y|d,x)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+
+</div>
+</div>
+<p>This recovers the correct identification formula for law of the counterfactual <span class="math inline">\(Y(d)\)</span> induced by <span class="math inline">\(do(D=d)\)</span>:
+<span class="math display">\[
+p_{Y(d)|X}(y|x) := p(y|do(d),x) = p(y|d,x).
+\]</span></p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="dosearch-for-causal-identification-in-dags.html#cb5-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="st">&quot;p(y,d,x)&quot;</span></span>
+<span id="cb5-2"><a href="dosearch-for-causal-identification-in-dags.html#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="dosearch-for-causal-identification-in-dags.html#cb5-3" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">&quot;p(y | do(d))&quot;</span></span>
+<span id="cb5-4"><a href="dosearch-for-causal-identification-in-dags.html#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="dosearch-for-causal-identification-in-dags.html#cb5-5" aria-hidden="true" tabindex="-1"></a>graph <span class="ot">&lt;-</span> <span class="st">&quot;x -&gt; y</span></span>
+<span id="cb5-6"><a href="dosearch-for-causal-identification-in-dags.html#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">  x -&gt; d </span></span>
+<span id="cb5-7"><a href="dosearch-for-causal-identification-in-dags.html#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">  d -&gt; y&quot;</span></span>
+<span id="cb5-8"><a href="dosearch-for-causal-identification-in-dags.html#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="dosearch-for-causal-identification-in-dags.html#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="dosearch-for-causal-identification-in-dags.html#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dosearch</span>(data, query, graph)</span></code></pre></div>
+<pre><code>## \sum_{x}\left(p(x)p(y|d,x)\right)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+
+</div>
+</div>
+<p>This recovers the correct identification formula:
+<span class="math display">\[
+p_{Y(d)}(y) := p(y: do(d)) = \sum_{x}\left(p(x)p(y|d,x)\right) 
+\]</span>
+We integrate out <span class="math inline">\(x\)</span> in the previous formula.</p>
+<p>Suppose we don’t observe the confounder. The effect is generally not identified.</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="dosearch-for-causal-identification-in-dags.html#cb7-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="st">&quot;p(y,d)&quot;</span></span>
+<span id="cb7-2"><a href="dosearch-for-causal-identification-in-dags.html#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="dosearch-for-causal-identification-in-dags.html#cb7-3" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="st">&quot;p(y | do(d))&quot;</span></span>
+<span id="cb7-4"><a href="dosearch-for-causal-identification-in-dags.html#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="dosearch-for-causal-identification-in-dags.html#cb7-5" aria-hidden="true" tabindex="-1"></a>graph <span class="ot">&lt;-</span> <span class="st">&quot;x -&gt; y</span></span>
+<span id="cb7-6"><a href="dosearch-for-causal-identification-in-dags.html#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">  x -&gt; d </span></span>
+<span id="cb7-7"><a href="dosearch-for-causal-identification-in-dags.html#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">  d -&gt; y&quot;</span></span>
+<span id="cb7-8"><a href="dosearch-for-causal-identification-in-dags.html#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="dosearch-for-causal-identification-in-dags.html#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dosearch</span>(data, query, graph)</span></code></pre></div>
+<pre><code>## The query p(y | do(d)) is non-identifiable.</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+
+</div>
+</div>
+<p>The next graph is an example of J. Pearl (different notation), where the graph is considerably more complicated. We are interested in <span class="math inline">\(D \to Y\)</span>.</p>
+<p align="center">
+<img src="images/dags_notebook_dosearch.png" />
+</p>
+<p>Here we try conditioning on <span class="math inline">\(X_2\)</span>. This would block one backdoor path from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span>, but would open another path on which <span class="math inline">\(X_2\)</span> is a collider, so this shouldn’t work. The application below gave a correct answer (after I put the spacings carefully).</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="dosearch-for-causal-identification-in-dags.html#cb9-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="st">&quot;p(y,d,x2)&quot;</span>   <span class="co">#observed only (Y, D, X_2)</span></span>
+<span id="cb9-2"><a href="dosearch-for-causal-identification-in-dags.html#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="dosearch-for-causal-identification-in-dags.html#cb9-3" aria-hidden="true" tabindex="-1"></a>query<span class="ot">&lt;-</span> <span class="st">&quot;p(y|do(d))&quot;</span>   <span class="co">#target parameter</span></span>
+<span id="cb9-4"><a href="dosearch-for-causal-identification-in-dags.html#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="dosearch-for-causal-identification-in-dags.html#cb9-5" aria-hidden="true" tabindex="-1"></a>graph<span class="ot">&lt;-</span> <span class="st">&quot;z1 -&gt; x1</span></span>
+<span id="cb9-6"><a href="dosearch-for-causal-identification-in-dags.html#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="st">z1 -&gt; x2</span></span>
+<span id="cb9-7"><a href="dosearch-for-causal-identification-in-dags.html#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="st">z2 -&gt; x2</span></span>
+<span id="cb9-8"><a href="dosearch-for-causal-identification-in-dags.html#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="st">z2 -&gt; x3</span></span>
+<span id="cb9-9"><a href="dosearch-for-causal-identification-in-dags.html#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="st">x2 -&gt; d</span></span>
+<span id="cb9-10"><a href="dosearch-for-causal-identification-in-dags.html#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="st">x2 -&gt; y</span></span>
+<span id="cb9-11"><a href="dosearch-for-causal-identification-in-dags.html#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="st">x3 -&gt; y</span></span>
+<span id="cb9-12"><a href="dosearch-for-causal-identification-in-dags.html#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="st">x1 -&gt; d</span></span>
+<span id="cb9-13"><a href="dosearch-for-causal-identification-in-dags.html#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="st">d -&gt; m</span></span>
+<span id="cb9-14"><a href="dosearch-for-causal-identification-in-dags.html#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="st">m -&gt; y</span></span>
+<span id="cb9-15"><a href="dosearch-for-causal-identification-in-dags.html#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span></span>
+<span id="cb9-16"><a href="dosearch-for-causal-identification-in-dags.html#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="dosearch-for-causal-identification-in-dags.html#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="fu">dosearch</span>(data, query, graph)</span></code></pre></div>
+<pre><code>## The query p(y|do(d)) is non-identifiable.</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+
+</div>
+</div>
+<p>Intuitively, we should add more common causes. For example, adding <span class="math inline">\(X_3\)</span> and using <span class="math inline">\(S = (X_2, X_3)\)</span> should work.</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="dosearch-for-causal-identification-in-dags.html#cb11-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="st">&quot;p(y,d,x2,x3)&quot;</span></span>
+<span id="cb11-2"><a href="dosearch-for-causal-identification-in-dags.html#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="dosearch-for-causal-identification-in-dags.html#cb11-3" aria-hidden="true" tabindex="-1"></a>conditional.query<span class="ot">&lt;-</span> <span class="st">&quot;p(y|do(d),x2, x3)&quot;</span>  <span class="co">#can ID conditional average effect?</span></span>
+<span id="cb11-4"><a href="dosearch-for-causal-identification-in-dags.html#cb11-4" aria-hidden="true" tabindex="-1"></a>query<span class="ot">&lt;-</span> <span class="st">&quot;p(y|do(d))&quot;</span>  <span class="co">#can ID unconditional effect?</span></span>
+<span id="cb11-5"><a href="dosearch-for-causal-identification-in-dags.html#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="dosearch-for-causal-identification-in-dags.html#cb11-6" aria-hidden="true" tabindex="-1"></a>graph<span class="ot">&lt;-</span> <span class="st">&quot;z1 -&gt; x1</span></span>
+<span id="cb11-7"><a href="dosearch-for-causal-identification-in-dags.html#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="st">z1 -&gt; x2</span></span>
+<span id="cb11-8"><a href="dosearch-for-causal-identification-in-dags.html#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="st">z2 -&gt; x2</span></span>
+<span id="cb11-9"><a href="dosearch-for-causal-identification-in-dags.html#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="st">z2 -&gt; x3</span></span>
+<span id="cb11-10"><a href="dosearch-for-causal-identification-in-dags.html#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="st">x2 -&gt; d</span></span>
+<span id="cb11-11"><a href="dosearch-for-causal-identification-in-dags.html#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="st">x2 -&gt; y</span></span>
+<span id="cb11-12"><a href="dosearch-for-causal-identification-in-dags.html#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">x3 -&gt; y</span></span>
+<span id="cb11-13"><a href="dosearch-for-causal-identification-in-dags.html#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="st">x1 -&gt; d</span></span>
+<span id="cb11-14"><a href="dosearch-for-causal-identification-in-dags.html#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="st">d -&gt; m</span></span>
+<span id="cb11-15"><a href="dosearch-for-causal-identification-in-dags.html#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="st">m -&gt; y</span></span>
+<span id="cb11-16"><a href="dosearch-for-causal-identification-in-dags.html#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span></span>
+<span id="cb11-17"><a href="dosearch-for-causal-identification-in-dags.html#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="dosearch-for-causal-identification-in-dags.html#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dosearch</span>(data, conditional.query, graph))</span></code></pre></div>
+<pre><code>## p(y|x2,x3,d)</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="dosearch-for-causal-identification-in-dags.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dosearch</span>(data, query, graph))</span></code></pre></div>
+<pre><code>## \sum_{x2,x3}\left(p(x2,x3)p(y|x2,x3,d)\right)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+
+</div>
+</div>
+<p>This retrives correct formulas for counterfactual distributions of <span class="math inline">\(Y(d)\)</span> induced by <span class="math inline">\(Do(D=d)\)</span>:</p>
+<p>The conditional distribution is identified by:
+<span class="math display">\[
+p_{Y(d) \mid X_2, X_3}(y) := p(y |x_2, x_3: do(d)) = p(y|x_2,x_3,d).
+\]</span></p>
+<p>The unconditional distribution is obtained by integration out <span class="math inline">\(x_2\)</span> and <span class="math inline">\(x_3\)</span>:</p>
+<p><span class="math display">\[
+p_{Y(d) }(y) :=  p(y do(d)) = \sum_{x2,x3}\left(p(x_2,x_3)p(y|x_2,x_3,d)\right).
+\]</span></p>
+<p>Next we suppose that we observe only <span class="math inline">\((Y,D, M)\)</span>. Can we identify the effect <span class="math inline">\(D \to Y\)</span>? Can we use back-door-criterion twice to get <span class="math inline">\(D \to M\)</span> and <span class="math inline">\(M \to Y\)</span> affect? Yes, that’s called front-door criterion – so we just need to remember only the back-door and the fact that we can use it iteratively.</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="dosearch-for-causal-identification-in-dags.html#cb15-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="st">&quot;p(y,d, m)&quot;</span> </span>
+<span id="cb15-2"><a href="dosearch-for-causal-identification-in-dags.html#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="dosearch-for-causal-identification-in-dags.html#cb15-3" aria-hidden="true" tabindex="-1"></a>query.dm<span class="ot">&lt;-</span> <span class="st">&quot;p(m|do(d))&quot;</span> </span>
+<span id="cb15-4"><a href="dosearch-for-causal-identification-in-dags.html#cb15-4" aria-hidden="true" tabindex="-1"></a>query.md<span class="ot">&lt;-</span> <span class="st">&quot;p(y|do(m))&quot;</span> </span>
+<span id="cb15-5"><a href="dosearch-for-causal-identification-in-dags.html#cb15-5" aria-hidden="true" tabindex="-1"></a>query<span class="ot">&lt;-</span> <span class="st">&quot;p(y|do(d))&quot;</span></span>
+<span id="cb15-6"><a href="dosearch-for-causal-identification-in-dags.html#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="dosearch-for-causal-identification-in-dags.html#cb15-7" aria-hidden="true" tabindex="-1"></a>graph<span class="ot">&lt;-</span> <span class="st">&quot;z1 -&gt; x1</span></span>
+<span id="cb15-8"><a href="dosearch-for-causal-identification-in-dags.html#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="st">z1 -&gt; x2</span></span>
+<span id="cb15-9"><a href="dosearch-for-causal-identification-in-dags.html#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="st">z2 -&gt; x2</span></span>
+<span id="cb15-10"><a href="dosearch-for-causal-identification-in-dags.html#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="st">z2 -&gt; x3</span></span>
+<span id="cb15-11"><a href="dosearch-for-causal-identification-in-dags.html#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="st">x2 -&gt; d</span></span>
+<span id="cb15-12"><a href="dosearch-for-causal-identification-in-dags.html#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="st">x2 -&gt; y</span></span>
+<span id="cb15-13"><a href="dosearch-for-causal-identification-in-dags.html#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="st">x3 -&gt; y</span></span>
+<span id="cb15-14"><a href="dosearch-for-causal-identification-in-dags.html#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="st">x1 -&gt; d</span></span>
+<span id="cb15-15"><a href="dosearch-for-causal-identification-in-dags.html#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="st">d -&gt; m</span></span>
+<span id="cb15-16"><a href="dosearch-for-causal-identification-in-dags.html#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="st">m -&gt; y</span></span>
+<span id="cb15-17"><a href="dosearch-for-causal-identification-in-dags.html#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span></span>
+<span id="cb15-18"><a href="dosearch-for-causal-identification-in-dags.html#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dosearch</span>(data, query.dm, graph))</span></code></pre></div>
+<pre><code>## p(m|d)</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="dosearch-for-causal-identification-in-dags.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dosearch</span>(data, query.md, graph))</span></code></pre></div>
+<pre><code>## \sum_{d}\left(p(d)p(y|d,m)\right)</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="dosearch-for-causal-identification-in-dags.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dosearch</span>(data, query, graph))</span></code></pre></div>
+<pre><code>## \sum_{m}\left(p(m|d)\sum_{d}\left(p(d)p(y|d,m)\right)\right)</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+
+</div>
+</div>
+<p>So we get identification results:
+First,
+<span class="math display">\[
+p_{M(d)}(m)  := p(m|do(d)) = p(m|d).
+\]</span>
+Second,
+<span class="math display">\[
+p_{Y(m)}(y) := p(y|do(m)) = \sum_{d}\left(p(d)p(y|d,m)\right), 
+\]</span>
+and the last by integrating the product of these two formulas:
+<span class="math display">\[
+p_{Y(d)}(y) := p(y|do(d)) = \sum_{m}\left(p(m|d)\sum_{d}\left(p(d)p(y|d,m)\right)\right) 
+\]</span></p>
+<p>The package is very rich and allows identification analysis, when the data comes from multiple sources. Suppose we observe marginal distributions <span class="math inline">\((Y,D)\)</span> and <span class="math inline">\((D,M)\)</span> only. Can we identify the effect of <span class="math inline">\(D \to Y\)</span>. The answer is (guess) and the package correctly recovers it.</p>
+<div class="columns">
+<div class="column" style="width:49.5%;">
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="dosearch-for-causal-identification-in-dags.html#cb21-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="st">&quot;p(y,m)</span></span>
+<span id="cb21-2"><a href="dosearch-for-causal-identification-in-dags.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="st">         p(m,d)&quot;</span> </span>
+<span id="cb21-3"><a href="dosearch-for-causal-identification-in-dags.html#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="dosearch-for-causal-identification-in-dags.html#cb21-4" aria-hidden="true" tabindex="-1"></a>query.dm<span class="ot">&lt;-</span> <span class="st">&quot;p(m|do(d))&quot;</span> </span>
+<span id="cb21-5"><a href="dosearch-for-causal-identification-in-dags.html#cb21-5" aria-hidden="true" tabindex="-1"></a>query.md<span class="ot">&lt;-</span> <span class="st">&quot;p(y|do(m))&quot;</span> </span>
+<span id="cb21-6"><a href="dosearch-for-causal-identification-in-dags.html#cb21-6" aria-hidden="true" tabindex="-1"></a>query<span class="ot">&lt;-</span> <span class="st">&quot;p(y|do(d))&quot;</span></span>
+<span id="cb21-7"><a href="dosearch-for-causal-identification-in-dags.html#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="dosearch-for-causal-identification-in-dags.html#cb21-8" aria-hidden="true" tabindex="-1"></a>graph<span class="ot">&lt;-</span> <span class="st">&quot;z1 -&gt; x1</span></span>
+<span id="cb21-9"><a href="dosearch-for-causal-identification-in-dags.html#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="st">z1 -&gt; x2</span></span>
+<span id="cb21-10"><a href="dosearch-for-causal-identification-in-dags.html#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="st">z2 -&gt; x2</span></span>
+<span id="cb21-11"><a href="dosearch-for-causal-identification-in-dags.html#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="st">z2 -&gt; x3</span></span>
+<span id="cb21-12"><a href="dosearch-for-causal-identification-in-dags.html#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="st">x2 -&gt; d</span></span>
+<span id="cb21-13"><a href="dosearch-for-causal-identification-in-dags.html#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="st">x2 -&gt; y</span></span>
+<span id="cb21-14"><a href="dosearch-for-causal-identification-in-dags.html#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="st">x3 -&gt; y</span></span>
+<span id="cb21-15"><a href="dosearch-for-causal-identification-in-dags.html#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="st">x1 -&gt; d</span></span>
+<span id="cb21-16"><a href="dosearch-for-causal-identification-in-dags.html#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="st">d -&gt; m</span></span>
+<span id="cb21-17"><a href="dosearch-for-causal-identification-in-dags.html#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="st">m -&gt; y</span></span>
+<span id="cb21-18"><a href="dosearch-for-causal-identification-in-dags.html#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span></span>
+<span id="cb21-19"><a href="dosearch-for-causal-identification-in-dags.html#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dosearch</span>(data, query.dm, graph))</span></code></pre></div>
+<pre><code>## p(m|d)</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="dosearch-for-causal-identification-in-dags.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dosearch</span>(data, query.md, graph))</span></code></pre></div>
+<pre><code>## The query p(y|do(m)) is non-identifiable.</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="dosearch-for-causal-identification-in-dags.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">dosearch</span>(data, query, graph))</span></code></pre></div>
+<pre><code>## The query p(y|do(d)) is non-identifiable.</code></pre>
+</div><div class="column" style="width:1%;">
+<p> 
+<!-- an empty Div (with a white space), serving as
+a column separator --></p>
+</div><div class="column" style="width:49.5%;">
+
+</div>
+</div>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="causal-identification-in-dags-using-backdoor-and-swigs-equivalence-classes-falsifiability-tests.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="a-case-study-the-effect-of-gun-ownership-on-gun-homicide-rates.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/alexanderquispe/ml_book/edit/master/23-notebook_dosearch.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": "https://github.com/alexanderquispe/ml_book/blob/master/23-notebook_dosearch.Rmd",
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
