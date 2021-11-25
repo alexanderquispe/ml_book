@@ -4,16 +4,16 @@
 ## Here we experiment with using package "sensemakr" in conjunction with debiased ML
 
 
-![sas_dml_figure1](figures/sas_dml_figure1.png)
-![sas_dml_figure2](figures/sas_dml_figure2.png)
+![sas_dml_figure1](images/dml_figure_1.png)
+![sas_dml_figure2](images/dml_figure_2.png)
+![sas_dml_figure2](images/dml_figure_3.png)
+![sas_dml_figure2](images/dml_figure_4.png)
 
+## We will work on: 
 
-<span style="font-size:3em; font-weight:bold"> We will </span>
+* Mimic the partialling out procedure with machine learning tools, 
 
-<span style="font-size:2em; font-weight:bold"> * mimic the partialling out procedure with machine learning tools,  </span>
-
-<span style="font-size:2em; font-weight:bold"> * and invoke Sensmakr to compute $\phi^2$ and plot sensitivity results. </span>
-
+* And invoke Sensmakr to compute $\phi^2$ and plot sensitivity results.
 
 
 <style>
